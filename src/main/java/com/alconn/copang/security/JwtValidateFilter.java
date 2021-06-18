@@ -30,10 +30,16 @@ public class JwtValidateFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        try{
         Optional<String> token = HttpUtils.getAuthenticationHeader(request, AuthenticationScheme.BEARER);
         token.ifPresent(t -> SecurityContextHolder.getContext().setAuthentication(service.getAuthentication(t)));
         log.info("context : {}", SecurityContextHolder.getContext().getAuthentication() == null);
-        filterChain.doFilter(request, response);
+        }catch (Exception e){
+
+        }
+        finally {
+            filterChain.doFilter(request, response);
+        }
 
 
     }

@@ -34,15 +34,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
         http.cors()
         .and()
                 .authorizeRequests()
-                .antMatchers("/access").hasRole("CLIENT")
+//                .antMatchers("/access").hasRole("CLIENT")
                 .antMatchers("/**").permitAll()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers(HttpMethod.DELETE).permitAll()
                 .antMatchers(HttpMethod.HEAD).permitAll()
                 .antMatchers(HttpMethod.POST).permitAll()
-                .antMatchers(HttpMethod.PUT).permitAll()
-        .and()
-            .addFilterBefore(new JwtValidateFilter(service), UsernamePasswordAuthenticationFilter.class);
+                .antMatchers(HttpMethod.PUT).permitAll();
+//        .and()
+//            .addFilterBefore(new JwtValidateFilter(service), UsernamePasswordAuthenticationFilter.class);
         ;
     }
 

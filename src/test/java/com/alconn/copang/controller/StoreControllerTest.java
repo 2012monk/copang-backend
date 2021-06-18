@@ -70,7 +70,7 @@ class StoreControllerTest {
                 get("/api/stores/list")
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())
-                .andExpect(jsonPath("$.data[0].name").value(store.getStoreName()))
+                .andExpect(jsonPath("$.data[0].storeName").value(store.getStoreName()))
                 .andDo(print());
     }
 
@@ -88,8 +88,8 @@ class StoreControllerTest {
                 get("/api/stores/" + store.getId().toString())
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())
-                .andExpect(jsonPath("$.data.name").value(store.getStoreName()))
-                .andExpect(jsonPath("$.data.desc").value(store.getDescription()))
+                .andExpect(jsonPath("$.data.storeName").value(store.getStoreName()))
+                .andExpect(jsonPath("$.data.description").value(store.getDescription()))
                 .andDo(print());
     }
 }
