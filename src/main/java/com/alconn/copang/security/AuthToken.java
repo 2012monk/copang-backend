@@ -1,14 +1,13 @@
-package com.alconn.copang.common;
+package com.alconn.copang.security;
 
-import com.alconn.copang.client.Client;
 import com.alconn.copang.client.Role;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.Collection;
 import java.util.Collections;
 
+@Slf4j
 public class AuthToken extends AbstractAuthenticationToken {
 
     private final String token;
@@ -16,16 +15,12 @@ public class AuthToken extends AbstractAuthenticationToken {
     private Object user;
 
     public AuthToken(String token, Object user, Role role) {
-        super(Collections.singletonList(new SimpleGrantedAuthority(role.name())));
+        super(Collections.singletonList(new SimpleGrantedAuthority(role == null ? "ROLE_GUEST" : "ROLE_" + role.name())));
+        log.warn("role {}", role == null);
         this.token = token;
         this.user = user;
     }
 
-    public AuthToken(Collection<? extends GrantedAuthority> authorities, String token, Object user) {
-        super(authorities);
-        this.token = token;
-        this.user = user;
-    }
 
     @Override
     public Object getCredentials() {
@@ -35,5 +30,9 @@ public class AuthToken extends AbstractAuthenticationToken {
     @Override
     public Object getPrincipal() {
         return this.user;
+    }
+
+    public String getToken() {
+    return this.token;
     }
 }

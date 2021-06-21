@@ -23,7 +23,7 @@ public class Client {
 
     private String username;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String password;
 
     @Embedded

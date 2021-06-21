@@ -9,6 +9,10 @@ public interface ApiDocumentUtils {
 
     static OperationRequestPreprocessor getDocumentRequest() {
         return preprocessRequest(
+                modifyUris()
+                .scheme("https")
+                .host("alconn.co")
+                .removePort(),
                 prettyPrint()
         );
     }

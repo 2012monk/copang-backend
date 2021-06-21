@@ -1,6 +1,13 @@
 package com.alconn.copang.item;
 
+
 import org.junit.jupiter.api.Assertions;
+
+import com.alconn.copang.exceptions.NoSuchUserException;
+import com.alconn.copang.item.Item;
+import com.alconn.copang.item.ItemService;
+import org.junit.jupiter.api.Disabled;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -13,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.NoSuchElementException;
 
+@Disabled
 @SpringBootTest
 @Transactional
 public class ItemServiceTest {
@@ -29,6 +37,7 @@ public class ItemServiceTest {
                 .mainImg("test")
                 .itemComment("test")
                 .build();
+
         return item;
     }
 
