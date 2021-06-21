@@ -2,7 +2,7 @@ package com.alconn.copang.security;
 
 public enum AuthenticationScheme {
 
-    BEARER("Beaer"),
+    BEARER("Bearer"),
     BASIC("Basic");
 
     String val;

@@ -10,9 +10,9 @@ import lombok.Getter;
 @Getter
 public class AccessTokenContainer {
 
-    private String access_token;
+    private final String access_token;
 
-    private String username;
+    private final String username;
 
-    private Role role;
+    private final Role role;
 }

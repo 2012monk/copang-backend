@@ -2,8 +2,11 @@ package com.alconn.copang.controller;
 
 import com.alconn.copang.security.CustomUserDetailsService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.restdocs.RestDocumentationContextProvider;
@@ -22,24 +25,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 //@AutoConfigureRestDocs
+@AutoConfigureMockMvc
 @ExtendWith({SpringExtension.class, RestDocumentationExtension.class})
 class HomeControllerTest {
 
     @MockBean
     CustomUserDetailsService service;
 
-    //    @Autowired
+    @Autowired
     MockMvc mvc;
 
-    @BeforeEach
-    void setUp(WebApplicationContext context,
-               RestDocumentationContextProvider provider) {
-        mvc = MockMvcBuilders.webAppContextSetup(context)
-                .apply(documentationConfiguration(provider))
-                .alwaysDo(document("{method-name}", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())))
-                .build();
-    }
-
+    @DisplayName("서버가 돌아가는지 테스트")
     @Test
     void hello() throws Exception {
 
@@ -49,10 +45,5 @@ class HomeControllerTest {
 
     }
 
-    @Test
-    void aunauthorizedTest() throws Exception {
-        mvc.perform(get("/access"))
-                .andExpect(status().isUnauthorized())
-                .andDo(print());
-    }
+
 }

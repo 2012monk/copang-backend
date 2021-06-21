@@ -4,14 +4,24 @@ import com.alconn.copang.common.ResponseMessage;
 import com.alconn.copang.exceptions.LoginFailedException;
 import com.alconn.copang.exceptions.UnauthorizedException;
 import org.aspectj.lang.annotation.Aspect;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-@RestControllerAdvice
+import org.springframework.security.access.AccessDeniedException;
+
+import java.sql.SQLIntegrityConstraintViolationException;
+
+@ControllerAdvice
+@Order(Ordered.HIGHEST_PRECEDENCE + 5)
+@ResponseBody
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(UnauthorizedException.class)
@@ -29,12 +39,51 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
-    //    @ExceptionHandler(Exception.class)
-//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//    @ExceptionHandler({Exception.class,RuntimeException.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected ResponseMessage<String> handleInternalServerError(HttpServletRequest request, Exception e){
+        System.out.println("ExceptionHandle! \n\n\n\n\n\n\n\n\n");
+        e.printStackTrace(System.out);
         return ResponseMessage.<String>builder()
-                .message("something when wrong i'll figure it out")
+                .message("서버에러입니다")
                 .code(-1001)
+                .build();
+    }
+
+//    @ExceptionHandler(Throwable.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected ResponseMessage<String> handleGlobal(Throwable t){
+        System.out.println("ExceptionHandle! \n\n\n\n\n\n\n\n\n");
+        return ResponseMessage.<String>builder()
+                .message("eerrr")
+                .build();
+    }
+
+    @ExceptionHandler({SQLIntegrityConstraintViolationException.class, DataIntegrityViolationException.class, ConstraintViolationException.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected ResponseMessage<String> jpaException(SQLIntegrityConstraintViolationException e) {
+        return ResponseMessage.<String>builder()
+                .message("요청하신 정보가 올바르지 않습니다")
+                .code(-111)
+                .build();
+    }
+
+//    @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    protected ResponseMessage<String> authException(AuthenticationCredentialsNotFoundException e){
+        return ResponseMessage.<String>builder()
+                .message("인증정보가 없습니다!")
+                .build();
+    }
+
+    @ExceptionHandler({AccessDeniedException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    protected ResponseMessage<String> handleAccessDenied(AccessDeniedException e){
+//        httpServletResponse.setCharacterEncoding("utf-8");
+//        System.out.println("ExceptionHandle! \n\n\n\n\n\n\n\n\n");
+        return ResponseMessage.<String>builder()
+                .message("권한이 없습니다")
+                .code(403)
                 .build();
     }
 

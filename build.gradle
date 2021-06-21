@@ -1,7 +1,7 @@
 plugins {
     id 'org.springframework.boot' version '2.5.1'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-    id 'org.asciidoctor.convert' version '1.5.9.2'
+    id 'org.asciidoctor.convert' version '1.5.3'
     id 'java'
 }
 
@@ -23,12 +23,13 @@ jar.enabled=false
 ext {
 //    set('snippetsDir', file("build/generated-snippets"))
     snippetsDir = file('build/generated-snippets')
+
     set('springCloudVersion', "2020.0.3")
 }
 //ext['spring-restdocs.version'] = '2.0.4.BUILD-SNAPSHOT'
 
 dependencies {
-    asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    implementation 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -66,7 +67,10 @@ test {
 }
 
 asciidoctor {
-//    attributes 'snippets': snippetsDir
+    attributes 'snippets': snippetsDir
+//    sources {
+//        include 'api-guide.adoc'
+//    }
     inputs.dir snippetsDir
     dependsOn test
 }
