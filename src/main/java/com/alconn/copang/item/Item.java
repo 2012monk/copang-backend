@@ -29,15 +29,10 @@ public class Item {
     @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE,orphanRemoval = true)
     private List<ItemDetail> itemDetails;
 
-    public void setItemName(String itemName) {
-        this.itemName = itemName;
+    public void returnItem(String itemName, String mainImg, String itemComment){
+        this.itemName=itemName;
+        this.mainImg=mainImg;
+        this.itemComment=itemComment;
     }
 
-    public void setMainImg(String mainImg) {
-        this.mainImg = mainImg;
-    }
-
-    public void setItemComment(String itemComment) {
-        this.itemComment = itemComment;
-    }
 }
