@@ -1,77 +1,101 @@
 package com.alconn.copang.config;
 
-import com.alconn.copang.security.CustomUserDetailsService;
+import com.alconn.copang.security.CustomLogoutHandler;
 import com.alconn.copang.security.JwtValidateFilter;
+import com.alconn.copang.security.privider.JwtAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
-import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
+
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter{
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final CustomUserDetailsService service;
+    //    @Autowired
+//    private final CustomUserDetailsService service;
 
+    private final JwtAuthenticationProvider provider;
+
+    private final Set<String> blackList;
+
+    private final CustomLogoutHandler handler;
+
+    private final JwtValidateFilter jwtFilter;
+
+
+//    @Bean
+//    public GrantedAuthorityDefaults grantedAuthorityDefaults() {
+//        return new GrantedAuthorityDefaults("");
+//    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
         http.cors()
-        .and()
-                .authorizeRequests()
-//                .antMatchers("/access").hasRole("CLIENT")
-                .antMatchers("/**").permitAll()
-                .antMatchers(HttpMethod.OPTIONS).permitAll()
-                .antMatchers(HttpMethod.DELETE).permitAll()
-                .antMatchers(HttpMethod.HEAD).permitAll()
-                .antMatchers(HttpMethod.POST).permitAll()
-                .antMatchers(HttpMethod.PUT).permitAll();
-//        .and()
-//            .addFilterBefore(new JwtValidateFilter(service), UsernamePasswordAuthenticationFilter.class);
+                .and()
+                    .httpBasic().disable()
+                    .csrf().disable()
+                    .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                    .authorizeRequests()
+                    .antMatchers("/").permitAll()
+                    .antMatchers("/**/login", "/**/signup").permitAll()
+                    .anyRequest().authenticated()
+                .and()
+                .csrf().disable()
+                    .logout()
+                        .logoutUrl("/api/auth/logout")
+                        .addLogoutHandler(handler)
+                        .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
+                    .permitAll()
+                //                .antMatchers("/access").hasRole("CLIENT")
+                //                .antMatchers("/**/*").permitAll()
+                //                .antMatchers(HttpMethod.OPTIONS).permitAll()
+                //                .antMatchers(HttpMethod.DELETE).permitAll()
+                //                .antMatchers(HttpMethod.HEAD).permitAll()
+                //                .antMatchers(HttpMethod.POST).permitAll()
+                //                .antMatchers(HttpMethod.PUT).permitAll();
+//            .and()
+//                .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
+//            .and()
+//                .exceptionHandling().authenticationEntryPoint(new RestAuthenticationEntryPoint())
+                .and()
+                   .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
         ;
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(provider);
     }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
 //        web.ignoring().antMatchers("/**");
+
+//        web.expressionHandler(new DefaultWebSecurityExpressionHandler(){
+//            @Override
+//            protected SecurityExpressionOperations createSecurityExpressionRoot(Authentication authentication, FilterInvocation fi) {
+//                WebSecurityExpressionRoot root = (WebSecurityExpressionRoot) super.createSecurityExpressionRoot(authentication, fi);
+//                root.setDefaultRolePrefix("");
+//                return root;
+//            }
+//        });
     }
 
-    @Bean
-    public GrantedAuthoritiesMapper authoritiesMapper() {
-        SimpleAuthorityMapper mapper = new SimpleAuthorityMapper();
-        mapper.setPrefix(""); // this line is not required
-        mapper.setConvertToUpperCase(true); // convert your roles to uppercase
-        mapper.setDefaultAuthority("GUEST"); // set a default role
-
-        return mapper;
-    }
-
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource(){
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.addAllowedOrigin("*");
-//        configuration.addAllowedMethod("*");
-//        configuration.addAllowedOrigin("*");
-//        configuration.setAllowCredentials(true);
-//        configuration.setMaxAge(3600L);
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//        return source;
-//    }
 
 }

@@ -19,14 +19,12 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Optional;
+import java.util.OptionalLong;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class JwtTokenProvider {
-
-    @Value("${spring.jwt.secret}")
-    private String keyString = "asdlfkajsdlfkjalksdjfaklsjdfkljaskldjfljk123123";
 
     private final int exp = 60 * 60 * 15;
 
@@ -34,14 +32,70 @@ public class JwtTokenProvider {
 
     private final String ACCESS_TOKEN = "access_token";
 
+    private final String REFRESH_TOKEN = "refresh_token";
+
     private final ObjectMapper mapper;
 
+    private final int refExp = 60 * 60 * 24 * 3;
+
+    @Value("${spring.jwt.secret}")
+    private String keyString;
 
     private SecretKey key;
 
     @PostConstruct
     protected void init() {
         key = new SecretKeySpec(Base64.encodeBase64(keyString.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256.getJcaName());
+    }
+
+    public String createRefreshToken(Client user) {
+        Date now = new Date();
+
+        Date exp = new Date(now.getTime() + refExp);
+
+        Claims claims = Jwts.claims();
+        claims.put("uid", user.getId());
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuer(issuer)
+                .setSubject(REFRESH_TOKEN)
+                .setIssuedAt(now)
+                .setExpiration(exp)
+                .setAudience(user.getUsername())
+                .signWith(key)
+                .compact();
+    }
+
+    public boolean validateRefreshToken(String token) throws InvalidTokenException {
+        try{
+            resolveRefreshToken(token);
+            return true;
+        }catch (Exception e){
+            log.debug("invalid refresh token", e);
+            throw new InvalidTokenException();
+        }
+    }
+
+    public OptionalLong getUserIdFromRefreshToken(String token) {
+        Jws<Claims> claimsJws = resolveRefreshToken(token);
+        Long id = claimsJws.getBody().get("uid", long.class);
+        return OptionalLong.of(id);
+    }
+
+
+    public Optional<String> getUsernameFromRefreshToken(String token) {
+        Jws<Claims> claimsJws = resolveRefreshToken(token);
+        String username = claimsJws.getBody().getAudience();
+        return Optional.ofNullable(username);
+    }
+
+    private Jws<Claims> resolveRefreshToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .requireIssuer(issuer)
+                .requireSubject(REFRESH_TOKEN)
+                .build()
+                .parseClaimsJws(token);
     }
 
     public Optional<String> createAccessToken(Client user) {
@@ -86,7 +140,7 @@ public class JwtTokenProvider {
                     .build()
                     .parseClaimsJws(token);
         } catch (JwtException e) {
-            e.printStackTrace();
+            log.info("invalid token{}", e.getMessage());
             throw new InvalidTokenException();
         }
     }
@@ -102,11 +156,11 @@ public class JwtTokenProvider {
     public Optional<Client> resolveUserFromToken(String token) {
         Claims claims = null;
         Client user = null;
-        try{
+        try {
             claims = getTokenBody(token);
             user = claims.get("user", Client.class);
-        }catch (Exception  e){
-            log.info("invalid token", e);
+        } catch (Exception e) {
+            log.info("invalid token", e.getMessage());
         }
         return Optional.ofNullable(user);
     }

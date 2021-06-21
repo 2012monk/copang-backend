@@ -1,0 +1,133 @@
+ifndef::snippets[]
+:snippets: ../../../build/generated-snippets
+endif::[]
+
+= Copang API Guide
+monk;
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+:operation-curl-request-title: Example request
+:operation-http-response-title: Example response
+
+
+[[overview]]
+= Overview
+
+[[overview_http_verbs]]
+== HTTP verbs
+HTTP 메서드 안내
+
+|===
+| Verb | Usage
+
+| `GET`
+| Used to retrieve a resource
+리소스 요청
+
+| `POST`
+| Used to create a new resource
+새로운 리소스 생성
+
+| `PATCH`
+| 일부 정보 업데이트
+
+| `PUT`
+| 정보 업데이트
+
+| `DELETE`
+| 삭제요청
+|===
+
+[[overview_http_status_codes]]
+== HTTP status codes
+HTTP 상태코드 안내
+
+RESTful notes tries to adhere as closely as possible to standard HTTP and REST conventions in its
+use of HTTP status codes.
+
+|===
+| Status code | Usage
+
+| `200 OK`
+|  요청 성공
+The request completed successfully
+
+| `201 Created`
+| 성공적으로 리소스가 만들어졌을때
+
+| `204 No Content`
+| An update to an existing resource has been applied successfully
+
+| `400 Bad Request`
+|
+잘못된 요청시
+
+| `405 Method Not Allowed`
+| URI 에서 메소드를 지원하지 않을때
+
+| `404 Not Found`
+| The requested resource did not exist
+| `403 Forbidden`
+| 로그인은 했지만 권한이 없는 리소스에 접근시
+
+| `401 UnAuthorized`
+| 인증 실패시 EX) 로그인 실패
+|===
+
+[[client]]
+= Client 유저 서비스
+
+[[]]
+=== 유저 정보 가져오기
+
+A `GET` request is used to access the index
+
+include::{snippets}/client/get-one-user/curl-request.adoc[]
+
+//[snippets='http-request,http-response']
+
+=== 유저 리스트 가져오기
+
+`GET`
+
+operation::client/get-user[snippets='http-request,curl-request,http-response']
+[[resources_tags]]
+== Auth 서비스
+
+회원 가입및 로그인
+
+[[Login]]
+=== Login
+
+A `POST` request is used to create a note
+
+operation::Auth/login-client[snippets='http-request,http-response']
+
+
+
+[[SignIn]]
+== SignIn
+회원 가입 예제요청
+
+operation::Auth/login-client[snippets='http-request,http-response']
+
+[[Authentication]]
+== Request with Authentication
+인증정보가 포함된 요청
+
+operation::Auth/authentication-test[snippets='http-request,http-response']
+
+[[AuthFail]]
+== 인가 실패 요청
+
+operation::Auth/auth-fail-test[snippets='http-request,http-response']
+
+
+
+[[resources_tag]]
+== 상품 정보 APIs
+

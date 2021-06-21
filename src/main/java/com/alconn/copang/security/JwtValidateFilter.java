@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,16 +27,25 @@ public class JwtValidateFilter extends OncePerRequestFilter {
 
     private final CustomUserDetailsService service;
 
-
+    private final Set<String> blackList;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        try{
-        Optional<String> token = HttpUtils.getAuthenticationHeader(request, AuthenticationScheme.BEARER);
-        token.ifPresent(t -> SecurityContextHolder.getContext().setAuthentication(service.getAuthentication(t)));
-        log.info("context : {}", SecurityContextHolder.getContext().getAuthentication() == null);
-        }catch (Exception e){
 
+        try{
+            Optional<String> token = HttpUtils.getAuthenticationHeader(request, AuthenticationScheme.BEARER);
+            String res = token.orElseGet(() ->"no token");
+            if (!blackList.contains(res)) {
+                SecurityContextHolder.getContext().setAuthentication(service.getAuthentication(res));
+            }
+            else {
+                log.info("blacklisted token access {}", blackList.size());
+            }
+            log.info("security context authentication : {}", SecurityContextHolder.getContext().getAuthentication());
+            String ref = HttpUtils.getCookie(request, "ref").orElseGet(() -> "no ref");
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
         finally {
             filterChain.doFilter(request, response);
@@ -43,4 +53,6 @@ public class JwtValidateFilter extends OncePerRequestFilter {
 
 
     }
+
+
 }

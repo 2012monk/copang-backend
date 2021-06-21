@@ -1,21 +1,36 @@
-package com.alconn.copang.client;
+package com.alconn.copang.auth;
 
+import com.alconn.copang.client.Client;
+import com.alconn.copang.client.ClientService;
 import com.alconn.copang.common.AccessTokenContainer;
 import com.alconn.copang.common.LoginToken;
 import com.alconn.copang.common.ResponseMessage;
 import com.alconn.copang.exceptions.InvalidTokenException;
 import com.alconn.copang.exceptions.LoginFailedException;
+import com.alconn.copang.exceptions.NoSuchUserException;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-@Deprecated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api")
-public class ClientAuthController {
+@RequestMapping("/api/auth")
+public class AuthController {
 
     private final ClientService service;
+
+    @PostMapping("/token")
+    public ResponseMessage<AccessTokenContainer> refreshAccessToken(@CookieValue(name = "ref") String token) throws InvalidTokenException, NoSuchUserException {
+        AccessTokenContainer accessTokenContainer =
+                service.getAccessTokenFromRefreshToken(token);
+        return ResponseMessage.<AccessTokenContainer>builder()
+                .data(accessTokenContainer)
+                .message("success")
+                .code(10)
+                .build();
+
+    }
 
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
@@ -34,5 +49,7 @@ public class ClientAuthController {
                 .data(service.login(loginToken))
                 .build();
     }
+
+
 
 }

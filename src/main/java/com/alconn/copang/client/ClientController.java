@@ -1,6 +1,7 @@
 package com.alconn.copang.client;
 
 import com.alconn.copang.common.ResponseMessage;
+import com.alconn.copang.exceptions.NoSuchUserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,19 +13,20 @@ import java.util.List;
 @RequestMapping("/api")
 public class ClientController {
 
-    private final ClientRepo repo;
+    public final ClientService service;
 
     @GetMapping("/user/{id}")
-    public ResponseMessage<Client> getUser(@PathVariable Long id)  {
+    public ResponseMessage<Client> getUser(@PathVariable Long id) throws NoSuchUserException {
+        Client client = service.getClient(id);
         return ResponseMessage.<Client>builder()
-                .data(repo.getById(id))
+                .data(client)
                 .build();
     }
 
     @GetMapping("/user/list")
     public ResponseMessage<List<Client>> getAllUsers() {
         return ResponseMessage.<List<Client>>builder()
-                .data(repo.findAll())
+                .data(service.getAllClients())
                 .message("success")
                 .build();
     }

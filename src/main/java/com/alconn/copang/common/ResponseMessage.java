@@ -1,9 +1,11 @@
 package com.alconn.copang.common;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @Builder
 public class ResponseMessage<T> {

@@ -2,14 +2,12 @@ package com.alconn.copang.security;
 
 import com.alconn.copang.client.Client;
 import com.alconn.copang.client.Role;
-import com.alconn.copang.common.AuthToken;
 import com.alconn.copang.security.privider.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
