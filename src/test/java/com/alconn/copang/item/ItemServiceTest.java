@@ -40,41 +40,43 @@ public class ItemServiceTest {
             System.out.println("saveitem에러" + e.getMessage());
             /* 뭔가 작동을 한다!/*/
         }
+
     }
 
-
-    @Test
-    public void findItem(){
-        save();
-        Long id=2L;
-        Item item=itemService.itemfindById(id).orElseThrow(()-> new NoSuchElementException("findItem에러"));
-        System.out.println(item.getItemName());
-    }
-
-    @Test
-    @Commit
-    public void delete(){
+//
+//    @Test
+//    public void findItem(){
 //        save();
-        Long id=20L;
-        Optional<Item> item=itemService.itemfindById(id);
+//        Long id=2L;
+//        Item item=itemService.itemfindById(id).orElseThrow(()-> new NoSuchElementException("findItem에러"));
+//        System.out.println(item.getItemName());
+//    }
+//
+//    @Test
+//    @Commit
+//    public void delete(){
+////        save();
+//        Long id=20L;
+//        Optional<Item> item=itemService.itemfindById(id);
+////        em.flush();
+////        em.clear();
+//        itemService.deleteItem(item.get().getId());
+////        em.flush();
+////        em.clear();
+//    }
+//
+//    @Test
+//    public void update(){
+//        save();
+//        Long id=9L;
+//        Optional<Item> item=itemService.itemfindById(id);
+//        em.flush();
+//        Item item2 =item.get();
+//        item2.setItemName("test2");
+//        Optional<Item> item3=Optional.of(item2);
+//        itemService.itemUpdate(item3);
 //        em.flush();
 //        em.clear();
-        itemService.deleteItem(item.get().getId());
-//        em.flush();
-//        em.clear();
-    }
+//    }
 
-    @Test
-    public void update(){
-        save();
-        Long id=9L;
-        Optional<Item> item=itemService.itemfindById(id);
-        em.flush();
-        Item item2 =item.get();
-        item2.setItemName("test2");
-        Optional<Item> item3=Optional.of(item2);
-        itemService.itemUpdate(item3);
-        em.flush();
-        em.clear();
-    }
 }

@@ -1,7 +1,7 @@
 package com.alconn.copang.client;
 
 import com.alconn.copang.common.AccessTokenContainer;
-import com.alconn.copang.common.LoginToken;
+import com.alconn.copang.auth.LoginToken;
 import com.alconn.copang.common.ResponseMessage;
 import com.alconn.copang.exceptions.InvalidTokenException;
 import com.alconn.copang.exceptions.LoginFailedException;
