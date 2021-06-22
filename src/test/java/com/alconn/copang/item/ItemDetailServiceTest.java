@@ -27,7 +27,7 @@ public class ItemDetailServiceTest {
     public Item itemCreate() {
         Item item = Item.builder()
                 .itemName("test")
-                .mainImg("test")
+                .mainImg("test2")
                 .itemComment("test")
                 .build();
         return item;
@@ -48,8 +48,8 @@ public class ItemDetailServiceTest {
                 .item(itemCreate())
                 .price(10000)
                 .stockQuantity(111)
-                .option("옷")
-                .detailImg("사진")
+                .option("가구")
+                .detailImg("가구사진")
                 .build();
         return itemDetail;
     }
@@ -57,18 +57,29 @@ public class ItemDetailServiceTest {
     @Test
     @Commit
     public void findItemDetailByItem(){
-        Item item=itemCreate();
+        System.out.println("????????");
+        Item item= null;
+        try {
+            item = itemCreate();
         itemService.saveItem(item);
+        } catch (Exception e) {
+            System.out.println("안됨");
+        }
         for(int i=0;i<3;i++){
-        itemDetailService.itemDetailSave(itemDetailCreate2(item));
+
+            try {
+                itemDetailService.itemDetailSave(itemDetailCreate2(item));
+            } catch (Exception e) {
+                System.out.println("안됨2");
+            }
         }
         em.flush();
 
-        List<ItemDetail> itemDetails= itemDetailService.listItemDetailFind(item.getId());
-
-        for(ItemDetail itemDetail: itemDetails){
-            System.out.println(itemDetail.toString());
-        }
+//        List<ItemDetail> itemDetails= itemDetailService.listItemDetailFind(item.getId());
+//
+//        for(ItemDetail itemDetail: itemDetails){
+//            System.out.println(itemDetail.toString());
+//        }
     }
 
     @Test
