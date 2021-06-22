@@ -2,16 +2,22 @@ package com.alconn.copang.auth;
 
 import com.alconn.copang.client.Client;
 import com.alconn.copang.client.ClientService;
+import com.alconn.copang.client.UserForm;
 import com.alconn.copang.common.AccessTokenContainer;
-import com.alconn.copang.common.LoginToken;
 import com.alconn.copang.common.ResponseMessage;
 import com.alconn.copang.exceptions.InvalidTokenException;
 import com.alconn.copang.exceptions.LoginFailedException;
 import com.alconn.copang.exceptions.NoSuchUserException;
-import lombok.Getter;
+import com.alconn.copang.exceptions.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
+
+import javax.validation.Valid;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 @RequiredArgsConstructor
 @RestController
@@ -32,11 +38,23 @@ public class AuthController {
 
     }
 
+    // TODO 받아들이는 타입에따라 분기 가능한가?
+//    @PostMapping("/signup")
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public ResponseMessage<Client> createClient(@RequestBody Client client) {
+//        return ResponseMessage.<Client>builder()
+//                .data(service.signupClient(client))
+//                .message("created")
+//                .code(200)
+//                .build();
+//    }
+
+
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseMessage<Client> createClient(@RequestBody Client client) {
+    public ResponseMessage<Client> createClient(@RequestBody @Validated UserForm form) throws SQLIntegrityConstraintViolationException {
         return ResponseMessage.<Client>builder()
-                .data(service.signupClient(client))
+                .data(service.signupClient(form))
                 .message("created")
                 .code(200)
                 .build();
