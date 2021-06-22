@@ -5,7 +5,7 @@ import com.alconn.copang.common.LoginToken;
 import com.alconn.copang.exceptions.InvalidTokenException;
 import com.alconn.copang.exceptions.LoginFailedException;
 import com.alconn.copang.exceptions.NoSuchUserException;
-import com.alconn.copang.security.privider.JwtTokenProvider;
+import com.alconn.copang.security.provider.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -1,8 +1,10 @@
 package com.alconn.copang.config;
 
+import com.alconn.copang.security.CustomAccessDeniedHandler;
 import com.alconn.copang.security.CustomLogoutHandler;
 import com.alconn.copang.security.JwtValidateFilter;
-import com.alconn.copang.security.privider.JwtAuthenticationProvider;
+import com.alconn.copang.security.RestAuthenticationEntryPoint;
+import com.alconn.copang.security.provider.JwtAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -51,12 +53,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                     .authorizeRequests()
-                    .antMatchers("/static/docs/index.html", "/docs/**").permitAll()
+                    .antMatchers( "/docs/**").permitAll()
                     .antMatchers("/").permitAll()
                     .antMatchers("/**/login", "/**/signup").permitAll()
-                    .anyRequest().authenticated()
+//                    .anyRequest().hasRole("GUEST")
+                // TODO 권한관계 설정하기
+                    .anyRequest().hasAnyRole("GUEST", "CLIENT", "ADMIN")
+//                    .anyRequest().authenticated()
                 .and()
-                .csrf().disable()
+                    .csrf().disable()
                     .logout()
                         .logoutUrl("/api/auth/logout")
                         .addLogoutHandler(handler)
@@ -69,19 +74,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //                .antMatchers(HttpMethod.HEAD).permitAll()
                 //                .antMatchers(HttpMethod.POST).permitAll()
                 //                .antMatchers(HttpMethod.PUT).permitAll();
-//            .and()
-//                .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
-//            .and()
-//                .exceptionHandling().authenticationEntryPoint(new RestAuthenticationEntryPoint())
-//                .and()
-//                   .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+            .and()
+                .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
+            .and()
+                .exceptionHandling().authenticationEntryPoint(new RestAuthenticationEntryPoint())
+            .and()
+                   .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         ;
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.authenticationProvider(provider);
+        auth.authenticationProvider(provider);
     }
 
     @Override
