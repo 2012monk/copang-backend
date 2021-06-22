@@ -14,7 +14,7 @@ public class HomeController {
         return "Hello!!!";
     }
 
-//    @Secured("ROLE_GUEST")
+    @Secured("ROLE_GUEST")
     @GetMapping("/access")
     public String access() {
         return "ok";
@@ -22,7 +22,6 @@ public class HomeController {
 
 //    @PreAuthorize("isAuthenticated()")
     @Secured("ROLE_CLIENT")
-//    @Secured("ROLE_GUEST")
     @GetMapping("/access2")
     public String authenticate(){
         return "ok";

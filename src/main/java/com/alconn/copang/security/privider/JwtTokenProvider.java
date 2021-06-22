@@ -1,4 +1,4 @@
-package com.alconn.copang.security.provider;
+package com.alconn.copang.security.privider;
 
 import com.alconn.copang.client.Client;
 import com.alconn.copang.client.Role;

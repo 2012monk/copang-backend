@@ -2,7 +2,7 @@ package com.alconn.copang.security;
 
 import com.alconn.copang.client.Client;
 import com.alconn.copang.client.Role;
-import com.alconn.copang.security.provider.JwtTokenProvider;
+import com.alconn.copang.security.privider.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
