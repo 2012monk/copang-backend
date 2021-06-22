@@ -40,7 +40,6 @@ public class ItemServiceTest {
             System.out.println("saveitem에러" + e.getMessage());
             /* 뭔가 작동을 한다!/*/
         }
-
     }
 
 //
@@ -78,5 +77,4 @@ public class ItemServiceTest {
 //        em.flush();
 //        em.clear();
 //    }
-
 }

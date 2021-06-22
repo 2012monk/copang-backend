@@ -30,7 +30,6 @@ public class Orders {
 
     private LocalDateTime orderDate;
 
-
     @OneToOne
     @JoinColumn(name = "address_id")
     private Address address;

@@ -117,4 +117,15 @@ public class ClientService {
     public boolean checkUsername(String username) {
         return repo.findClientByUsername(username).isPresent();
     }
+
+    @Transactional
+    public boolean deleteClient(Long id) throws NoSuchUserException {
+        try{
+            repo.deleteById(id);
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new NoSuchUserException("요청하신 정보가 잘못되었습니다");
+        }
+    }
 }
