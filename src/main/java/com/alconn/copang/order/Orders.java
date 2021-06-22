@@ -30,7 +30,8 @@ public class Orders {
 
     private LocalDateTime orderDate;
 
-    @Embedded
+    @OneToOne
+    @JoinColumn(name = "address_id")
     private Address address;
 
     @Enumerated(EnumType.STRING)

@@ -1,28 +1,34 @@
 package com.alconn.copang.client;
 
 import com.alconn.copang.ApiDocumentUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.operation.preprocess.Preprocessors;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.transaction.Transactional;
 
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -34,9 +40,9 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Slf4j
 @SpringBootTest
@@ -52,6 +58,8 @@ class ClientControllerTest {
     private MockMvc mvc;
 
 
+    @Autowired
+    private ModelMapper mapper;
 
     @BeforeEach
     public void setUp(RestDocumentationContextProvider restDocumentationExtension) {
@@ -129,8 +137,27 @@ class ClientControllerTest {
 //                                parameterWithName(":id").description("조회할 유저 아이디")
 //                        )))
                 .andDo(print());
-
-
     }
 
+    @Transactional
+    @Test
+    void update() throws Exception {
+        ObjectMapper m = new ObjectMapper();
+        Client client = Client.builder()
+                .username("name323")
+                .password("pass123")
+                .build();
+
+        this.repo.save(client);
+        UserForm form = mapper.map(client, UserForm.class);
+        ReflectionTestUtils.setField(form, "realName", "hello");
+        this.mvc.perform(
+                put("/api/user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(m.writeValueAsString(form))
+                        .characterEncoding("utf-8")
+        ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$..realName").value(form.getRealName()));
+    }
 }

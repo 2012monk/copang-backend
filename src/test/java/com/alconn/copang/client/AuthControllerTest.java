@@ -1,29 +1,22 @@
 package com.alconn.copang.client;
 
 import com.alconn.copang.ApiDocumentUtils;
-import com.alconn.copang.auth.AuthController;
 import com.alconn.copang.common.AccessTokenContainer;
-import com.alconn.copang.common.LoginToken;
+import com.alconn.copang.auth.LoginToken;
 import com.alconn.copang.config.SecurityConfig;
-import com.alconn.copang.exceptions.InvalidTokenException;
-import com.alconn.copang.exceptions.LoginFailedException;
 import com.alconn.copang.security.CustomLogoutHandler;
 import com.alconn.copang.security.CustomUserDetailsService;
 import com.alconn.copang.security.JwtValidateFilter;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
@@ -35,15 +28,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import javax.servlet.Filter;
-import javax.transaction.Transactional;
-
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -99,6 +88,7 @@ class AuthControllerTest {
                 .webAppContextSetup(this.context)
 //                .addFilters(new JwtValidateFilter(userDetailsService, blackList))
                 .addFilters(filter)
+
                 .addFilters(new CharacterEncodingFilter("UTF-8"))
                 .apply(documentationConfiguration(restDocumentation))
                 .alwaysDo(document("Auth/{method-name}", ApiDocumentUtils.getDocumentRequest(), ApiDocumentUtils.getDocumentResponse()))
@@ -204,5 +194,17 @@ class AuthControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    void signUp() throws Exception {
+        UserForm form = new UserForm();
+        ReflectionTestUtils.setField(form, "username", "name");
+        ReflectionTestUtils.setField(form, "password", "pass");
 
+        this.mvc.perform(
+                post(domain + "signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(form))
+        ).andExpect(status().isCreated())
+                .andDo(print());
+    }
 }

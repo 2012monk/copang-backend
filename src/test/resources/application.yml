@@ -6,3 +6,10 @@ spring:
   jackson:
     serialization:
       fail-on-empty-beans: false
+
+
+server:
+  servlet:
+    encoding:
+      force-response: true
+      force: true

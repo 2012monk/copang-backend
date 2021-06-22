@@ -1,5 +1,7 @@
 package com.alconn.copang.config;
 
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -15,6 +17,8 @@ import org.springframework.web.servlet.view.UrlBasedViewResolver;
 @EnableWebMvc
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
+    private final ModelMapper modelMapper = new ModelMapper();
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -46,6 +50,21 @@ public class WebConfig implements WebMvcConfigurer {
         UrlBasedViewResolver resolver = new UrlBasedViewResolver();
         resolver.setViewClass(InternalResourceView.class);
         return resolver;
+    }
+
+    @Bean
+    public ModelMapper nullSkipModelMapper() {
+        // Private 접근허용으로 setter없이 매핑가능하도록 설정
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT)
+                .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE)
+                .setSkipNullEnabled(true)
+                .setFieldMatchingEnabled(true);
+        // 매핑 전략 설정
+//        modelMapper.getConfiguration()
+//                .setMatchingStrategy(MatchingStrategies.STRICT);
+//        modelMapper.getConfiguration().setSkipNullEnabled(true);
+        return modelMapper;
     }
 
 
