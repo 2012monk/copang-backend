@@ -1,11 +1,13 @@
 package com.alconn.copang.client;
 
+import com.alconn.copang.annotations.IdentitySecured;
 import com.alconn.copang.common.ResponseMessage;
 import com.alconn.copang.exceptions.ValidationException;
 import com.alconn.copang.exceptions.NoSuchUserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
 
 import javax.validation.Valid;
 import java.util.List;
@@ -41,6 +43,17 @@ public class ClientController {
         return ResponseMessage.<Client>builder()
                 .data(service.updateClient(form))
                 .message("update_success")
+                .build();
+    }
+
+
+    @IdentitySecured
+    @DeleteMapping("/{id}")
+    public ResponseMessage<String> deleteUser(@PathVariable Long id) throws NoSuchUserException {
+        service.deleteClient(id);
+        return ResponseMessage.<String>builder()
+                .message("success")
+                .data("blbl")
                 .build();
     }
 }

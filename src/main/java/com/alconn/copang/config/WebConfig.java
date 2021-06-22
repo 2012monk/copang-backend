@@ -1,6 +1,5 @@
 package com.alconn.copang.config;
 
-
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
@@ -53,7 +52,6 @@ public class WebConfig implements WebMvcConfigurer {
         return resolver;
     }
 
-
     @Bean
     public ModelMapper nullSkipModelMapper() {
         // Private 접근허용으로 setter없이 매핑가능하도록 설정
@@ -68,6 +66,7 @@ public class WebConfig implements WebMvcConfigurer {
 //        modelMapper.getConfiguration().setSkipNullEnabled(true);
         return modelMapper;
     }
+
 
 
     //
