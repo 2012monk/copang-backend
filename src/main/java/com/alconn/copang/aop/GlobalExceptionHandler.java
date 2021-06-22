@@ -37,7 +37,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UnauthorizedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     protected ResponseMessage<String> handleUnauthorizedException(UnauthorizedException e) {
-        return  ResponseMessage.<String>builder().message(e.getMessage()).code(e.getCode()).build();
+        log.warn("working\n\n\n====" + e.getMessage());
+        e.printStackTrace();
+
+        return  ResponseMessage.<String>builder()
+                .message(e.getMessage())
+                .code(e.getCode()).build();
     }
 
     @ExceptionHandler(LoginFailedException.class)
@@ -118,6 +123,7 @@ public class GlobalExceptionHandler {
                 .data(msg)
                 .build();
     }
+
 
 
 

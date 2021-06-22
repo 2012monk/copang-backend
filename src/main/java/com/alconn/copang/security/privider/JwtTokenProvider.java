@@ -160,7 +160,7 @@ public class JwtTokenProvider {
             claims = getTokenBody(token);
             user = claims.get("user", Client.class);
         } catch (Exception e) {
-            log.info("invalid token", e.getMessage());
+            log.info("invalid token {}", e.getMessage());
         }
         return Optional.ofNullable(user);
     }
