@@ -1,6 +1,7 @@
-ifndef::snippets[]
-:snippets: ../../../build/generated-snippets
-endif::[]
+
+//ifndef::snippets[]
+//:snippets: ../../../build/generated-snippets
+//endif::[]
 
 = Copang API Guide
 monk;
@@ -10,12 +11,12 @@ monk;
 :toc: left
 :toclevels: 4
 :sectlinks:
-:operation-curl-request-title: Example request
-:operation-http-response-title: Example response
+:operation-curl-request-title: 에제 요청 Request
+:operation-http-response-title: 에제 응답 Response
 
 
 [[overview]]
-= Overview
+== Overview
 
 [[overview_http_verbs]]
 == HTTP verbs
@@ -78,6 +79,10 @@ The request completed successfully
 | 인증 실패시 EX) 로그인 실패
 |===
 
+
+include::guide.adoc[]
+
+
 [[client]]
 = Client 유저 서비스
 
@@ -88,6 +93,8 @@ A `GET` request is used to access the index
 
 include::{snippets}/client/get-one-user/curl-request.adoc[]
 
+예제응답
+include::{snippets}/client/get-one-user/http-response.adoc[]
 //[snippets='http-request,http-response']
 
 === 유저 리스트 가져오기

@@ -35,5 +35,9 @@ public class CustomUserDetailsService {
         return new AuthToken(token, client, client.getRole());
     }
 
+    public Authentication getAuthentication() {
+        return new AuthToken("null", Client.builder().role(Role.GUEST).build(), Role.GUEST);
+    }
+
 
 }

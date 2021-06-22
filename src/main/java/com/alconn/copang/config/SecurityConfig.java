@@ -51,6 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                     .authorizeRequests()
+                    .antMatchers("/static/docs/index.html", "/docs/**").permitAll()
                     .antMatchers("/").permitAll()
                     .antMatchers("/**/login", "/**/signup").permitAll()
                     .anyRequest().authenticated()
@@ -72,20 +73,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
 //            .and()
 //                .exceptionHandling().authenticationEntryPoint(new RestAuthenticationEntryPoint())
-                .and()
-                   .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+//                .and()
+//                   .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         ;
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(provider);
+//        auth.authenticationProvider(provider);
     }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
 //        web.ignoring().antMatchers("/**");
+        web.ignoring().antMatchers("/docs")
+                .antMatchers("/resources/**", "/static/**")
+                .antMatchers("/docs/*", "/static/docs/**")
+                .antMatchers("/docs/**", "/docs/index.html");
 
 //        web.expressionHandler(new DefaultWebSecurityExpressionHandler(){
 //            @Override

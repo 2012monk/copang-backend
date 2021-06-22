@@ -1,11 +1,15 @@
 package com.alconn.copang.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.resource.PathResourceResolver;
+import org.springframework.web.servlet.view.InternalResourceView;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
 @EnableAspectJAutoProxy
 @EnableWebMvc
@@ -25,4 +29,30 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowCredentials(true)
                 .maxAge(3600L);
     }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/**")
+                .setCachePeriod(3600)
+                .addResourceLocations("classpath:/static/")
+                .resourceChain(true)
+                .addResolver(new PathResourceResolver())
+        ;
+
+    }
+
+    @Bean
+    public ViewResolver viewResolver(){
+        UrlBasedViewResolver resolver = new UrlBasedViewResolver();
+        resolver.setViewClass(InternalResourceView.class);
+        return resolver;
+    }
+
+
+
+    //
+//    @Override
+//    public void addViewControllers(ViewControllerRegistry registry) {
+//        registry.addViewController("/docs").setViewName("index");
+//    }
 }

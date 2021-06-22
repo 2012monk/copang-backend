@@ -40,6 +40,7 @@ public class JwtValidateFilter extends OncePerRequestFilter {
             }
             else {
                 log.info("blacklisted token access {}", blackList.size());
+                SecurityContextHolder.getContext().setAuthentication(service.getAuthentication());
             }
             log.info("security context authentication : {}", SecurityContextHolder.getContext().getAuthentication());
             String ref = HttpUtils.getCookie(request, "ref").orElseGet(() -> "no ref");
