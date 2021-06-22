@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
+
 import javax.validation.Valid;
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class ClientController {
                 .build();
     }
 
-    @Transactional
+
     @IdentitySecured
     @DeleteMapping("/{id}")
     public ResponseMessage<String> deleteUser(@PathVariable Long id) throws NoSuchUserException {

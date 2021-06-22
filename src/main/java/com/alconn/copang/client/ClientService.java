@@ -118,6 +118,7 @@ public class ClientService {
         return repo.findClientByUsername(username).isPresent();
     }
 
+    @Transactional
     public boolean deleteClient(Long id) throws NoSuchUserException {
         try{
             repo.deleteById(id);
