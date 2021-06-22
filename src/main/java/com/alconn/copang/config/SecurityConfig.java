@@ -1,7 +1,9 @@
 package com.alconn.copang.config;
 
+import com.alconn.copang.security.CustomAccessDeniedHandler;
 import com.alconn.copang.security.CustomLogoutHandler;
 import com.alconn.copang.security.JwtValidateFilter;
+import com.alconn.copang.security.RestAuthenticationEntryPoint;
 import com.alconn.copang.security.privider.JwtAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -51,11 +53,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                     .authorizeRequests()
+                    .antMatchers( "/docs/**").permitAll()
                     .antMatchers("/").permitAll()
                     .antMatchers("/**/login", "/**/signup").permitAll()
-                    .anyRequest().authenticated()
+//                    .anyRequest().hasRole("GUEST")
+                // TODO 권한관계 설정하기
+                    .anyRequest().hasAnyRole("GUEST", "CLIENT", "ADMIN")
+//                    .anyRequest().authenticated()
                 .and()
-                .csrf().disable()
+                    .csrf().disable()
                     .logout()
                         .logoutUrl("/api/auth/logout")
                         .addLogoutHandler(handler)
@@ -68,11 +74,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //                .antMatchers(HttpMethod.HEAD).permitAll()
                 //                .antMatchers(HttpMethod.POST).permitAll()
                 //                .antMatchers(HttpMethod.PUT).permitAll();
-//            .and()
-//                .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
-//            .and()
-//                .exceptionHandling().authenticationEntryPoint(new RestAuthenticationEntryPoint())
-                .and()
+            .and()
+                .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
+            .and()
+                .exceptionHandling().authenticationEntryPoint(new RestAuthenticationEntryPoint())
+            .and()
                    .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         ;
@@ -86,6 +92,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
 //        web.ignoring().antMatchers("/**");
+        web.ignoring().antMatchers("/docs")
+                .antMatchers("/resources/**", "/static/**")
+                .antMatchers("/docs/*", "/static/docs/**")
+                .antMatchers("/docs/**", "/docs/index.html");
 
 //        web.expressionHandler(new DefaultWebSecurityExpressionHandler(){
 //            @Override

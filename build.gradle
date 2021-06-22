@@ -1,7 +1,7 @@
 plugins {
     id 'org.springframework.boot' version '2.5.1'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-    id 'org.asciidoctor.convert' version '1.5.3'
+    id 'org.asciidoctor.jvm.convert' version '3.3.2'
     id 'java'
 }
 
@@ -13,6 +13,7 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+    asciidoctorExtensions
 }
 
 repositories {
@@ -26,15 +27,13 @@ ext {
 
     set('springCloudVersion', "2020.0.3")
 }
-//ext['spring-restdocs.version'] = '2.0.4.BUILD-SNAPSHOT'
 
 dependencies {
-    implementation 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.cloud:spring-cloud-starter'
+//    implementation 'org.springframework.cloud:spring-cloud-starter'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -47,12 +46,15 @@ dependencies {
 
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+
     annotationProcessor 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
     testCompileOnly 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testImplementation 'org.springframework.security:spring-security-test'
+
+    asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 }
 
 dependencyManagement {
@@ -66,18 +68,31 @@ test {
     useJUnitPlatform()
 }
 
+
 asciidoctor {
-    attributes 'snippets': snippetsDir
-//    sources {
-//        include 'api-guide.adoc'
-//    }
+    configurations 'asciidoctorExtensions'
     inputs.dir snippetsDir
     dependsOn test
+
 }
 
 bootJar {
     dependsOn asciidoctor // (3)
-    from ("${asciidoctor.outputDir}/html5") { // (4)
-        into 'static/docs'
+    copy {
+        from "build/docs/asciidoc"            // /html5를 사용하지 않는다!
+        into 'src/main/resources/static/docs'    // /static/docs로 복사!
     }
 }
+
+task copyDocument(type: Copy) {
+    dependsOn asciidoctor
+
+    from file("build/docs/asciidoc/")
+    into file("src/main/resources/static/docs")
+}
+
+
+build {
+    dependsOn copyDocument
+}
+
