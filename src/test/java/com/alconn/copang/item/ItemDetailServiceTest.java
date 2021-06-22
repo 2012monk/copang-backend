@@ -8,6 +8,7 @@ import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 
 @Disabled
 @SpringBootTest
@@ -23,50 +24,68 @@ public class ItemDetailServiceTest {
     @Autowired
     EntityManager em;
 
-
-
-    public Item teamsave(){
-        Item item=new Item();
-        item.setItemName("test");
-        item.setMainImg("test");
-        item.setItemComment("test");
-        itemService.saveItem(item);
+    public Item itemCreate() {
+        Item item = Item.builder()
+                .itemName("test")
+                .mainImg("test")
+                .itemComment("test")
+                .build();
         return item;
     }
 
-    @Test
-    @Commit
-    public void itdSave(){
-        Item item=teamsave();
-        ItemDetail itemDetail= ItemDetail.builder()
-                .detailImg("detailtest")
-                .option("detailtest")
-                .stockQuantity(1)
+    public ItemDetail itemDetailCreate2(Item itemInput){
+        ItemDetail itemDetail=ItemDetail.builder()
+                .item(itemInput)
                 .price(10000)
-                .item(item)
+                .stockQuantity(111)
+                .option("옷")
+                .detailImg("사진")
                 .build();
-        ItemDetail itemDetail2= ItemDetail.builder()
-                .detailImg("detailtest")
-                .option("detailtest")
-                .stockQuantity(1)
+        return itemDetail;
+    }
+    public ItemDetail itemDetailCreate(){
+        ItemDetail itemDetail=ItemDetail.builder()
+                .item(itemCreate())
                 .price(10000)
-                .item(item)
+                .stockQuantity(111)
+                .option("옷")
+                .detailImg("사진")
                 .build();
-        itemDetailService.itDsave(itemDetail);
-        itemDetailService.itDsave(itemDetail2);
-        em.flush();
-        em.close();
+        return itemDetail;
     }
 
     @Test
-    @Transactional
     @Commit
-    public void itddelete(){
-        Long id=18L;
-        ItemDetail itemDetail=itemDetailService.itDfind(id);
-        itemDetailService.itDdelete(itemDetail.getId());
+    public void findItemDetailByItem(){
+        Item item=itemCreate();
+        itemService.saveItem(item);
+        for(int i=0;i<3;i++){
+        itemDetailService.itemDetailSave(itemDetailCreate2(item));
+        }
         em.flush();
-        em.close();
+
+        List<ItemDetail> itemDetails= itemDetailService.listItemDetailFind(item.getId());
+
+        for(ItemDetail itemDetail: itemDetails){
+            System.out.println(itemDetail.toString());
+        }
+    }
+
+    @Test
+    @Commit
+    public void updateItemDetaile(){
+        Item item=itemCreate();
+        itemService.saveItem(item);
+
+        ItemDetail itemDetail=itemDetailCreate2(item);
+        ItemDetail itemDetail2=itemDetailCreate2(item);
+        itemDetailService.itemDetailSave(itemDetail);
+        itemDetailService.itemDetailSave(itemDetail2);
+
+        itemDetail2.updateItemDetail(3000,200,"옵션","사진2");
+//        em.flush();
+        itemDetailService.itemDetailUpdate(itemDetail.getId(), itemDetail2);
+
     }
 
 }

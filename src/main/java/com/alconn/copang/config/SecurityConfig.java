@@ -4,7 +4,7 @@ import com.alconn.copang.security.CustomAccessDeniedHandler;
 import com.alconn.copang.security.CustomLogoutHandler;
 import com.alconn.copang.security.JwtValidateFilter;
 import com.alconn.copang.security.RestAuthenticationEntryPoint;
-import com.alconn.copang.security.provider.JwtAuthenticationProvider;
+import com.alconn.copang.security.privider.JwtAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;

@@ -3,6 +3,7 @@ package com.alconn.copang.item;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -10,6 +11,7 @@ import javax.persistence.*;
 @Getter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class ItemDetail {
 
     @Id @GeneratedValue
@@ -29,8 +31,34 @@ public class ItemDetail {
 
     private String detailImg;
 
+    public void updateItemDetail(int price, int stockQuantity, String option, String detailImg){
+        this.price=price;
+        this.stockQuantity=stockQuantity;
+        this.option=option;
+        this.detailImg=detailImg;
+    }
 
-    public ItemDetail() {
+    public void removeStockQuantity(int quantity){
+        int result=this.stockQuantity-quantity;
+        if(result<0){
+            result=0;
+        }
+        this.stockQuantity=result;
+    }
 
+    public void addStockQuantity(int quantity){
+        this.stockQuantity+=quantity;
+    }
+
+    @Override
+    public String toString() {
+        return "ItemDetail{" +
+                "id=" + id +
+                ", item_id=" + item.getId() +
+                ", price=" + price +
+                ", stockQuantity=" + stockQuantity +
+                ", option='" + option + '\'' +
+                ", detailImg='" + detailImg + '\'' +
+                '}';
     }
 }
