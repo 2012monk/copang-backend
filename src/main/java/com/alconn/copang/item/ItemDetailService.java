@@ -1,6 +1,7 @@
 package com.alconn.copang.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,12 @@ public class ItemDetailService {
         return itemDetailRepository.findById(id).get();
     }
 
+    //전체 리스트
+    public List<ItemDetail> listItemDetailsALLFind(){
+        return itemDetailRepository.listItemDetailsALLFind();
+    }
+
+    //특정 상품에 대한 리스트
     public List<ItemDetail> listItemDetailFind(Long itemId) {
         return itemDetailRepository.getItemDetailByItem(itemId);
     }
@@ -39,5 +46,4 @@ public class ItemDetailService {
 
         itemDetailSave(itemDetail1);
     }
-
 }
