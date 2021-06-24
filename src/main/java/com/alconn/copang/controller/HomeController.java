@@ -13,7 +13,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String hello(){
-        return "Hello!!!";
+        return "Hello!!! world!";
     }
 
     @Secured("ROLE_GUEST")

@@ -19,13 +19,12 @@ pipeline{
 
             steps {
                 sh './gradlew clean build'
-
-                post {
-                    failure {
-                        echo 'build failed'
-                        slackSend color: 'good',
-                                  message: "Build Failed Check it 빌드 실패!! ${BUILD_TAG}  ${BUILD_URL}"
-                    }
+            }
+            post {
+                failure {
+                    echo 'build failed'
+                    slackSend color: 'good',
+                              message: "Build Failed Check it 빌드 실패!! ${BUILD_TAG}  ${BUILD_URL}"
                 }
             }
         }
@@ -37,9 +36,12 @@ pipeline{
             }
             steps {
                 echo 'docker build start'
-                sh "DOCKER_HOST=${DOCKER_HOST} docker-compos -f docker-compose.yml rm -f"
-                sh "DOCKER_HOST=${DOCKER_HOST} docker-compos -f docker-compose.yml -p ${APP_NAME} -f docker-composy.yml pull"
-                sh "DOCKER_HOST=${DOCKER_HOST} docker-compos -f docker-compose.yml -p ${APP_NAME} -f docker-composy.yml up -d --build"
+                sh 'docker-compose -v'
+                sh "docker-compose -f docker-compose.yml config"
+                sh "docker -H ${DOCKER_HOST} ps -a"
+                sh "DOCKER_HOST=${DOCKER_HOST} docker-compose -f docker-compose.yml rm -f"
+                sh "DOCKER_HOST=${DOCKER_HOST} docker-compose -f docker-compose.yml -p ${APP_NAME} -f docker-compose.yml pull"
+                sh "DOCKER_HOST=${DOCKER_HOST} docker-compose -f docker-compose.yml -p ${APP_NAME} -f docker-compose.yml up -d --build"
             }
 
             post {
@@ -47,14 +49,12 @@ pipeline{
                     echo 'deploy success'
                     slackSend color: 'good',
                               message: "배포 성공했습니다!!  ${BUILD_TAG}    ${BUILD_URL}"
-
                 }
 
                 failure {
                     echo 'deploy failed'
                     slackSend color: 'bad',
                               message: "배포에 실패 했습니다!!  ${BUILD_TAG}    ${BUILD_URL}"
-
                 }
             }
         }
