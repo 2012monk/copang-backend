@@ -1,9 +1,6 @@
 package com.alconn.copang.item;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -19,6 +16,7 @@ public class ItemDetail {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
+//    @Column(nullable = false)
     private Item item;
 
     @Column(nullable = false)

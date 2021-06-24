@@ -1,16 +1,18 @@
 package com.alconn.copang.item;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 
-@Disabled
 @SpringBootTest
 @Transactional
 public class ItemDetailServiceTest {
@@ -18,11 +20,8 @@ public class ItemDetailServiceTest {
     @Autowired
     ItemDetailService itemDetailService;
 
-    @Autowired
+    @MockBean
     ItemService itemService;
-
-    @Autowired
-    EntityManager em;
 
     public Item itemCreate() {
         Item item = Item.builder()
@@ -45,13 +44,27 @@ public class ItemDetailServiceTest {
     }
     public ItemDetail itemDetailCreate(){
         ItemDetail itemDetail=ItemDetail.builder()
-                .item(itemCreate())
+//                .item(itemCreate())
                 .price(10000)
                 .stockQuantity(111)
                 .option("가구")
                 .detailImg("가구사진")
                 .build();
         return itemDetail;
+    }
+
+    @Test
+    public void delete(){
+        boolean result=itemService.deleteItem(124124412L);
+        System.out.println("result = " + result);
+    }
+
+    @Test
+    @Commit
+    public void save(){
+        Item item=itemCreate();
+        itemService.saveItem(item);
+        itemDetailService.itemDetailSave(itemDetailCreate2(item));
     }
 
     @Test
@@ -73,13 +86,12 @@ public class ItemDetailServiceTest {
                 System.out.println("안됨2");
             }
         }
-        em.flush();
 
-//        List<ItemDetail> itemDetails= itemDetailService.listItemDetailFind(item.getId());
-//
-//        for(ItemDetail itemDetail: itemDetails){
-//            System.out.println(itemDetail.toString());
-//        }
+        List<ItemDetail> itemDetails= itemDetailService.listItemDetailFind(item.getId());
+
+        for(ItemDetail itemDetail: itemDetails){
+            System.out.println(itemDetail.toString());
+        }
     }
 
     @Test

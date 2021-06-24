@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -26,6 +28,10 @@ public class Item {
     private String mainImg;
 
     private String itemComment;
+
+    @CreationTimestamp
+    @Column(name = "item_time",updatable = false)
+    private LocalDate itemCreate;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE,orphanRemoval = true)
     private List<ItemDetail> itemDetails;
