@@ -47,14 +47,17 @@ pipeline{
                     echo 'deploy success'
                     slackSend color: 'good',
                               message: "배포 성공했습니다!!  ${BUILD_TAG}    ${BUILD_URL}"
+
                 }
 
                 failure {
                     echo 'deploy failed'
                     slackSend color: 'bad',
                               message: "배포에 실패 했습니다!!  ${BUILD_TAG}    ${BUILD_URL}"
+
                 }
             }
         }
     }
 }
+
