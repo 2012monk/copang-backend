@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class DocumentController {
 
-    @RequestMapping("/docs")
+    @GetMapping("/docs")
     public String docs() {
         return "redirect:/docs/index.html";
     }
