@@ -6,26 +6,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.filter.CharacterEncodingFilter;
 
 
 import javax.persistence.EntityManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.when;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -94,8 +86,8 @@ public class ItemControllerTest {
        List<ItemDetail> itemDetailList = itemDetailService.listItemDetailsALLFind();
        List<ItemDetailForm> itemDetailFormitemMapperList=itemMapper.listDomainToDto(itemDetailList);
 
+//       this.mockMvc.perform(get("/item/list")).andExpect(status().isOk()).andDo(print());
 
-       this.mockMvc.perform(get("/item/list")).andExpect(status().isOk()).andDo(print());
    }
 
    @Test
@@ -108,12 +100,13 @@ public class ItemControllerTest {
 
        ItemDetailForm itemDetailForm=itemMapper.domainToDto(itemDetailService.itemDetailFind(itemDetail.getId()));
 
-       System.out.println("itemDetailForm = " + itemDetailForm.getId().toString());
-       this.mockMvc.perform(get("/listOne")
-               .param("itme_id",itemDetailForm.getId().toString()))
-               .andExpect(status().isOk())
-               .andDo(print());
+//       System.out.println("itemDetailForm = " + itemDetailForm.getId().toString());
+//       this.mockMvc.perform(get("/listOne")
+//               .param("itme_id",itemDetailForm.getId().toString()))
+//               .andExpect(status().isOk())
+//               .andDo(print());
 
+       System.out.println("itemController.itemDetailFindOne= " + itemController.itemDetailfindOne(itemDetailForm.getId()).message);
 
    }
 

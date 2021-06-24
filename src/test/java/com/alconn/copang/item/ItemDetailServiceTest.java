@@ -20,8 +20,11 @@ public class ItemDetailServiceTest {
     @Autowired
     ItemDetailService itemDetailService;
 
-    @MockBean
+    @Autowired
     ItemService itemService;
+
+    @Autowired
+    EntityManager em;
 
     public Item itemCreate() {
         Item item = Item.builder()
@@ -68,20 +71,16 @@ public class ItemDetailServiceTest {
 
     @Test
     public void findItemDetailByItem(){
-        System.out.println("????????");
-        Item item= null;
-        try {
-            item = itemCreate();
+        Item item = itemCreate();
         itemService.saveItem(item);
-        } catch (Exception e) {
-            System.out.println("안됨");
-        }
+        em.flush();
         for(int i=0;i<3;i++){
-
             try {
-                itemDetailService.itemDetailSave(itemDetailCreate2(item));
+                itemDetailService.itemDetailSave(itemDetailCreate2(item)) ;
+                em.flush();
+
             } catch (Exception e) {
-                System.out.println("안됨2");
+                e.getStackTrace();
             }
         }
 

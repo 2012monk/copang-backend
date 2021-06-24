@@ -34,6 +34,7 @@ public class ItemDetailService {
 
     //전체 리스트
     public List<ItemDetail> listItemDetailsALLFind() {
+
         return itemDetailRepository.listItemDetailsALLFind();
     }
 
