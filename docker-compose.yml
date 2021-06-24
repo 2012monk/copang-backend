@@ -5,7 +5,6 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
-
         expose:
             - "8080"
 
@@ -13,3 +12,4 @@ networks:
     default:
         external: true
         name: main_default
+
