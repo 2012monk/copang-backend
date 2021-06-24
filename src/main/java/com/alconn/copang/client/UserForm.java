@@ -1,15 +1,19 @@
 package com.alconn.copang.client;
 
-import lombok.Getter;
+import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.NotEmpty;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public class UserForm {
 
 //    public UserForm(PasswordEncoder encoder) {
 //    }
+    @Setter
     private Long id;
 
     @NotEmpty( message = "아이디는 존재해야 합니다")
@@ -23,6 +27,9 @@ public class UserForm {
     private String realName;
 
     private String description;
+
+    @Setter
+    private Role role;
 
     public String getPassword() {
         return password;

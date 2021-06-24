@@ -1,11 +1,13 @@
-package com.alconn.copang.security.privider;
+package com.alconn.copang.security.provider;
 
 import com.alconn.copang.client.Client;
 import com.alconn.copang.client.Role;
 import com.alconn.copang.exceptions.InvalidTokenException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Serializer;
 import io.jsonwebtoken.jackson.io.JacksonDeserializer;
+import io.jsonwebtoken.jackson.io.JacksonSerializer;
 import io.jsonwebtoken.lang.Maps;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +20,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalLong;
 
@@ -106,7 +109,10 @@ public class JwtTokenProvider {
 
         Claims claims = Jwts.claims();
         claims.put("user", user);
+//        Serializer<Map<String, Client>> serializer = Maps.
         return Optional.of(Jwts.builder()
+                .serializeToJsonWith(new JacksonSerializer<>(mapper))
+//                .serializeToJsonWith(new JacksonSerializer<Map<String, ?>>(Maps.of("user", Client.class).build()))
                 .setClaims(claims)
                 .setIssuer("alconn.co")
                 .setSubject(ACCESS_TOKEN)
@@ -133,7 +139,8 @@ public class JwtTokenProvider {
     public Jws<Claims> resolveToken(String token) throws InvalidTokenException {
         try {
             return Jwts.parserBuilder()
-                    .deserializeJsonWith(new JacksonDeserializer(Maps.of("user", Client.class).build()))
+//                    .deserializeJsonWith(new JacksonDeserializer(Maps.of("user", Client.class).build()))
+//                    .deserializeJsonWith(new JacksonDeserializer<>(mapper))
                     .setSigningKey(key)
                     .requireIssuer(issuer)
                     .requireSubject(ACCESS_TOKEN)
@@ -158,9 +165,15 @@ public class JwtTokenProvider {
         Client user = null;
         try {
             claims = getTokenBody(token);
-            user = claims.get("user", Client.class);
+            Claims finalClaims = claims;
+            claims.keySet().forEach(c -> log.warn(c + finalClaims.get(c).toString()));
+            Map json = (Map) claims.get("user");
+//            String json = (String) claims.get("user");
+//            log.warn(json);
+            user = mapper.convertValue(json, Client.class);
+//            user = claims.get("user", Client.class);
         } catch (Exception e) {
-            log.info("invalid token {}", e.getMessage());
+            log.info("invalid token Exception :  {},  {}",e.getClass().getSimpleName(), e.getMessage());
         }
         return Optional.ofNullable(user);
     }

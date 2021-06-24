@@ -13,6 +13,8 @@ monk;
 :sectlinks:
 :operation-curl-request-title: 에제 요청 Request
 :operation-http-response-title: 에제 응답 Response
+:operation-request-fields-title: 요청 data
+:operation-response-fields-title: 응답 data
 
 
 [[overview]]
@@ -79,8 +81,15 @@ The request completed successfully
 | 인증 실패시 EX) 로그인 실패
 |===
 
+[[authentication]]
+= Auth
 
-include::guide.adoc[]
+== Login 로그인 요청
+operation::auth/login[snippets='http-request,http-response,request-fields,response-fields']
+
+== SignUp 회원가입 요청
+operation::auth/signup-client[snippets='http-request,http-response,request-fields,response-fields']
+
 
 
 [[client]]
@@ -91,11 +100,7 @@ include::guide.adoc[]
 
 A `GET` request is used to access the index
 
-include::{snippets}/client/get-one-user/curl-request.adoc[]
-
-예제응답
-include::{snippets}/client/get-one-user/http-response.adoc[]
-//[snippets='http-request,http-response']
+operation::client/get-one-user[snippets='http-request,http-response,path-parameters,request-headers']
 
 === 유저 리스트 가져오기
 
@@ -131,7 +136,7 @@ operation::Auth/authentication-test[snippets='http-request,http-response']
 [[AuthFail]]
 == 인가 실패 요청
 
-operation::Auth/auth-fail-test[snippets='http-request,http-response']
+operation::Auth/auth-fail-test[snippets='http-request,http-response,request-fields,response-feilds']
 
 
 
