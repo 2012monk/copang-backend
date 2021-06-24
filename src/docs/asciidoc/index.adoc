@@ -21,7 +21,8 @@ monk;
 == Overview
 
 [[overview_http_verbs]]
-== HTTP verbs
+= HTTP verbs
+
 HTTP 메서드 안내
 
 |===
