@@ -25,7 +25,6 @@ pipeline{
                     echo 'build failed'
                     slackSend color: 'good',
                               message: "Build Failed Check it 빌드 실패!! ${BUILD_TAG}  ${BUILD_URL}"
-
                 }
             }
         }
@@ -53,12 +52,9 @@ pipeline{
                     echo 'deploy failed'
                     slackSend color: 'bad',
                               message: "배포에 실패 했습니다!!  ${BUILD_TAG}    ${BUILD_URL}"
-
-
                 }
             }
         }
     }
 
 }
-
