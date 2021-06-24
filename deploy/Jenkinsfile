@@ -37,9 +37,9 @@ pipeline{
             }
             steps {
                 echo 'docker build start'
-                sh "DOCKER_HOST=${DOCKER_HOST} docker-compos -f docker-compose.yml rm -f"
-                sh "DOCKER_HOST=${DOCKER_HOST} docker-compos -f docker-compose.yml -p ${APP_NAME} -f docker-composy.yml pull"
-                sh "DOCKER_HOST=${DOCKER_HOST} docker-compos -f docker-compose.yml -p ${APP_NAME} -f docker-composy.yml up -d --build"
+                sh "DOCKER_HOST=${DOCKER_HOST} docker-compose -f docker-compose.yml rm -f"
+                sh "DOCKER_HOST=${DOCKER_HOST} docker-compose -f docker-compose.yml -p ${APP_NAME} -f docker-compose.yml pull"
+                sh "DOCKER_HOST=${DOCKER_HOST} docker-compose -f docker-compose.yml -p ${APP_NAME} -f docker-compose.yml up -d --build"
             }
 
             post {
