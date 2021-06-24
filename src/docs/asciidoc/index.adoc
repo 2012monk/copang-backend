@@ -28,12 +28,10 @@ HTTP 메서드 안내
 | Verb | Usage
 
 | `GET`
-| Used to retrieve a resource
-리소스 요청
+| 리소스 요청
 
 | `POST`
-| Used to create a new resource
-새로운 리소스 생성
+| 새로운 리소스 생성
 
 | `PATCH`
 | 일부 정보 업데이트
@@ -47,10 +45,8 @@ HTTP 메서드 안내
 
 [[overview_http_status_codes]]
 == HTTP status codes
-HTTP 상태코드 안내
 
-RESTful notes tries to adhere as closely as possible to standard HTTP and REST conventions in its
-use of HTTP status codes.
+HTTP 상태코드 안내
 
 |===
 | Status code | Usage
@@ -96,50 +92,29 @@ operation::auth/signup-client[snippets='http-request,http-response,request-field
 = Client 유저 서비스
 
 [[]]
-=== 유저 정보 가져오기
+== 유저 정보 가져오기
 
 A `GET` request is used to access the index
 
 operation::client/get-one-user[snippets='http-request,http-response,path-parameters,request-headers']
 
-=== 유저 리스트 가져오기
+== 유저 리스트 가져오기
 
 `GET`
 
-operation::client/get-user[snippets='http-request,curl-request,http-response']
-[[resources_tags]]
-== Auth 서비스
+operation::client/get-user-list[snippets='http-request,request-headers,http-response,response-fields']
 
-회원 가입및 로그인
+== 유저 업데이트
 
-[[Login]]
-=== Login
-
-A `POST` request is used to create a note
-
-operation::Auth/login-client[snippets='http-request,http-response']
-
-
-
-[[SignIn]]
-== SignIn
-회원 가입 예제요청
-
-operation::Auth/login-client[snippets='http-request,http-response']
+operation::client/update[snippets='http-request,request-headers,http-response,response-fields']
 
 [[Authentication]]
 == Request with Authentication
 인증정보가 포함된 요청
 
-operation::Auth/authentication-test[snippets='http-request,http-response']
-
-[[AuthFail]]
-== 인가 실패 요청
-
-operation::Auth/auth-fail-test[snippets='http-request,http-response,request-fields,response-feilds']
-
 
 
 [[resources_tag]]
-== 상품 정보 APIs
+= 상품 정보 APIs
 
+아직 문서화 되지 않았습니다
