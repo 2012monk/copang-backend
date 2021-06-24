@@ -19,13 +19,13 @@ pipeline{
 
             steps {
                 sh './gradlew clean build'
+            }
+            post {
+                failure {
+                    echo 'build failed'
+                    slackSend color: 'good',
+                              message: "Build Failed Check it 빌드 실패!! ${BUILD_TAG}  ${BUILD_URL}"
 
-                post {
-                    failure {
-                        echo 'build failed'
-                        slackSend color: 'good',
-                                  message: "Build Failed Check it 빌드 실패!! ${BUILD_TAG}  ${BUILD_URL}"
-                    }
                 }
             }
         }
@@ -47,7 +47,6 @@ pipeline{
                     echo 'deploy success'
                     slackSend color: 'good',
                               message: "배포 성공했습니다!!  ${BUILD_TAG}    ${BUILD_URL}"
-
                 }
 
                 failure {
@@ -55,9 +54,11 @@ pipeline{
                     slackSend color: 'bad',
                               message: "배포에 실패 했습니다!!  ${BUILD_TAG}    ${BUILD_URL}"
 
+
                 }
             }
         }
     }
+
 }
 
