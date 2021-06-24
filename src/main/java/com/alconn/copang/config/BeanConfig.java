@@ -15,7 +15,7 @@ import java.util.Set;
 @Configuration
 public class BeanConfig {
 
-
+//
     @Bean
     public Set<String> blackList(){
         return new HashSet<>();

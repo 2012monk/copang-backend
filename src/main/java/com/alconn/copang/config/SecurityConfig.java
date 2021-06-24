@@ -1,11 +1,11 @@
 package com.alconn.copang.config;
 
-import com.alconn.copang.security.CustomAccessDeniedHandler;
-import com.alconn.copang.security.CustomLogoutHandler;
-import com.alconn.copang.security.JwtValidateFilter;
-import com.alconn.copang.security.RestAuthenticationEntryPoint;
-import com.alconn.copang.security.privider.JwtAuthenticationProvider;
+import com.alconn.copang.security.*;
+import com.alconn.copang.security.provider.JwtAuthenticationProvider;
+import com.alconn.copang.security.provider.JwtTokenProvider;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -15,9 +15,11 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -26,21 +28,43 @@ import java.util.Set;
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    //    @Autowired
+//    @Autowired
 //    private final CustomUserDetailsService service;
 
     private final JwtAuthenticationProvider provider;
-
-    private final Set<String> blackList;
-
+//
     private final CustomLogoutHandler handler;
-
+//
     private final JwtValidateFilter jwtFilter;
+
+    private final ObjectMapper mapper;
+
+    private final JwtTokenProvider tokenProvider;
+
+//    @Bean
+//    public JwtValidateFilter jwtValidateFilter(){
+//        return new JwtValidateFilter(service, blackList());
+//    }
+//    @Bean
+//    public CustomUserDetailsService userDetailsService(){
+//        return new CustomUserDetailsService(jwtTokenProvider());
+//    }
+
+//    @Bean
+//    public CustomLogoutHandler customLogoutHandler(){
+//        return new CustomLogoutHandler(blackList());
+//    }
+
 
 
 //    @Bean
-//    public GrantedAuthorityDefaults grantedAuthorityDefaults() {
-//        return new GrantedAuthorityDefaults("");
+//    public JwtAuthenticationProvider jwtAuthenticationProvider(){
+//        return new JwtAuthenticationProvider(jwtTokenProvider());
+//    }
+
+//    @Bean
+//    public JwtTokenProvider jwtTokenProvider(){
+//        return new JwtTokenProvider(mapper);
 //    }
 
     @Override
@@ -80,22 +104,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(new RestAuthenticationEntryPoint())
             .and()
                    .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+//                   .addFilterBefore(jwtValidateFilter(), UsernamePasswordAuthenticationFilter.class);
 
         ;
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.authenticationProvider(jwtAuthenticationProvider());
         auth.authenticationProvider(provider);
     }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
 //        web.ignoring().antMatchers("/**");
-        web.ignoring().antMatchers("/docs")
-                .antMatchers("/resources/**", "/static/**")
-                .antMatchers("/docs/*", "/static/docs/**")
-                .antMatchers("/docs/**", "/docs/index.html");
+//        web.ignoring().antMatchers("/docs")
+//                .antMatchers("/resources/**", "/static/**")
+//                .antMatchers("/docs/*", "/static/docs/**")
+//                .antMatchers("/docs/**", "/docs/index.html");
 
 //        web.expressionHandler(new DefaultWebSecurityExpressionHandler(){
 //            @Override

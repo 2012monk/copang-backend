@@ -1,8 +1,3 @@
-
-//ifndef::snippets[]
-//:snippets: ../../../build/generated-snippets
-//endif::[]
-
 = Copang API Guide
 monk;
 :doctype: book
@@ -13,25 +8,26 @@ monk;
 :sectlinks:
 :operation-curl-request-title: 에제 요청 Request
 :operation-http-response-title: 에제 응답 Response
+:operation-request-fields-title: 요청 data
+:operation-response-fields-title: 응답 data
 
 
 [[overview]]
 == Overview
 
 [[overview_http_verbs]]
-== HTTP verbs
+= HTTP verbs
+
 HTTP 메서드 안내
 
 |===
 | Verb | Usage
 
 | `GET`
-| Used to retrieve a resource
-리소스 요청
+| 리소스 요청
 
 | `POST`
-| Used to create a new resource
-새로운 리소스 생성
+| 새로운 리소스 생성
 
 | `PATCH`
 | 일부 정보 업데이트
@@ -41,14 +37,14 @@ HTTP 메서드 안내
 
 | `DELETE`
 | 삭제요청
+
+
 |===
 
 [[overview_http_status_codes]]
-== HTTP status codes
-HTTP 상태코드 안내
+=== HTTP status codes
 
-RESTful notes tries to adhere as closely as possible to standard HTTP and REST conventions in its
-use of HTTP status codes.
+HTTP 상태코드 안내
 
 |===
 | Status code | Usage
@@ -79,62 +75,46 @@ The request completed successfully
 | 인증 실패시 EX) 로그인 실패
 |===
 
+[[authentication]]
+= Auth
 
-include::guide.adoc[]
+== Login 로그인 요청
+operation::auth/login[snippets='http-request,http-response,request-fields,response-fields']
+
+== SignUp 회원가입 요청
+operation::auth/signup-client[snippets='http-request,http-response,request-fields,response-fields']
+
 
 
 [[client]]
 = Client 유저 서비스
 
 [[]]
-=== 유저 정보 가져오기
+== 유저 정보 가져오기
 
 A `GET` request is used to access the index
 
-include::{snippets}/client/get-one-user/curl-request.adoc[]
+operation::client/get-one-user[snippets='http-request,http-response,path-parameters,request-headers']
 
-예제응답
-include::{snippets}/client/get-one-user/http-response.adoc[]
-//[snippets='http-request,http-response']
 
-=== 유저 리스트 가져오기
 
 `GET`
 
-operation::client/get-user[snippets='http-request,curl-request,http-response']
-[[resources_tags]]
-== Auth 서비스
 
-회원 가입및 로그인
+operation::client/get-user-list[snippets='http-request,request-headers,http-response,response-fields']
 
-[[Login]]
-=== Login
+== 유저 업데이트
 
-A `POST` request is used to create a note
-
-operation::Auth/login-client[snippets='http-request,http-response']
-
-
-
-[[SignIn]]
-== SignIn
-회원 가입 예제요청
-
-operation::Auth/login-client[snippets='http-request,http-response']
+operation::client/update[snippets='http-request,request-headers,http-response,response-fields']
 
 [[Authentication]]
 == Request with Authentication
 인증정보가 포함된 요청
 
-operation::Auth/authentication-test[snippets='http-request,http-response']
-
-[[AuthFail]]
-== 인가 실패 요청
-
-operation::Auth/auth-fail-test[snippets='http-request,http-response']
-
 
 
 [[resources_tag]]
-== 상품 정보 APIs
+= 상품 정보 APIs
 
+
+아직 문서화 되지 않았습니정
