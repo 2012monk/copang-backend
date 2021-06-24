@@ -12,4 +12,4 @@ services:
 networks: 
     default:
         external: true
-        name: proxy
+        name: main_default
