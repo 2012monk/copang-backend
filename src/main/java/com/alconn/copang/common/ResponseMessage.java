@@ -5,13 +5,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @Builder
 public class ResponseMessage<T> {
 
         public String message;
 
+//        @JsonInclude(JsonInclude.Include.NON_NULL)
         public T data;
 
         public int code;

@@ -1,7 +1,9 @@
 package com.alconn.copang.controller;
 
+import com.alconn.copang.annotations.IdentitySecured;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,7 +13,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String hello(){
-        return "Hello!!!";
+        return "Hello!!! world!";
     }
 
     @Secured("ROLE_GUEST")
@@ -24,6 +26,12 @@ public class HomeController {
     @Secured("ROLE_CLIENT")
     @GetMapping("/access2")
     public String authenticate(){
+        return "ok";
+    }
+
+    @IdentitySecured
+    @DeleteMapping("/api/dtest")
+    public String delete() {
         return "ok";
     }
 }

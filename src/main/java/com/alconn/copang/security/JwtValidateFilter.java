@@ -1,13 +1,8 @@
 package com.alconn.copang.security;
 
-import com.alconn.copang.client.Client;
-import com.alconn.copang.security.privider.JwtTokenProvider;
 import com.alconn.copang.utils.HttpUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -40,6 +35,7 @@ public class JwtValidateFilter extends OncePerRequestFilter {
             }
             else {
                 log.info("blacklisted token access {}", blackList.size());
+                SecurityContextHolder.getContext().setAuthentication(service.getAuthentication());
             }
             log.info("security context authentication : {}", SecurityContextHolder.getContext().getAuthentication());
             String ref = HttpUtils.getCookie(request, "ref").orElseGet(() -> "no ref");

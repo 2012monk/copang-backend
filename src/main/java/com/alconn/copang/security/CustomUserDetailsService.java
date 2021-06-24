@@ -2,7 +2,7 @@ package com.alconn.copang.security;
 
 import com.alconn.copang.client.Client;
 import com.alconn.copang.client.Role;
-import com.alconn.copang.security.privider.JwtTokenProvider;
+import com.alconn.copang.security.provider.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
@@ -33,6 +33,10 @@ public class CustomUserDetailsService {
     public Authentication getAuthentication(String token) {
         Client client = provider.resolveUserFromToken(token).orElse(Client.builder().role(Role.GUEST).build());
         return new AuthToken(token, client, client.getRole());
+    }
+
+    public Authentication getAuthentication() {
+        return new AuthToken("null", Client.builder().role(Role.GUEST).build(), Role.GUEST);
     }
 
 
