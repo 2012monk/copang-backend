@@ -90,9 +90,12 @@ asciidoctor {
 
 bootJar {
     dependsOn asciidoctor // (3)
-    copy {
-        from "build/docs/asciidoc"            // /html5를 사용하지 않는다!
-        into 'src/main/resources/static/docs'    // /static/docs로 복사!
+//    copy {
+//        from "build/docs/asciidoc"            // /html5를 사용하지 않는다!
+//        into 'src/main/resources/static/docs'    // /static/docs로 복사!
+//    }
+    from ("${asciidoctor.outputDir}") {
+        into 'static/docs'
     }
 }
 
