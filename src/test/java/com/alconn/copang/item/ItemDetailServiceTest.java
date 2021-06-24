@@ -60,7 +60,6 @@ public class ItemDetailServiceTest {
     }
 
     @Test
-    @Commit
     public void save(){
         Item item=itemCreate();
         itemService.saveItem(item);
@@ -68,7 +67,6 @@ public class ItemDetailServiceTest {
     }
 
     @Test
-    @Commit
     public void findItemDetailByItem(){
         System.out.println("????????");
         Item item= null;
@@ -95,7 +93,6 @@ public class ItemDetailServiceTest {
     }
 
     @Test
-    @Commit
     public void updateItemDetaile(){
         Item item=itemCreate();
         itemService.saveItem(item);
