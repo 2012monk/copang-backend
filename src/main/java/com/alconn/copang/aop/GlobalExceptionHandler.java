@@ -96,6 +96,7 @@ public class GlobalExceptionHandler {
     protected ResponseMessage<String> handleAccessDenied(AccessDeniedException e){
 //        httpServletResponse.setCharacterEncoding("utf-8");
 //        System.out.println("ExceptionHandle! \n\n\n\n\n\n\n\n\n");
+        log.warn("access denied ", e);
         return ResponseMessage.<String>builder()
                 .message("권한이 없습니다")
                 .code(403)
