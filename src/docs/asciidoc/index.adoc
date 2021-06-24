@@ -117,4 +117,4 @@ operation::client/update[snippets='http-request,request-headers,http-response,re
 [[resources_tag]]
 = 상품 정보 APIs
 
-아직 문서화 되지 않았습니다
+아직 문서화 되지 않았습니정
