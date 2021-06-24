@@ -31,11 +31,13 @@ pipeline{
 
         stage('Dockering') {
             environment{
-                DOCKER_HOST="172.31.3.145:2375"
-                APP_NAME='copang-back'
+                DOCKER_HOST="3.37.219.52:2375"
+                APP_NAME='copang'
             }
             steps {
                 echo 'docker build start'
+                sh 'docker-compose -v'
+                sh "docker-compose -f docker-compose.yml config"
                 sh "DOCKER_HOST=${DOCKER_HOST} docker-compose -f docker-compose.yml rm -f"
                 sh "DOCKER_HOST=${DOCKER_HOST} docker-compose -f docker-compose.yml -p ${APP_NAME} -f docker-compose.yml pull"
                 sh "DOCKER_HOST=${DOCKER_HOST} docker-compose -f docker-compose.yml -p ${APP_NAME} -f docker-compose.yml up -d --build"
