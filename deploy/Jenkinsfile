@@ -53,7 +53,7 @@ pipeline{
 
                 failure {
                     echo 'deploy failed'
-                    slackSend color: 'bad'
+                    slackSend color: 'bad',
                               message: "배포에 실패 했습니다!!  ${BUILD_TAG}    ${BUILD_URL}"
 
                 }
