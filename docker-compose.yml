@@ -6,7 +6,8 @@ services:
             context: .
             dockerfile: Dockerfile
 
-        expose: "8080"
+        expose: 
+            - "8080"
 
 networks: 
     default:
