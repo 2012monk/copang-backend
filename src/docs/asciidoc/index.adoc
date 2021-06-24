@@ -99,11 +99,11 @@ A `GET` request is used to access the index
 operation::client/get-one-user[snippets='http-request,http-response,path-parameters,request-headers']
 
 
-== 유저 리스트 가져오기
 
 `GET`
 
 
+operation::client/get-user-list[snippets='http-request,request-headers,http-response,response-fields']
 
 == 유저 업데이트
 
@@ -112,7 +112,6 @@ operation::client/update[snippets='http-request,request-headers,http-response,re
 [[Authentication]]
 == Request with Authentication
 인증정보가 포함된 요청
-
 
 
 
