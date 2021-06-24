@@ -94,37 +94,7 @@ include::{snippets}/client/get-one-user/curl-request.adoc[]
 
 `GET`
 
-operation::client/get-user[snippets='http-request,curl-request,http-response']
-[[resources_tags]]
-== Auth 서비스
-
-회원 가입및 로그인
-
-[[Login]]
-=== Login
-
-A `POST` request is used to create a note
-
-operation::Auth/login-client[snippets='http-request,http-response']
-
-
-
-[[SignIn]]
-== SignIn
-회원 가입 예제요청
-
-operation::Auth/login-client[snippets='http-request,http-response']
-
-[[Authentication]]
-== Request with Authentication
-인증정보가 포함된 요청
-
-operation::Auth/authentication-test[snippets='http-request,http-response']
-
-[[AuthFail]]
-== 인가 실패 요청
-
-operation::Auth/auth-fail-test[snippets='http-request,http-response']
+operation::client/get-user-list[snippets='http-request,curl-request,http-response']
 
 
 
