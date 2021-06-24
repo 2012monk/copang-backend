@@ -1,8 +1,3 @@
-
-//ifndef::snippets[]
-//:snippets: ../../../build/generated-snippets
-//endif::[]
-
 = Copang API Guide
 monk;
 :doctype: book
@@ -42,10 +37,12 @@ HTTP 메서드 안내
 
 | `DELETE`
 | 삭제요청
+
+
 |===
 
 [[overview_http_status_codes]]
-== HTTP status codes
+=== HTTP status codes
 
 HTTP 상태코드 안내
 
