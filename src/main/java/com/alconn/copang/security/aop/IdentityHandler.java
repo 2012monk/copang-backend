@@ -3,22 +3,15 @@ package com.alconn.copang.security.aop;
 import com.alconn.copang.client.Client;
 import com.alconn.copang.exceptions.UnauthorizedException;
 import com.alconn.copang.security.AuthToken;
-import com.alconn.copang.security.privider.JwtTokenProvider;
+import com.alconn.copang.security.provider.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-
-import java.nio.file.AccessDeniedException;
-import java.util.Arrays;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -39,7 +32,7 @@ public class IdentityHandler {
 //            throw new AccessDeniedException("인증정보가 없습니다");
 //        }
 
-        Arrays.stream(pjp.getArgs()).forEach(System.out::println);
+//        Arrays.stream(pjp.getArgs()).forEach(System.out::println);
 
         Client client = provider.resolveUserFromToken(authentication.getToken()).orElseThrow(() -> new UnauthorizedException("인증정보가 잘못 되었습니당!"));
         Long id = client.getId();

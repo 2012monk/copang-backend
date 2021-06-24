@@ -19,7 +19,18 @@ public interface ApiDocumentUtils {
 
     static OperationResponsePreprocessor getDocumentResponse() {
         return preprocessResponse(
-                prettyPrint()
+                prettyPrint(),
+                removeMatchingHeaders("Origin",
+                        "Access-Control-Request-Method",
+                        "Access-Control-Request-Headers",
+                        "X-Content-Type-Options",
+                        "X-XSS-Protection",
+                        "Cache-Control",
+                        "Pragma",
+                        "Expires",
+                        "X-Frame-Options",
+                        "Vary"
+                        )
         );
     }
 }

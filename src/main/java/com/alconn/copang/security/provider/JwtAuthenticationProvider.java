@@ -1,6 +1,5 @@
-package com.alconn.copang.security.privider;
+package com.alconn.copang.security.provider;
 
-import com.alconn.copang.client.ClientService;
 import com.alconn.copang.security.AuthToken;
 import com.alconn.copang.exceptions.InvalidTokenException;
 import lombok.extern.slf4j.Slf4j;

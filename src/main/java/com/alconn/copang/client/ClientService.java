@@ -6,10 +6,9 @@ import com.alconn.copang.exceptions.InvalidTokenException;
 import com.alconn.copang.exceptions.LoginFailedException;
 import com.alconn.copang.exceptions.NoSuchUserException;
 import com.alconn.copang.exceptions.ValidationException;
-import com.alconn.copang.security.privider.JwtTokenProvider;
+import com.alconn.copang.security.provider.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +21,7 @@ import java.util.List;
 @Service
 public class ClientService {
 
-    private final ModelMapper mapper;
+    private final ClientMapper mapper;
 
     private final ClientRepo repo;
 
@@ -43,6 +42,13 @@ public class ClientService {
 
         return repo.save(client);
 
+    }
+
+    public Client register(UserForm userForm) {
+        userForm.setRole(Role.CLIENT);
+        Client client = mapper.toEntity(userForm);
+
+        return repo.save(client);
     }
 
     public Client getClient(Long id) throws NoSuchUserException {
@@ -79,11 +85,12 @@ public class ClientService {
 //    }
 
     @Transactional
-    public Client updateClient(UserForm form) throws NoSuchUserException, ValidationException {
-        if (form.getId() == 0){
+    public Client updateClient(UserForm form, Long id) throws NoSuchUserException, ValidationException {
+        if (id == null || id == 0){
             throw new ValidationException("업데이트시 유저아이디가 존재해야합니다");
         }
-        Client subject = repo.findClientByUsername(form.getUsername()).orElseThrow(NoSuchUserException::new);
+        Client subject = repo.findById(id).orElseThrow(ValidationException::new);
+//        Client subject = repo.findClientByUsername(form.getUsername()).orElseThrow(NoSuchUserException::new);
 //        Client client = Client.builder()
 //                .id(subject.getId())
 //                .username(form.getUsername())
@@ -93,10 +100,15 @@ public class ClientService {
 //                .description(form.getDescription())
 //                .build();
 //        Client c = mapper.map(form, Client.class);
-        mapper.map(form, subject);
-
+        form.setId(subject.getId());
+        Client up = mapper.toEntity(form);
+        System.out.println("\n\n\n\n\n\n\n\n "+subject.getRealName());
+        System.out.println("\n\n\n\n\n\n\n\n "+form.getRealName());
+        mapper.updateFromDto(form, subject);
+        System.out.println("\n\n\n\n\n\n\n\n "+form.getRealName());
+        System.out.println("\n\n\n\n\n\n\n\n "+subject.getRealName());
 //        return repo.save(client);
-        return subject;
+        return repo.save(up);
     }
 
     // TODO CreationTimeStamp 왜 널이지?
@@ -105,7 +117,9 @@ public class ClientService {
         if (checkUsername(form.getUsername())){
             throw new SQLIntegrityConstraintViolationException("아이디가 중복되었습니다");
         }
-        Client client = mapper.map(form, Client.class);
+        form.setRole(Role.CLIENT);
+        Client client = mapper.toEntity(form);
+//        Client client = mapper.toEntityClass(form, Client.class);
         return repo.save(client);
     }
 

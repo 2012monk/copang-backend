@@ -8,8 +8,38 @@ spring:
       fail-on-empty-beans: false
 
 
+---
+spring:
+  datasource:
+    hikari:
+      driver-class-name: org.h2.Driver
+      username: sa
+      jdbc-url: jdbc:h2:mem:test;MODE=MYSQL
+      maximumPoolSize: 10
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: create-drop
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        dialect: org.hibernate.dialect.MariaDBDialect
+
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+  config:
+    activate:
+      on-profile: test
 server:
   servlet:
     encoding:
-      force-response: true
+      charset: UTF-8
+      enabled: true
       force: true
+      force-response: true
+      force-request: true
