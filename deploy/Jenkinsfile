@@ -31,7 +31,7 @@ pipeline{
 
         stage('Dockering') {
             environment{
-                DOCKER_HOST="3.37.219.52:2375"
+                DOCKER_HOST="3.37.2.79:2375"
                 APP_NAME='copang'
             }
             steps {
