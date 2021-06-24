@@ -1,15 +1,14 @@
-version: '2'
-services:
+version: '3'
+services: 
     copang-back:
         container_name: copang
         build:
             context: .
             dockerfile: Dockerfile
-        expose:
-            - "8080"
+
+        expose: "8080"
 
 networks: 
     default:
         external: true
-        name: main_default
-
+        name: proxy
