@@ -22,7 +22,7 @@ public class UserForm {
     @NotEmpty( message = "패스워드는 존재해야 합니다")
     private String password;
 
-    private String mobile;
+    private String phone;
 
     private String realName;
 
