@@ -95,7 +95,7 @@ class ClientControllerTest {
             list.add(Client.builder()
                     .username("테스트 유저입니다!!" + random.nextInt())
                     .description("안녕하세요!")
-                    .mobile("010-0030-9090")
+                    .phone("010-0030-9090")
                     .realName("길동홍길동")
                     .role(Role.CLIENT)
                     .password(String.valueOf(random.nextInt())).build());
@@ -110,7 +110,7 @@ class ClientControllerTest {
                 .username("coppang143")
                 .password("비밀번호123!")
                 .role(Role.CLIENT)
-                .mobile("010-0030-9090")
+                .phone("010-0030-9090")
                 .description("안녕하세요!")
                 .role(Role.CLIENT)
                 .realName("길동홍길동")
@@ -128,7 +128,7 @@ class ClientControllerTest {
             list.add(Client.builder()
                     .username("테스트 유저입니다!!" + random.nextInt())
                     .description("안녕하세요!")
-                    .mobile("010-0030-9090")
+                    .phone("010-0030-9090")
                     .description("안녕하세요!")
                     .role(Role.CLIENT)
                     .realName("길동홍길동")
@@ -159,7 +159,7 @@ class ClientControllerTest {
                                 fieldWithPath("data.[].id").type(JsonFieldType.NUMBER).description("고유번호"),
                                 fieldWithPath("data.[].username").type(JsonFieldType.STRING).description("아이디"),
                                 fieldWithPath("data.[].description").type(JsonFieldType.STRING).description("소개"),
-                                fieldWithPath("data.[].mobile").type(JsonFieldType.STRING).description("휴대전화번호"),
+                                fieldWithPath("data.[].phone").type(JsonFieldType.STRING).description("휴대전화번호"),
                                 fieldWithPath("data.[].realName").type(JsonFieldType.STRING).description("이름"),
                                 fieldWithPath("data.[].role").type(JsonFieldType.STRING).description("유저타입"),
                                 fieldWithPath("data.[].signInDate").type(JsonFieldType.STRING).description("가입날짜")
@@ -180,7 +180,7 @@ class ClientControllerTest {
                 .username("coppang143")
                 .password("비밀번호123!")
                 .description("안녕하세요!")
-                .mobile("010-0030-9090")
+                .phone("010-0030-9090")
                 .realName("길동홍길동")
                 .role(Role.CLIENT)
                 .build();
@@ -214,7 +214,7 @@ class ClientControllerTest {
                                 fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("고유번호"),
                                 fieldWithPath("data.username").type(JsonFieldType.STRING).description("아이디"),
                                 fieldWithPath("data.description").type(JsonFieldType.STRING).description("소개"),
-                                fieldWithPath("data.mobile").type(JsonFieldType.STRING).description("휴대전화번호"),
+                                fieldWithPath("data.phone").type(JsonFieldType.STRING).description("휴대전화번호"),
                                 fieldWithPath("data.realName").type(JsonFieldType.STRING).description("이름"),
                                 fieldWithPath("data.role").type(JsonFieldType.STRING).description("유저타입"),
                                 fieldWithPath("data.signInDate").type(JsonFieldType.STRING).description("가입날짜")
@@ -231,7 +231,7 @@ class ClientControllerTest {
                 .username("coppang143")
                 .password("비밀번호123!")
                 .description("안녕하세요!")
-                .mobile("010-0030-9090")
+                .phone("010-0030-9090")
                 .realName("길동홍길동")
                 .role(Role.CLIENT)
                 .build();
@@ -271,7 +271,7 @@ class ClientControllerTest {
                                 fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("고유번호"),
                                 fieldWithPath("data.username").type(JsonFieldType.STRING).description("아이디"),
                                 fieldWithPath("data.description").type(JsonFieldType.STRING).description("소개"),
-                                fieldWithPath("data.mobile").type(JsonFieldType.STRING).description("휴대전화번호"),
+                                fieldWithPath("data.phone").type(JsonFieldType.STRING).description("휴대전화번호"),
                                 fieldWithPath("data.realName").type(JsonFieldType.STRING).description("이름"),
                                 fieldWithPath("data.role").type(JsonFieldType.STRING).description("유저타입")
 //                                fieldWithPath("data.signInDate").type(JsonFieldType.STRING).description("가입날짜")

@@ -36,7 +36,7 @@ public class Client {
 
     private String realName;
 
-    private String mobile;
+    private String phone;
 
     private String description;
 

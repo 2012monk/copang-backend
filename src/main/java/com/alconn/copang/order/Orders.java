@@ -6,7 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.userdetails.User;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -16,10 +17,19 @@ import java.util.List;
 @Getter
 @Builder
 @Entity
+
 public class Orders {
 
     @Id @GeneratedValue
-    private Long id;
+    private Long orderId;
+
+    private int totalPrice;
+
+    private int totalAmount;
+
+    private String requirement;
+
+    private String tid;
 
     @OneToMany(mappedBy = "orders")
     private List<OrderItem> orderItemList;
@@ -28,12 +38,31 @@ public class Orders {
     @JoinColumn(name = "client_id")
     private Client client;
 
+    @Column(updatable = false)
+    @CreationTimestamp
     private LocalDateTime orderDate;
+
+    @UpdateTimestamp
+    private LocalDateTime lastUpdatedDate;
 
     @OneToOne
     @JoinColumn(name = "address_id")
     private Address address;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private OrderState orderState = OrderState.INIT;
+    private OrderStatus orderState = OrderStatus.READY;
+
+
+    public void proceedOrder() {
+        this.orderState = OrderStatus.PROCEED;
+    }
+
+    public void cancelOrder() {
+        this.orderState = OrderStatus.CANCELED;
+    }
+
+    public void doneOrder() {
+        this.orderState = OrderStatus.DONE;
+    }
 }
