@@ -1,6 +1,6 @@
 package com.alconn.copang.order;
 
-import com.alconn.copang.client.Address;
+import com.alconn.copang.address.Address;
 import com.alconn.copang.client.Client;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -41,7 +41,7 @@ public class Orders {
     @JoinColumn(name = "client_id")
     private Client client;
 
-    @JsonFormat(pattern = "yyyy/MM/dd-HH:mm", locale = "Seoul/Asia")
+    @JsonFormat(pattern = "yyyy/MM/dd-HH:mm", locale = "Seoul/Asia", shape = JsonFormat.Shape.STRING)
     @Column(updatable = false)
     @CreationTimestamp
     private LocalDateTime orderDate;

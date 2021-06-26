@@ -6,19 +6,25 @@ monk;
 :toc: left
 :toclevels: 4
 :sectlinks:
-:operation-curl-request-title: 에제 요청 Request
-:operation-http-response-title: 에제 응답 Response
+:operation-curl-request-title: 에제 요청
+:operation-http-request-title: 에제 요청
+:operation-http-response-title: 에제 응답
 :operation-request-fields-title: 요청 data
 :operation-response-fields-title: 응답 data
 
+
+[[Introduction]]
+== 소개
 
 [[overview]]
 == Overview
 
 [[overview_http_verbs]]
-= HTTP verbs
+== HTTP verbs
 
-HTTP 메서드 안내
+NOTE: HTTP 메서드 안내
+
+
 
 |===
 | Verb | Usage
@@ -111,8 +117,28 @@ operation::client/update[snippets='http-request,request-headers,http-response,re
 == Request with Authentication
 인증정보가 포함된 요청
 
+[[Orders]]
+== 주문 API
 
+=== 주문 하기
+*`POST` /api/orders*
 
+operation::orders/start-order[snippets='http-request,request-fields,request-headers,http-response,response-fields']
+
+=== 주문 진행시키기
+*`PATCH` /api/orders/:orderId/proceed*
+
+operation::orders/proceed-order[snippets='request-headers,path-parameters,http-request,http-response,response-fields']
+
+=== 주문 단건 조회
+==== `GET` /api/order/:orderId
+
+operation::orders/get-one-order[snippets='request-headers,path-parameters,http-request,http-response,response-fields']
+
+=== 유저 주문 조회하기
+==== `GET` /api/order/client/:clientId
+
+operation::orders/get-client-order-list[snippets='request-headers,path-parameters,http-request,http-response,response-fields']
 [[resources_tag]]
 = 상품 정보 APIs
 

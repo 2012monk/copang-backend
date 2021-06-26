@@ -1,5 +1,6 @@
 package com.alconn.copang.client;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -35,6 +36,7 @@ public class UserForm {
         return password;
     }
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @Getter
     @Builder
     @AllArgsConstructor @NoArgsConstructor
@@ -47,5 +49,7 @@ public class UserForm {
         private String phone;
 
         private String realName;
+
+        private Role role;
     }
 }

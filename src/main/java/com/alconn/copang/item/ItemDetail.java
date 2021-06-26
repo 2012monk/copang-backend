@@ -48,6 +48,11 @@ public class ItemDetail {
         this.stockQuantity+=quantity;
     }
 
+    public void setItem(Item item) {
+        this.item = item;
+        item.addItemDeails(this);
+    }
+
     @Override
     public String toString() {
         return "ItemDetail{" +

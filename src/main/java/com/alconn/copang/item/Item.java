@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -33,8 +34,9 @@ public class Item {
     @Column(name = "item_time",updatable = false)
     private LocalDate itemCreate;
 
+    @Builder.Default
     @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE,orphanRemoval = true)
-    private List<ItemDetail> itemDetails;
+    private List<ItemDetail> itemDetails = new ArrayList<>();
 
     public void returnItem(String itemName, String mainImg, String itemComment){
         this.itemName=itemName;
@@ -42,4 +44,7 @@ public class Item {
         this.itemComment=itemComment;
     }
 
+    public void addItemDeails(ItemDetail itemDetail) {
+        this.itemDetails.add(itemDetail);
+    }
 }
