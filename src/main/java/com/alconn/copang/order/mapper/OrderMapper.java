@@ -11,7 +11,7 @@ import org.mapstruct.ReportingPolicy;
 public interface OrderMapper extends EntityMapper<OrderForm, Orders> {
 
 //    @Mapping(target = "address.addressId", source = "addressId")
-    Orders createToEntity(OrderForm.Create dto);
+    Orders convertCreate(OrderForm.Create dto);
 
     OrderForm.Response toResponse(Orders orders);
 }

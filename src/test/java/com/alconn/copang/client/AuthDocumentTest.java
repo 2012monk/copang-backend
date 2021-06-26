@@ -127,7 +127,7 @@ public class AuthDocumentTest {
 
 //        given(repo.save(any(Client.class))).willReturn(client);
 
-        System.out.println("client.getId() = " + client.getId());
+        System.out.println("client.getId() = " + client.getClientId());
         AccessTokenContainer tokenContainer = AccessTokenContainer.builder().build();
 //        when(repo.save(client)).thenReturn(client);
         System.out.println("tokenContainer.getAccess_token() = " + tokenContainer.getAccess_token());

@@ -100,7 +100,7 @@ public class ClientService {
 //                .description(form.getDescription())
 //                .build();
 //        Client c = mapper.map(form, Client.class);
-        form.setId(subject.getId());
+        form.setId(subject.getClientId());
         Client up = mapper.toEntity(form);
         System.out.println("\n\n\n\n\n\n\n\n "+subject.getRealName());
         System.out.println("\n\n\n\n\n\n\n\n "+form.getRealName());

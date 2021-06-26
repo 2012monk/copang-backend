@@ -26,7 +26,7 @@ import java.util.List;
 public class Client {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long clientId;
 
     private String username;
 
@@ -39,7 +39,6 @@ public class Client {
     private String phone;
 
     private String description;
-
 
 //    @Column(updatable = false, nullable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm", iso = DateTimeFormat.ISO.DATE_TIME)

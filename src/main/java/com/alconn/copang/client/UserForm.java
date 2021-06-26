@@ -34,4 +34,18 @@ public class UserForm {
     public String getPassword() {
         return password;
     }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor @NoArgsConstructor
+    public static class Response {
+
+        private Long clientId;
+
+        private String username;
+
+        private String phone;
+
+        private String realName;
+    }
 }

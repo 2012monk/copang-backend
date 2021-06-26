@@ -5,10 +5,7 @@ import com.alconn.copang.client.Role;
 import com.alconn.copang.exceptions.InvalidTokenException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Serializer;
-import io.jsonwebtoken.jackson.io.JacksonDeserializer;
 import io.jsonwebtoken.jackson.io.JacksonSerializer;
-import io.jsonwebtoken.lang.Maps;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -57,7 +54,7 @@ public class JwtTokenProvider {
         Date exp = new Date(now.getTime() + refExp);
 
         Claims claims = Jwts.claims();
-        claims.put("uid", user.getId());
+        claims.put("uid", user.getClientId());
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuer(issuer)

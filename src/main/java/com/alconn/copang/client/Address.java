@@ -1,5 +1,6 @@
 package com.alconn.copang.client;
 
+import com.alconn.copang.common.EntityPriority;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,5 +28,7 @@ public class Address {
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
+
+    private EntityPriority priority;
 
 }
