@@ -2,10 +2,9 @@ package com.alconn.copang.item;
 
 
 import lombok.*;
-
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Builder
@@ -13,30 +12,30 @@ import javax.validation.constraints.NotEmpty;
 @AllArgsConstructor
 public class ItemDetailForm {
 
-    private Long id;
+    private Long itemDetailId;
 
-    private Item item;
+    private Long itemId;
 
-    @NotBlank(message = "가격이 없습니다")
+    @NotBlank
+    private String itemName;
+
+    @NotBlank
     private int price;
 
-    @NotBlank(message = "재고수량이 없습니다")
+    @NotBlank
     private int stockQuantity;
 
-    private String option;
+    @NotNull
+    private String optionName;
 
-    private String detailImg;
+    @NotNull
+    private String optionValue;
 
-    @Override
-    public String toString() {
-        return "ItemDetailForm{" +
-                "id=" + id +
-                ", item=" + item.getId() +
-                ", item_time=" + item.getItemCreate() +
-                ", price=" + price +
-                ", stockQuantity=" + stockQuantity +
-                ", option='" + option + '\'' +
-                ", detailImg='" + detailImg + '\'' +
-                '}';
-    }
+    @NotBlank
+    private String mainImg;
+
+    private String subImg;
+
+
+
 }
