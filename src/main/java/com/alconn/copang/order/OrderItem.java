@@ -17,17 +17,19 @@ public class OrderItem {
     @Id @GeneratedValue
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "item_id")
     private ItemDetail itemDetail;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "orders_id")
     private Orders orders;
 
     private int amount;
 
     private int total;
+
+    private int shippingPrice;
 
     public void setOrders(Orders orders) {
         this.orders = orders;

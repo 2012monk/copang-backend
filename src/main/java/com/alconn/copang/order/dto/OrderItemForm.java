@@ -17,7 +17,9 @@ public class OrderItemForm {
 
     private Long itemDetailId;
 
-    private String option;
+    private String optionName;
+
+    private String optionValue;
 
     private Long itemId;
 

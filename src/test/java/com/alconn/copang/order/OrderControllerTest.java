@@ -166,7 +166,8 @@ class OrderControllerTest {
                             .itemName(name)
                             .amount(1)
                             .price(20000)
-                            .option((i + 1L) + "KG")
+                            .optionName("박스")
+                            .optionValue((i + 1L) + "KG")
                             .unitTotal(2000)
                             .build()
             );
@@ -184,7 +185,8 @@ class OrderControllerTest {
                 fieldWithPath("orderItems.[].itemName").type(JsonFieldType.STRING).description("상품명"),
                 fieldWithPath("orderItems.[].itemId").type(JsonFieldType.NUMBER).description("아이템 식별자"),
                 fieldWithPath("orderItems.[].itemDetailId").type(JsonFieldType.NUMBER).description("옵션 식별자"),
-                fieldWithPath("orderItems.[].option").type(JsonFieldType.STRING).description("옵션명").optional(),
+                fieldWithPath("orderItems.[].optionName").type(JsonFieldType.STRING).description("옵션명").optional(),
+                fieldWithPath("orderItems.[].optionValue").type(JsonFieldType.STRING).description("옵션값").optional(),
                 fieldWithPath("orderItems.[].price").type(JsonFieldType.NUMBER).description("가격").optional(),
                 fieldWithPath("orderItems.[].amount").type(JsonFieldType.NUMBER).description("개별 상품수량"),
                 fieldWithPath("orderItems.[].unitTotal").type(JsonFieldType.NUMBER).description("개별상품 합산 금액")
@@ -217,7 +219,8 @@ class OrderControllerTest {
                 fieldWithPath("data.orderItems.[].itemName").type(JsonFieldType.STRING).description("상품명"),
                 fieldWithPath("data.orderItems.[].itemId").type(JsonFieldType.NUMBER).description("아이템 식별자"),
                 fieldWithPath("data.orderItems.[].itemDetailId").type(JsonFieldType.NUMBER).description("옵션 식별자"),
-                fieldWithPath("data.orderItems.[].option").type(JsonFieldType.STRING).description("옵션명"),
+                fieldWithPath("data.orderItems.[].optionName").type(JsonFieldType.STRING).description("옵션명"),
+                fieldWithPath("data.orderItems.[].optionValue").type(JsonFieldType.STRING).description("옵션값"),
                 fieldWithPath("data.orderItems.[].price").type(JsonFieldType.NUMBER).description("가격"),
                 fieldWithPath("data.orderItems.[].amount").type(JsonFieldType.NUMBER).description("개별 상품수량"),
                 fieldWithPath("data.orderItems.[].unitTotal").type(JsonFieldType.NUMBER).description("개별상품 합산 금액")
@@ -249,7 +252,8 @@ class OrderControllerTest {
                 fieldWithPath("data[].orderItems.[].itemName").type(JsonFieldType.STRING).description("상품명"),
                 fieldWithPath("data[].orderItems.[].itemId").type(JsonFieldType.NUMBER).description("아이템 식별자"),
                 fieldWithPath("data[].orderItems.[].itemDetailId").type(JsonFieldType.NUMBER).description("옵션 식별자"),
-                fieldWithPath("data[].orderItems.[].option").type(JsonFieldType.STRING).description("옵션명"),
+                fieldWithPath("data[].orderItems.[].optionName").type(JsonFieldType.STRING).description("옵션명"),
+                fieldWithPath("data[].orderItems.[].optionValue").type(JsonFieldType.STRING).description("옵션값"),
                 fieldWithPath("data[].orderItems.[].price").type(JsonFieldType.NUMBER).description("가격"),
                 fieldWithPath("data[].orderItems.[].amount").type(JsonFieldType.NUMBER).description("개별 상품수량"),
                 fieldWithPath("data[].orderItems.[].unitTotal").type(JsonFieldType.NUMBER).description("개별상품 합산 금액")

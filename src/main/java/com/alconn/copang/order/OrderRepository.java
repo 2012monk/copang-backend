@@ -1,4 +1,4 @@
-package com.alconn.copang.order.mapper;
+package com.alconn.copang.order;
 
 import com.alconn.copang.client.Client;
 import com.alconn.copang.order.Orders;
