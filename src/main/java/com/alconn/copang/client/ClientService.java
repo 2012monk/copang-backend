@@ -100,15 +100,17 @@ public class ClientService {
 //                .description(form.getDescription())
 //                .build();
 //        Client c = mapper.map(form, Client.class);
-        form.setId(subject.getClientId());
-        Client up = mapper.toEntity(form);
-        System.out.println("\n\n\n\n\n\n\n\n "+subject.getRealName());
-        System.out.println("\n\n\n\n\n\n\n\n "+form.getRealName());
-        mapper.updateFromDto(form, subject);
-        System.out.println("\n\n\n\n\n\n\n\n "+form.getRealName());
-        System.out.println("\n\n\n\n\n\n\n\n "+subject.getRealName());
+//        form.setId(subject.getClientId());
+//        Client up = mapper.toEntity(form);
+        subject.updateInfo(form.getPhone(), form.getRealName());
+
+//        System.out.println("\n\n\n\n\n\n\n\n "+subject.getRealName());
+//        System.out.println("\n\n\n\n\n\n\n\n "+form.getRealName());
+//        mapper.updateFromDto(form, subject);
+//        System.out.println("\n\n\n\n\n\n\n\n "+form.getRealName());
+//        System.out.println("\n\n\n\n\n\n\n\n "+subject.getRealName());
 //        return repo.save(client);
-        return repo.save(up);
+        return repo.save(subject);
     }
 
     // TODO CreationTimeStamp 왜 널이지?

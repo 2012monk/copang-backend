@@ -51,6 +51,16 @@ public class Client {
     private Role role;
 
 
+    public void updateInfo(String phone, String realName) {
+        this.phone = phone == null ? this.phone : phone;
+        this.realName = realName == null ? this.realName : realName;
+    }
 
+    public void updatePassword(String password) {
+        this.password = password;
+    }
 
+    public void updateUserName(String username) {
+        this.username = username;
+    }
 }

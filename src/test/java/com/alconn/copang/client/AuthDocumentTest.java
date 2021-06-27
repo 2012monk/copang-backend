@@ -85,7 +85,7 @@ public class AuthDocumentTest {
                 .andDo(document("auth/signup-client",
                         getDocumentRequest(),
                         getDocumentResponse(),
-                        requestFields(
+                        relaxedRequestFields(
                                 fieldWithPath("username").type(JsonFieldType.STRING).description("아이디"),
                                 fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
                                 fieldWithPath("realName").type(JsonFieldType.STRING).description("이름"),
@@ -95,7 +95,7 @@ public class AuthDocumentTest {
                         responseFields(
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메세지"),
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
-                                fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("고유번호"),
+                                fieldWithPath("data.clientId").type(JsonFieldType.NUMBER).description("유저 식별자"),
                                 fieldWithPath("data.username").type(JsonFieldType.STRING).description("아이디"),
                                 fieldWithPath("data.description").type(JsonFieldType.STRING).description("소개"),
                                 fieldWithPath("data.phone").type(JsonFieldType.STRING).description("휴대전화번호"),

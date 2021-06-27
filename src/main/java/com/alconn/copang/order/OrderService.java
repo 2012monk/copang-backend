@@ -10,7 +10,6 @@ import com.alconn.copang.item.ItemDetail;
 import com.alconn.copang.order.dto.OrderForm;
 import com.alconn.copang.order.dto.OrderItemForm;
 import com.alconn.copang.order.mapper.OrderItemMapper;
-import com.alconn.copang.order.mapper.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +25,6 @@ public class OrderService {
 
     private final OrderRepository repo;
 
-//    private final OrderMapper mapper;
-
     private final OrderItemRepository orderItemRepository;
 
     private final OrderItemMapper orderItemMapper;
@@ -36,6 +33,12 @@ public class OrderService {
 
     @Transactional
     public OrderForm.Response createOrder(OrderForm.Create form) {
+
+
+
+        // item id, item detail id 키값만으로 빌드해서 저장한다
+
+
         List<OrderItem> orderItems = form.getOrderItems()
                 .stream()
                 .map(i ->
@@ -45,18 +48,17 @@ public class OrderService {
                         .itemDetail(
                                 ItemDetail
                                 .builder()
-                                .id(i.getItemDetailId())
+                                .itemDetailId(i.getItemDetailId())
                                 .item(Item
                                         .builder()
-                                        .itemName(i.getItemName())
-                                        .id(i.getItemId())
+//                                        .itemName(i.getItemName())
+                                        .itemId(i.getItemId())
                                         .build())
                                 .build())
                         .build()
                 )
                 .collect(Collectors.toList());
 
-        orderItemRepository.saveAllAndFlush(orderItems);
 
         Orders orders = Orders.builder()
                 .client(Client.builder().clientId(form.getClientId()).build())
@@ -67,30 +69,33 @@ public class OrderService {
                 .totalPrice(form.getTotalPrice())
                 .build();
 
-        repo.save(orders);
         orders.setOrderItemList(orderItems);
+        repo.save(orders);
+
+//        orderItemRepository.saveAllAndFlush(orderItems);
 //        OrderForm.Response response = mapper.toResponse(orders);
 
-        Orders o = getOneOrders(orders.getOrderId());
+//        Orders o = getOneOrders(orders.getOrderId());
 
-        System.out.println("orderItems = " + orderItems.get(0).getItemDetail().getItem().getItemCreate());
+        //        System.out.println("orderItems = " + orderItems.get(0).getItemDetail().getItem().getItemCreate());
         return OrderForm.Response.builder()
-        .orderDate(o.getOrderDate())
-        .orderId(o.getOrderId())
-        .orderItems(o.getOrderItemList()
+        .orderDate(orders.getOrderDate())
+        .orderId(orders.getOrderId())
+        .orderItems(orders.getOrderItemList()
                 .stream().map(i ->
                 OrderItemForm.builder()
-                    .itemDetailId(i.getItemDetail().getId())
+                    .itemDetailId(i.getItemDetail().getItemDetailId())
                     .itemId(i.getId())
                     .itemName(i.getItemDetail().getItem().getItemName())
-                    .option(i.getItemDetail().getOption())
+                    .optionName(i.getItemDetail().getOptionName())
+                    .optionValue(i.getItemDetail().getOptionValue())
                     .amount(i.getAmount())
                     .price(i.getItemDetail().getPrice())
                     .build()
                 ).collect(Collectors.toList()))
         .clientId(orders.getClient().getClientId())
-        .totalAmount(o.getTotalAmount())
-        .totalPrice(o.getTotalPrice())
+        .totalAmount(orders.getTotalAmount())
+        .totalPrice(orders.getTotalPrice())
         .build();
     }
 
@@ -164,9 +169,13 @@ public class OrderService {
                         .stream().map(i ->
                                 OrderItemForm.builder()
                                 .amount(i.getAmount())
-                                .itemDetailId(i.getItemDetail().getId())
-                                .itemName(i.getItemDetail().getItem().getItemName())
+                                .unitTotal(i.getTotal())
                                 .price(i.getItemDetail().getPrice())
+                                .itemId(i.getItemDetail().getItem().getItemId())
+                                .itemDetailId(i.getItemDetail().getItemDetailId())
+                                .itemName(i.getItemDetail().getItem().getItemName())
+                                .optionName(i.getItemDetail().getOptionName())
+                                .optionValue(i.getItemDetail().getOptionValue())
                                 .build()
                         ).collect(Collectors.toList())
                 )

@@ -138,7 +138,7 @@ class ClientControllerTest {
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메세지"),
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
                                 fieldWithPath("data").type(JsonFieldType.ARRAY).description("회원 리스트"),
-                                fieldWithPath("data.[].id").type(JsonFieldType.NUMBER).description("고유번호"),
+                                fieldWithPath("data.[].clientId").type(JsonFieldType.NUMBER).description("유저 식별"),
                                 fieldWithPath("data.[].username").type(JsonFieldType.STRING).description("아이디"),
                                 fieldWithPath("data.[].description").type(JsonFieldType.STRING).description("소개"),
                                 fieldWithPath("data.[].phone").type(JsonFieldType.STRING).description("휴대전화번호"),
@@ -175,7 +175,7 @@ class ClientControllerTest {
 
         this.mvc.perform(
                 RestDocumentationRequestBuilders.
-                get("/api/user/{id}", client.getClientId())
+                get("/api/user/{clientId}}", client.getClientId())
                 .header(HttpHeaders.AUTHORIZATION, "Bearer "+ container.getAccess_token())
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())
@@ -185,15 +185,15 @@ class ClientControllerTest {
                         ApiDocumentUtils.getDocumentRequest(),
                         ApiDocumentUtils.getDocumentResponse(),
                         pathParameters(
-                                parameterWithName("id").description("아이디")
+                                parameterWithName("clientId").description("아이디")
                         ),
                         requestHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer scheme Access Token 인증 토큰")
                         ),
-                        responseFields(
+                        relaxedResponseFields(
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메세지"),
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
-                                fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("고유번호"),
+                                fieldWithPath("data.clientId").type(JsonFieldType.NUMBER).description("고유번호"),
                                 fieldWithPath("data.username").type(JsonFieldType.STRING).description("아이디"),
                                 fieldWithPath("data.description").type(JsonFieldType.STRING).description("소개"),
                                 fieldWithPath("data.phone").type(JsonFieldType.STRING).description("휴대전화번호"),
@@ -230,7 +230,7 @@ class ClientControllerTest {
 
         ResultActions result = this.mvc.perform(
                 RestDocumentationRequestBuilders.
-                put("/api/user/{id}", client.getClientId())
+                put("/api/user/{clientId}", client.getClientId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(form))
                 .characterEncoding("utf-8")
@@ -242,7 +242,7 @@ class ClientControllerTest {
                         ApiDocumentUtils.getDocumentRequest(),
                         ApiDocumentUtils.getDocumentResponse(),
                         pathParameters(
-                                parameterWithName("id").description("아이디")
+                                parameterWithName("clientId").description("아이디")
                         ),
                         requestHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer scheme Access Token 인증 토큰")
@@ -250,7 +250,7 @@ class ClientControllerTest {
                         relaxedResponseFields(
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메세지"),
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
-                                fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("고유번호"),
+                                fieldWithPath("data.clientId").type(JsonFieldType.NUMBER).description("유저 식별"),
                                 fieldWithPath("data.username").type(JsonFieldType.STRING).description("아이디"),
                                 fieldWithPath("data.description").type(JsonFieldType.STRING).description("소개"),
                                 fieldWithPath("data.phone").type(JsonFieldType.STRING).description("휴대전화번호"),
