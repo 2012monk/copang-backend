@@ -49,7 +49,7 @@ public class Orders {
     @UpdateTimestamp
     private LocalDateTime lastUpdatedDate;
 
-    @OneToOne
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private Address address;
 
