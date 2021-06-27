@@ -34,7 +34,7 @@ public class Orders {
     private String tid;
 
     @Builder.Default
-    @OneToMany(mappedBy = "orders")
+    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL)
     private final List<OrderItem> orderItemList = new ArrayList<>();
 
     @ManyToOne
