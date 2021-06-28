@@ -4,51 +4,33 @@ import com.alconn.copang.ApiDocumentUtils;
 import com.alconn.copang.auth.LoginToken;
 import com.alconn.copang.common.AccessTokenContainer;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.annotation.Before;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
-import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
-import org.springframework.restdocs.operation.preprocess.Preprocessors;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import javax.transaction.Transactional;
 
-import java.lang.annotation.Target;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -95,7 +77,7 @@ class ClientControllerTest {
             list.add(Client.builder()
                     .username("테스트 유저입니다!!" + random.nextInt())
                     .description("안녕하세요!")
-                    .mobile("010-0030-9090")
+                    .phone("010-0030-9090")
                     .realName("길동홍길동")
                     .role(Role.CLIENT)
                     .password(String.valueOf(random.nextInt())).build());
@@ -110,7 +92,7 @@ class ClientControllerTest {
                 .username("coppang143")
                 .password("비밀번호123!")
                 .role(Role.CLIENT)
-                .mobile("010-0030-9090")
+                .phone("010-0030-9090")
                 .description("안녕하세요!")
                 .role(Role.CLIENT)
                 .realName("길동홍길동")
@@ -128,7 +110,7 @@ class ClientControllerTest {
             list.add(Client.builder()
                     .username("테스트 유저입니다!!" + random.nextInt())
                     .description("안녕하세요!")
-                    .mobile("010-0030-9090")
+                    .phone("010-0030-9090")
                     .description("안녕하세요!")
                     .role(Role.CLIENT)
                     .realName("길동홍길동")
@@ -156,10 +138,10 @@ class ClientControllerTest {
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메세지"),
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
                                 fieldWithPath("data").type(JsonFieldType.ARRAY).description("회원 리스트"),
-                                fieldWithPath("data.[].id").type(JsonFieldType.NUMBER).description("고유번호"),
+                                fieldWithPath("data.[].clientId").type(JsonFieldType.NUMBER).description("유저 식별"),
                                 fieldWithPath("data.[].username").type(JsonFieldType.STRING).description("아이디"),
                                 fieldWithPath("data.[].description").type(JsonFieldType.STRING).description("소개"),
-                                fieldWithPath("data.[].mobile").type(JsonFieldType.STRING).description("휴대전화번호"),
+                                fieldWithPath("data.[].phone").type(JsonFieldType.STRING).description("휴대전화번호"),
                                 fieldWithPath("data.[].realName").type(JsonFieldType.STRING).description("이름"),
                                 fieldWithPath("data.[].role").type(JsonFieldType.STRING).description("유저타입"),
                                 fieldWithPath("data.[].signInDate").type(JsonFieldType.STRING).description("가입날짜")
@@ -180,7 +162,7 @@ class ClientControllerTest {
                 .username("coppang143")
                 .password("비밀번호123!")
                 .description("안녕하세요!")
-                .mobile("010-0030-9090")
+                .phone("010-0030-9090")
                 .realName("길동홍길동")
                 .role(Role.CLIENT)
                 .build();
@@ -193,7 +175,7 @@ class ClientControllerTest {
 
         this.mvc.perform(
                 RestDocumentationRequestBuilders.
-                get("/api/user/{id}", client.getId())
+                get("/api/user/{clientId}", client.getClientId())
                 .header(HttpHeaders.AUTHORIZATION, "Bearer "+ container.getAccess_token())
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())
@@ -203,18 +185,18 @@ class ClientControllerTest {
                         ApiDocumentUtils.getDocumentRequest(),
                         ApiDocumentUtils.getDocumentResponse(),
                         pathParameters(
-                                parameterWithName("id").description("아이디")
+                                parameterWithName("clientId").description("아이디")
                         ),
                         requestHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer scheme Access Token 인증 토큰")
                         ),
-                        responseFields(
+                        relaxedResponseFields(
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메세지"),
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
-                                fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("고유번호"),
+                                fieldWithPath("data.clientId").type(JsonFieldType.NUMBER).description("고유번호"),
                                 fieldWithPath("data.username").type(JsonFieldType.STRING).description("아이디"),
                                 fieldWithPath("data.description").type(JsonFieldType.STRING).description("소개"),
-                                fieldWithPath("data.mobile").type(JsonFieldType.STRING).description("휴대전화번호"),
+                                fieldWithPath("data.phone").type(JsonFieldType.STRING).description("휴대전화번호"),
                                 fieldWithPath("data.realName").type(JsonFieldType.STRING).description("이름"),
                                 fieldWithPath("data.role").type(JsonFieldType.STRING).description("유저타입"),
                                 fieldWithPath("data.signInDate").type(JsonFieldType.STRING).description("가입날짜")
@@ -231,7 +213,7 @@ class ClientControllerTest {
                 .username("coppang143")
                 .password("비밀번호123!")
                 .description("안녕하세요!")
-                .mobile("010-0030-9090")
+                .phone("010-0030-9090")
                 .realName("길동홍길동")
                 .role(Role.CLIENT)
                 .build();
@@ -248,7 +230,7 @@ class ClientControllerTest {
 
         ResultActions result = this.mvc.perform(
                 RestDocumentationRequestBuilders.
-                put("/api/user/{id}", client.getId())
+                put("/api/user/{clientId}", client.getClientId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(form))
                 .characterEncoding("utf-8")
@@ -260,7 +242,7 @@ class ClientControllerTest {
                         ApiDocumentUtils.getDocumentRequest(),
                         ApiDocumentUtils.getDocumentResponse(),
                         pathParameters(
-                                parameterWithName("id").description("아이디")
+                                parameterWithName("clientId").description("아이디")
                         ),
                         requestHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer scheme Access Token 인증 토큰")
@@ -268,10 +250,10 @@ class ClientControllerTest {
                         relaxedResponseFields(
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메세지"),
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
-                                fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("고유번호"),
+                                fieldWithPath("data.clientId").type(JsonFieldType.NUMBER).description("유저 식별"),
                                 fieldWithPath("data.username").type(JsonFieldType.STRING).description("아이디"),
                                 fieldWithPath("data.description").type(JsonFieldType.STRING).description("소개"),
-                                fieldWithPath("data.mobile").type(JsonFieldType.STRING).description("휴대전화번호"),
+                                fieldWithPath("data.phone").type(JsonFieldType.STRING).description("휴대전화번호"),
                                 fieldWithPath("data.realName").type(JsonFieldType.STRING).description("이름"),
                                 fieldWithPath("data.role").type(JsonFieldType.STRING).description("유저타입")
 //                                fieldWithPath("data.signInDate").type(JsonFieldType.STRING).description("가입날짜")

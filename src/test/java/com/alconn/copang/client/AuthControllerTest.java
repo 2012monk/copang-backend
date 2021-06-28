@@ -7,7 +7,6 @@ import com.alconn.copang.config.SecurityConfig;
 import com.alconn.copang.security.CustomLogoutHandler;
 import com.alconn.copang.security.CustomUserDetailsService;
 import com.alconn.copang.security.JwtValidateFilter;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -182,9 +181,9 @@ class AuthControllerTest {
         assertNotNull(repo.save(client).getPassword());
         // when
 
-        log.info("id {} ;", repo.save(client).getId());
+        log.info("id {} ;", repo.save(client).getClientId());
 
-        log.info("user : {} ", client.getId());
+        log.info("user : {} ", client.getClientId());
         this.mvc.perform(
                 post(domain + "login")
                         .contentType(MediaType.APPLICATION_JSON)

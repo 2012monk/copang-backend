@@ -35,7 +35,7 @@ public class IdentityHandler {
 //        Arrays.stream(pjp.getArgs()).forEach(System.out::println);
 
         Client client = provider.resolveUserFromToken(authentication.getToken()).orElseThrow(() -> new UnauthorizedException("인증정보가 잘못 되었습니당!"));
-        Long id = client.getId();
+        Long id = client.getClientId();
 //        try{
 //
 //        }catch (Exception e){
