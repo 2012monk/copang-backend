@@ -49,6 +49,7 @@ public class ItemController {
                 .message("상품상세페이지")
                 .data(itemForm)
                 .build();
+
     }
 
     //1. 상품 삭제
@@ -103,7 +104,28 @@ public class ItemController {
 //                .message("상품하나조회")
 //                .data(itemDetailForm)
 //                .build();
+//        return ResponseMessage.<ItemDetailForm>builder()
+//                .message("상품하나조회")
+//                .data(itemDetailForm)
+//                .build();
 //    }
+
+//
+//
+//    @DeleteMapping("/delete/{id}")
+//    public ResponseMessage itemDetailDelete(@PathVariable Long id){
+//        boolean result=itemDetailService.itemDetailDelete(id);
+//        if(result==true)
+//            return ResponseMessage.builder()
+//                    .message( "삭제가 완료되었습니다")
+//                    .build();
+//
+//        else
+//            return ResponseMessage.builder()
+//                    .message("잘못된 요청입니다")
+//                    .build();
+//    }
+
 
 //
 //

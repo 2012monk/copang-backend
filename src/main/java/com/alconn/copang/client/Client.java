@@ -26,7 +26,7 @@ import java.util.List;
 public class Client {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long clientId;
 
     private String username;
 
@@ -36,22 +36,31 @@ public class Client {
 
     private String realName;
 
-    private String mobile;
+    private String phone;
 
     private String description;
 
-
 //    @Column(updatable = false, nullable = false)
+//    @CreatedDate
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm", iso = DateTimeFormat.ISO.DATE_TIME)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul", shape = JsonFormat.Shape.STRING)
     @CreationTimestamp
     @Column(updatable = false)
-//    @CreatedDate
     private LocalDateTime signInDate;
 
     private Role role;
 
 
+    public void updateInfo(String phone, String realName) {
+        this.phone = phone == null ? this.phone : phone;
+        this.realName = realName == null ? this.realName : realName;
+    }
 
+    public void updatePassword(String password) {
+        this.password = password;
+    }
 
+    public void updateUserName(String username) {
+        this.username = username;
+    }
 }

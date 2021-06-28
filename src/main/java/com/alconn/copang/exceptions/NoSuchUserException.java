@@ -1,6 +1,6 @@
 package com.alconn.copang.exceptions;
 
-public class NoSuchUserException extends Exception{
+public class NoSuchUserException extends NoSuchEntityExceptions{
 
     private static final String msg = "유저정보를 불러오는데 실패했습니다!";
 

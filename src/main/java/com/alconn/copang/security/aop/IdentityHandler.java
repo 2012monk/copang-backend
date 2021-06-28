@@ -1,5 +1,6 @@
 package com.alconn.copang.security.aop;
 
+import com.alconn.copang.annotations.InjectId;
 import com.alconn.copang.client.Client;
 import com.alconn.copang.exceptions.UnauthorizedException;
 import com.alconn.copang.security.AuthToken;
@@ -12,6 +13,9 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -35,7 +39,7 @@ public class IdentityHandler {
 //        Arrays.stream(pjp.getArgs()).forEach(System.out::println);
 
         Client client = provider.resolveUserFromToken(authentication.getToken()).orElseThrow(() -> new UnauthorizedException("인증정보가 잘못 되었습니당!"));
-        Long id = client.getId();
+        Long id = client.getClientId();
 //        try{
 //
 //        }catch (Exception e){
@@ -49,5 +53,23 @@ public class IdentityHandler {
 //        return pjp.proceed(pjp.getArgs());
 
         return pjp.proceed(pjp.getArgs());
+    }
+
+    @Around(value = "com.alconn.copang.config.PointCutConfig.injectId()")
+    public Object setClientId(ProceedingJoinPoint pjp) throws Throwable {
+        AuthToken authentication = (AuthToken) SecurityContextHolder.getContext().getAuthentication();
+        Client client = provider.resolveUserFromToken(authentication.getToken()).orElseThrow(() -> new UnauthorizedException("인증정보가 잘못 되었습니당!"));
+        Long id = client.getClientId();
+
+        Arrays.stream(pjp.getArgs()).filter(o -> o.getClass().getDeclaredAnnotation(InjectId.class) != null).findAny().orElseThrow(IllegalArgumentException::new);
+
+        Object[] args = Arrays.stream(pjp.getArgs()).map(o ->{
+                if (o.getClass().getDeclaredAnnotation(InjectId.class) != null){
+                    return id;
+                }
+                return o;
+        }).toArray();
+
+        return pjp.proceed(args);
     }
 }

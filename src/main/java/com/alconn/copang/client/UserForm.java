@@ -1,5 +1,6 @@
 package com.alconn.copang.client;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -22,7 +23,7 @@ public class UserForm {
     @NotEmpty( message = "패스워드는 존재해야 합니다")
     private String password;
 
-    private String mobile;
+    private String phone;
 
     private String realName;
 
@@ -33,5 +34,22 @@ public class UserForm {
 
     public String getPassword() {
         return password;
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Getter
+    @Builder
+    @AllArgsConstructor @NoArgsConstructor
+    public static class Response {
+
+        private Long clientId;
+
+        private String username;
+
+        private String phone;
+
+        private String realName;
+
+        private Role role;
     }
 }

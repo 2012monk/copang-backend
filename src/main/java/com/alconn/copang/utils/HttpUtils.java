@@ -2,6 +2,7 @@ package com.alconn.copang.utils;
 
 import com.alconn.copang.security.AuthenticationScheme;
 import com.fasterxml.jackson.databind.deser.DataFormatReaders;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.parameters.P;
 
@@ -15,18 +16,24 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class HttpUtils {
 
     public static Optional<String> getAuthenticationHeader(HttpServletRequest request, AuthenticationScheme scheme) {
 
-        String authentication = getHeader(request, HttpHeaders.AUTHORIZATION).orElse("no token ");
-        String requestScheme = authentication.split(" ")[0];
-        String value = authentication.split(" ")[1];
+        try{
 
-        Pattern pattern = Pattern.compile(scheme.getVal(), Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(requestScheme);
-        if (matcher.find()){
-            return Optional.ofNullable(value);
+            String authentication = getHeader(request, HttpHeaders.AUTHORIZATION).orElse("no token ");
+            String requestScheme = authentication.split(" ")[0];
+            String value = authentication.split(" ")[1];
+
+            Pattern pattern = Pattern.compile(scheme.getVal(), Pattern.CASE_INSENSITIVE);
+            Matcher matcher = pattern.matcher(requestScheme);
+            if (matcher.find()){
+                return Optional.ofNullable(value);
+            }
+        }catch (Exception e){
+            log.info("header parse failed : {}", e.getMessage());
         }
 
 //        if (scheme.getVal().equals(requestScheme)) {

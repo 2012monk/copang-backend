@@ -18,7 +18,9 @@ public class ModelMapperTest {
 
     @Test
     void name() {
-        mapper.getConfiguration().setSkipNullEnabled(true).setMatchingStrategy(MatchingStrategies.STRICT)
+        mapper.getConfiguration()
+                .setSkipNullEnabled(true)
+                .setMatchingStrategy(MatchingStrategies.STRICT)
                 .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
         .setFieldMatchingEnabled(true);
         LoginToken token = new LoginToken();

@@ -6,19 +6,25 @@ monk;
 :toc: left
 :toclevels: 4
 :sectlinks:
-:operation-curl-request-title: 에제 요청 Request
-:operation-http-response-title: 에제 응답 Response
+:operation-curl-request-title: 에제 요청
+:operation-http-request-title: 에제 요청
+:operation-http-response-title: 에제 응답
 :operation-request-fields-title: 요청 data
 :operation-response-fields-title: 응답 data
 
+
+[[Introduction]]
+== 소개
 
 [[overview]]
 == Overview
 
 [[overview_http_verbs]]
-= HTTP verbs
+=== HTTP verbs
 
-HTTP 메서드 안내
+NOTE: HTTP 메서드 안내
+
+
 
 |===
 | Verb | Usage
@@ -75,10 +81,26 @@ The request completed successfully
 | 인증 실패시 EX) 로그인 실패
 |===
 
+[[overvie_error]]
+=== 에러 메세지 안내
+
+==== 엑세스 권한이 없을때
+
+operation::auth/auth-failed[snippets='response-body,response-fields']
+
+[[Authentication]]
+=== 인증정보가 포함된 요청
+
+Authorization 헤더에 Bearer Scheme으로 토큰을 넣어주시면 됩니다
+Bearer 띄우고 token
+
+operation::auth/with-auth[snippets='http-request,request-headers']
+
 [[authentication]]
 = Auth
 
 == Login 로그인 요청
+
 operation::auth/login[snippets='http-request,http-response,request-fields,response-fields']
 
 == SignUp 회원가입 요청
@@ -107,14 +129,65 @@ operation::client/get-user-list[snippets='http-request,request-headers,http-resp
 
 operation::client/update[snippets='http-request,request-headers,http-response,response-fields']
 
-[[Authentication]]
-== Request with Authentication
-인증정보가 포함된 요청
 
 
+[[Orders]]
+= 주문 API
 
+== 주문 하기
+==== `POST` /api/orders
+
+operation::orders/start-order[snippets='http-request,request-fields,request-headers,http-response,response-fields']
+
+== 주문 진행시키기
+==== `PATCH` /api/orders/:orderId/proceed
+
+operation::orders/proceed-order[snippets='request-headers,path-parameters,http-request,http-response,response-fields']
+
+== 주문 단건 조회
+==== `GET` /api/order/:orderId
+
+operation::orders/get-one-order[snippets='request-headers,path-parameters,http-request,http-response,response-fields']
+
+== 유저 주문 조회하기
+==== `GET` /api/order/client/:clientId
+
+operation::orders/get-client-order-list[snippets='request-headers,path-parameters,http-request,http-response,response-fields']
+
+
+= 장바구니 API
+
+== 장바구니 조회 [유저 기준]
+==== `GET` /api/cart
+
+operation::cart/get-client-cart[snippets='http-request,request-headers,http-response,response-fields']
+
+== 장바구니 아이템추가
+==== `POST` /api/cart/item
+
+기존에 존재하는 아이템 업데이트시 수량이 추가됩니다
+
+
+operation::cart/add-cart-item[snippets='http-request,request-headers,request-fields,http-response,response-fields']
+
+== 장바구니 아이템 수량 업데이트
+==== `POST` /api/cart/item/amount
+
+
+operation::cart/update-cart-item-amount[snippets='http-request,request-headers,request-fields,http-response,response-fields']
+
+
+== 장바구니 아이템 빼기
+==== `DELETE` /api/cart/item/:itemDetailId
+
+operation::cart/delete-item[snippets='http-request,path-parameters,request-headers,http-response,response-fields']
+
+== 장바구니 비우기
+==== `DELETE` /api/cart
+
+operation::cart/clear-cart[snippets='http-request,request-headers,http-response,response-fields']
 [[resources_tag]]
-= 상품 정보 APIs
+== 상품 정보 APIs
 
 
 아직 문서화 되지 않았습니정
