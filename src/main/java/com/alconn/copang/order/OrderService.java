@@ -38,7 +38,6 @@ public class OrderService {
 
         // item id, item detail id 키값만으로 빌드해서 저장한다
 
-
         List<OrderItem> orderItems = form.getOrderItems()
                 .stream()
                 .map(i ->

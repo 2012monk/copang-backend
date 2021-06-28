@@ -21,6 +21,7 @@ import org.springframework.security.web.authentication.logout.HttpStatusReturnin
 
 import java.util.HashSet;
 import java.util.Set;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @RequiredArgsConstructor
 @Configuration
@@ -85,10 +86,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .anyRequest().hasAnyRole("GUEST", "CLIENT", "ADMIN")
 //                    .anyRequest().authenticated()
                 .and()
-                    .csrf().disable()
+//                    .csrf().disable()
+
                     .logout()
-                        .logoutUrl("/api/auth/logout")
                         .addLogoutHandler(handler)
+//                        .logoutRequestMatcher(new AntPathRequestMatcher("/api/auth/logout", "GET"))
+                        .logoutUrl("/api/auth/logout")
                         .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
                     .permitAll()
                 //                .antMatchers("/access").hasRole("CLIENT")

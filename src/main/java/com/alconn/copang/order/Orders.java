@@ -49,7 +49,9 @@ public class Orders {
     @UpdateTimestamp
     private LocalDateTime lastUpdatedDate;
 
-    @OneToOne(optional = false, cascade = CascadeType.ALL)
+    // TODO 주문과 주소 연결하기
+//    @OneToOne(optional = false)
+    @OneToOne
     @JoinColumn(name = "address_id")
     private Address address;
 

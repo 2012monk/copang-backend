@@ -101,9 +101,12 @@ class OrderServiceTest {
 //                new Address(1L,
 //                        "좌동 123", "철원 1번지", "010-9090-8989", "문앞요", client, EntityPriority.PRIMARY);
 
-        //  Client, Address 생성
         repo.save(client);
+        manager.flush();
+        manager.clear();
+        //  Client, Address 생성
         addressRepository.save(address);
+
 
         // ItemDetail, Item 생성
         List<ItemDetail> details = new ArrayList<>();

@@ -27,7 +27,7 @@ public class Cart {
     private Long clientId;
 
     @Builder.Default
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CartItem> cartItems = new HashSet<>();
 
     private int totalPrice;

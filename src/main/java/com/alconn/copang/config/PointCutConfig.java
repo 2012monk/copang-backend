@@ -14,6 +14,6 @@ public interface PointCutConfig {
 
     // parameter annotation 에서 포인트컷 적용안됨
     @Pointcut(value = "@annotation(com.alconn.copang.annotations.InjectId)")
-//    @Pointcut(value = "execution(* *(.., @InjectId (*), ..))")
     default void injectId(){}
+//    @Pointcut(value = "execution(* *(.., @InjectId (*), ..))")
 }

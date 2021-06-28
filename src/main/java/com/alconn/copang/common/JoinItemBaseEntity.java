@@ -18,7 +18,9 @@ public abstract class JoinItemBaseEntity {
 //    @Id @GeneratedValue
 //    private Long id;
 
-    @ManyToOne(optional = false)
+    // TODO connect 해야함
+//    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "item_id")
     protected ItemDetail item;
 

@@ -13,6 +13,8 @@ import javax.validation.constraints.Positive;
 @Getter
 public class CartItemForm {
 
+    private Long cartId;
+
     private Long itemDetailId;
 
     private Long itemId;
@@ -21,10 +23,10 @@ public class CartItemForm {
     private String itemName;
 
     @Positive
-    private int price;
+    private Integer price;
 
     @Positive
-    private int amount;
+    private Integer amount;
 
     @NotBlank
     private String optionName;
@@ -36,4 +38,6 @@ public class CartItemForm {
     private String mainImg;
 
     private String subImg;
+
+    private Integer unitTotal;
 }
