@@ -20,7 +20,6 @@ public class CustomLogoutHandler implements LogoutHandler {
 
     private final Set<String> blackList;
 
-
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         System.out.println("\n\n\n\n\n Logout \n\n"+ (blackList != null));

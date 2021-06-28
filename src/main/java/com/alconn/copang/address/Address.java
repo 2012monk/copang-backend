@@ -30,7 +30,7 @@ public class Address {
 
     private String preRequest;
 
-    // TODO 연관관계 강요 Adress 완성시 체크
+    // TODO 연관관계 강요 Address 완성시 체크
 //    @ManyToOne(optional = false)
     @ManyToOne
     @JoinColumn(name = "client_id")

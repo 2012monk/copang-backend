@@ -41,11 +41,11 @@ public class Client {
     private String description;
 
 //    @Column(updatable = false, nullable = false)
+//    @CreatedDate
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm", iso = DateTimeFormat.ISO.DATE_TIME)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul", shape = JsonFormat.Shape.STRING)
     @CreationTimestamp
     @Column(updatable = false)
-//    @CreatedDate
     private LocalDateTime signInDate;
 
     private Role role;

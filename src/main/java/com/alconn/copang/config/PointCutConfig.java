@@ -11,4 +11,9 @@ public interface PointCutConfig {
 
     @Pointcut(value = "@annotation(com.alconn.copang.annotations.IdentitySecured)")
     default void identifyRequired(){}
+
+    // parameter annotation 에서 포인트컷 적용안됨
+    @Pointcut(value = "@annotation(com.alconn.copang.annotations.InjectId)")
+    default void injectId(){}
+//    @Pointcut(value = "execution(* *(.., @InjectId (*), ..))")
 }

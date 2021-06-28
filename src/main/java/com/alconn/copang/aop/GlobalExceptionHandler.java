@@ -79,6 +79,7 @@ public class GlobalExceptionHandler {
     protected ResponseMessage<String> jpaException(SQLIntegrityConstraintViolationException e) {
         return ResponseMessage.<String>builder()
                 .message("요청하신 정보가 올바르지 않습니다")
+                .data(e.getMessage())
                 .code(-111)
                 .build();
     }
@@ -105,9 +106,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseMessage<List<String>> handleValidate(ValidationException e){
+    public ResponseMessage<?> handleValidate(ValidationException e){
         e.printStackTrace();
-        return null;
+        return ResponseMessage.builder()
+            .message("요청하신 정보가 올바르지 않습니다")
+            .data(e.getMessage())
+            .build();
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

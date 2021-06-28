@@ -1,5 +1,8 @@
 package com.alconn.copang.config;
 
+import com.alconn.copang.security.aop.UserIdResolver;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
@@ -7,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.resource.PathResourceResolver;
@@ -14,6 +18,7 @@ import org.springframework.web.servlet.view.InternalResourceView;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
+@RequiredArgsConstructor
 @EnableJpaAuditing
 @EnableAspectJAutoProxy
 @EnableWebMvc
@@ -21,6 +26,8 @@ import org.springframework.web.servlet.view.UrlBasedViewResolver;
 public class WebConfig implements WebMvcConfigurer {
 
     private final ModelMapper modelMapper = new ModelMapper();
+
+    private final UserIdResolver userIdResolver;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -45,6 +52,11 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResolver(new PathResourceResolver())
         ;
 
+    }
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(userIdResolver);
     }
 
     @Bean
