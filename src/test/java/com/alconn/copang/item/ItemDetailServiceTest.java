@@ -1,11 +1,15 @@
 package com.alconn.copang.item;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.List;
 
 @SpringBootTest
 @Transactional
@@ -21,7 +25,12 @@ public class ItemDetailServiceTest {
     ItemDetailRepository itemDetailRepository;
 
     @Autowired
+    ItemMapper itemMapper;
+
+    @Autowired
     EntityManager em;
+
+
     public Item itemTest(){
         Item item=Item.builder()
                 .itemName("테스트상품")
@@ -40,6 +49,46 @@ public class ItemDetailServiceTest {
         return itemDetail;
     }
 
+    //enum이 적용된 예제데이터
+    public List<ItemDetail> findMockData(){
+        Item item=itemTest();
+        itemRepository.save(item);
+
+        ItemDetail itemDetail=itemDetailTest();
+        ItemDetail itemDetail2=itemDetailTest();
+
+        List<ItemDetail> itemDetailList=new ArrayList<>();
+//        itemDetail.itemConnect(item);
+//        itemDetail2.itemConnect(item);
+
+        itemDetailList.add(itemDetail);
+        itemDetailList.add(itemDetail2);
+
+        itemDetailList=itemDetailService.itemDetailSaveList(item,itemDetailList);
+
+        em.flush();
+        em.close();
+
+        return itemDetailList;
+    }
+
+
+    @DisplayName("대표 이미지 출력용")
+    @Test
+    public void findMainTest(){
+        findMockData();
+        findMockData();
+        em.flush();
+        em.close();
+        List<ItemDetail> list=itemDetailRepository.listItemDetailsMainFind(ItemMainApply.APPLY);
+        List<ItemDetailForm> list2= itemMapper.listDomainToDto(list);
+        for(ItemDetailForm itemDetailForm:list2){
+            System.out.println("itemDetail = " + itemDetailForm.toString());
+        }
+    }
+
+
+    @DisplayName("예제 데이터")
     @Test
     public void saveTest(){
         Item item=itemTest();
@@ -53,132 +102,37 @@ public class ItemDetailServiceTest {
         em.close();
     }
 
-    //상품 ID를 조회해서 없으면 첫번째 옵션을 대표로 적용
-    public Item itemFind(Long id){
-        Item item=itemRepository.findById(id).get();
+    //mockup데이터 디비 확인용
+    @Test
+    @Commit
+    public void mockDatas(){
+        findMockData();
+        findMockData();
+        em.flush();
+        em.close();
+    }
 
+    @Test
+    public void findItemTest(){
+        List<ItemDetail> list=findMockData();
+        List<ItemDetail> list2=findMockData();
 
-        return item;
+        itemDetailRepository.findItemDetailPage(list.get(0).getItem().getItemId());
+        itemDetailRepository.findItemDetailPage(list2.get(0).getItem().getItemId());
+
+    }
+
+    @Test
+    public void delTest(){
+        List<ItemDetail> list=findMockData();
+        List<ItemDetailForm> list2=itemMapper.listDomainToDto(list);
+        Long id=list.get(0).getItem().getItemId();
+        em.close();
+        itemRepository.deleteById(id);
+        em.flush();
+        System.out.println("list2 = " + list2);
     }
 
 }
 
 
-
-    //
-//    @Autowired
-//    ItemDetailService itemDetailService;
-//
-//    @Autowired
-//    ItemDetailRepository itemDetailRepository;
-//
-//    @Autowired
-//    ItemService itemService;
-//
-//    @Autowired
-//    EntityManager em;
-//
-//    public Item itemCreate() {
-//        Item item = Item.builder()
-//                .itemName("test")
-//                .build();
-//        return item;
-//    }
-//
-//    public ItemDetail itemDetailCreate2(Item itemInput){
-//        ItemDetail itemDetail=ItemDetail.builder()
-//                .item(itemInput)
-//                .price(10000)
-//                .stockQuantity(111)
-//                .option("옷")
-//                .detailImg("사진")
-//                .build();
-//        return itemDetail;
-//    }
-//    public ItemDetail itemDetailCreate(){
-//        ItemDetail itemDetail=ItemDetail.builder()
-////                .item(itemCreate())
-//                .price(10000)
-//                .stockQuantity(111)
-//                .option("가구")
-//                .detailImg("가구사진")
-//                .build();
-//        return itemDetail;
-//    }
-//
-//    @Test
-//    public void delete(Long id){
-//        boolean result=itemService.deleteItem(124124412L);
-//        System.out.println("result = " + result);
-//    }
-//
-//    @Test
-//    public void save(){
-//        Item item=itemCreate();
-//        Item item2=itemCreate();
-//        itemService.saveItem(item);
-//        itemService.saveItem(item2);
-//
-//    }
-//
-//    @Test
-//    public void findItemDetailByItem(){
-//        Item item = itemCreate();
-//        itemService.saveItem(item);
-//        em.flush();
-//        for(int i=0;i<3;i++){
-//            try {
-//                itemDetailService.itemDetailSave(itemDetailCreate2(item)) ;
-//                em.flush();
-//
-//            } catch (Exception e) {
-//                e.getStackTrace();
-//            }
-//        }
-//
-//        List<ItemDetail> itemDetails= itemDetailService.listItemDetailFind(item.getItemId());
-//
-//        for(ItemDetail itemDetail: itemDetails){
-//            System.out.println(itemDetail.toString());
-//        }
-//    }
-//
-//    @Test
-//    public void findOne(){
-//        Item item=itemCreate();
-//        itemService.saveItem(item);
-//
-//
-//
-//        ItemDetail itemDetail=itemDetailCreate2(item);
-//        itemDetailService.itemDetailSave(itemDetail);
-//
-//        ItemDetail itemDetai2=itemDetailCreate2(item);
-//        itemDetailService.itemDetailSave(itemDetai2);
-//
-//        em.flush();
-//        em.close();
-//
-//        List<ItemDetail> itemDetail1s=itemDetailRepository.findItemDetailsByItem_ItemId(itemDetail.getItem().getItemId());
-//
-//        System.out.println(itemDetail1s);
-//    }
-//
-//    @Test
-//    public void updateItemDetaile(){
-//        Item item=itemCreate();
-//        itemService.saveItem(item);
-//
-//        ItemDetail itemDetail=itemDetailCreate2(item);
-//        ItemDetail itemDetail2=itemDetailCreate2(item);
-//        itemDetailService.itemDetailSave(itemDetail);
-//        itemDetailService.itemDetailSave(itemDetail2);
-//
-//        itemDetail2.updateItemDetail(3000,200,"옵션","사진2");
-////        em.flush();
-//        itemDetailService.itemDetailUpdate(itemDetail.getItemDetailId(), itemDetail2);
-//
-//    }
-//
-//
-//}
