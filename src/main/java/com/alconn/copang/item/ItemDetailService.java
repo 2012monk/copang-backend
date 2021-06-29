@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
@@ -18,14 +20,24 @@ public class ItemDetailService {
 
     private final ItemService itemService;
 
-    //저장로직
-    public List<ItemDetailForm> itemDetailListSave(List<ItemDetailForm> itemDetailFormList){
-        //Domain
-        List<ItemDetail> itemDetailList=itemMapper.listDtoToDomain(itemDetailFormList);
-        itemDetailList=itemDetailSaveList(itemDetailList);
 
-        //Dto로 재포장하여 전송
-        itemDetailFormList=itemMapper.listDomainToDto(itemDetailList);
+    @Transactional
+    public ItemForm itemDetailListSave(ItemForm itemForm){
+        //매퍼 풀기
+        Item item=Item.builder()
+                .itemName(itemForm.getItemName())
+                .build();
+        itemService.saveItem(item);
+
+        List<ItemDetail> itemDetailList=itemMapper.listDtoToDomainN(itemForm.getItemDetailFormList());
+
+        //연관관계 매핑
+        itemDetailList=itemDetailSaveList(item,itemDetailList);
+
+
+        //재포장
+        ItemForm itemDetailFormList=itemMapper.itemDetailToDto(item,itemDetailList);
+
         return itemDetailFormList;
     }
 
@@ -38,82 +50,81 @@ public class ItemDetailService {
         return itemDetailRepository.save(itemDetail);
     }
 
-    //다중저장과 연관관계 설정
-    @Transactional
-    public List<ItemDetail> itemDetailSaveList(List<ItemDetail> itemDetailList){
-        System.out.println("itemDetailList.get(0) = " + itemDetailList.get(0).getItem().getItemName());
-        Item item=itemService.saveItem(itemDetailList.get(0).getItem());
-        itemDetailList.replaceAll(new UnaryOperator<ItemDetail>() {
-            @Override
-            public ItemDetail apply(ItemDetail itemDetail) {
-                itemDetail.itemConnect(item);
-                return itemDetail;
-            }
-        });
-        //item 저장은 한번만 이뤄지면 되므로
+    //다중저장과 연관관계 설정, enum 임시저장
+    private List<ItemDetail> itemDetailSaveList(Item item,List<ItemDetail> itemDetailList){
+        for(ItemDetail itemDetail:itemDetailList){
+            itemDetail.setItemMainApply(ItemMainApply.NON);
+            itemDetail.itemConnect(item);
+        }
+        //enum 설정하기전에 0번을 적용하는것으로 진행할게요
+        itemDetailList.get(0).setItemMainApply(ItemMainApply.APPLY);
         return itemDetailRepository.saveAll(itemDetailList);
     }
 
+    //전체출력 ( 대표 출력 )
+    public List<ItemDetailForm.MainForm> findMainList(){
+        List<ItemDetail> list=itemDetailRepository.listItemDetailsMainFind(ItemMainApply.APPLY);
+        List<ItemDetailForm.MainForm> listForm=itemMapper.mainPage(list);
+        return listForm;
+    }
+
+    //상품 상세 페이지
+    //상품 아이디를 받으면 전체 상품옵션을 돌려주는 방식
+    public ItemForm findItemDetailPage(Long id){
+        List<ItemDetail> list =itemDetailRepository.findItemDetailPage(id);
+        ItemForm itemForm=itemMapper.itemDetailToDto(list.get(0).getItem(),list);
+        return itemForm;
+    }
 
 
+    //삭제
+    //지운 상품에 대해 정보를 돌려주는 역할을 해보도록 해보자
+    @Transactional
+    public ItemForm delItem(Long id){
+        ItemForm itemForm=findItemDetailPage(id);
+        itemService.itemDelete(id);
+        return itemForm;
+    }
 
 
+    //옵션 개별 제거
+    @Transactional
+    public ItemForm delItemDetail(Long id){
+        ItemDetail itemDetail=itemDetailRepository.findById(id).get();
+        List<ItemDetail> itemDetailList=new ArrayList<>();
+        itemDetailList.add(itemDetail);
 
+        ItemForm itemForm=itemMapper.itemDetailToDto(itemDetail.getItem(),itemDetailList);
 
+        itemDetailRepository.deleteById(id);
+        return itemForm;
+    }
 
-
-
-
+//    public ItemForm.ItemFormUpdate updateItemDetail(Long id,ItemForm.ItemFormUpdate itemFormUpdate){
+//        //풀기
+//        List<ItemDetail> itemDetailList = itemMapper.updateItemDetaillistToDomain(itemFormUpdate.getItemDetailUpdateList());
+//        Item item=itemService.itemFindNum(itemFormUpdate.getItemId());
 //
-//    //전체 옵션 출력
-//    public ItemDetail itemDetailFind(Long id) {
-//        return itemDetailRepository.findById(id).get();
-//    }
-//
-//    //전체 리스트
-//    public List<ItemDetail> listItemDetailsALLFind() {
-//        return itemDetailRepository.listItemDetailsALLFind();
-//    }
-//
-//    public List<ItemDetailForm> itemDetailFormList(){
-//        List<ItemDetail> itemDetailList=itemDetailRepository.listItemDetailsALLFind();
-//        List<ItemDetailForm> itemDetailForms=itemMapper.listDomainToDto(itemDetailList);
-//
-//
-//        return itemDetailForms;
-//
-//    }
-//
-//
-//    //특정 상품에 대한 리스트
-//    public List<ItemDetail> listItemDetailFind(Long itemId) {
-//
-//        return itemDetailRepository.getItemDetailByItem(itemId);
-//    }
-//
-//    //삭제
-//    @Transactional
-//    public boolean itemDetailDelete(Long id) {
-//        try {
-//            itemDetailRepository.deleteById(id);
-//            return true;
-//        } catch (EmptyResultDataAccessException e) {
-//            return false;
+//        //업데이트
+//        //연관관계 매핑
+//        for(ItemDetail itemDetail:itemDetailList){
+//            itemDetail.itemConnect(item);
 //        }
-//    }
 //
-//    //아이템 디테일 업데이트
-////    @Transactional
-////    public ItemDetail itemDetailUpdate(Long id, ItemDetail itemDetail) {
-////        ItemDetail itemDetail1=itemDetailFind(id);
-////        itemDetail1.updateItemDetail(
-////                itemDetail1.getPrice(),
-////                itemDetail1.getStockQuantity(),
-////                itemDetail1.getOptionName(),
-////                itemDetail1.getDetailImg());
-////
-////        itemDetail1= itemDetailSave(itemDetail1);
-////
-////        return itemDetail1;
-////    }
+//
+//        //재포장
+//
+//
+//    }
 }
+
+
+
+
+
+
+
+
+
+
+

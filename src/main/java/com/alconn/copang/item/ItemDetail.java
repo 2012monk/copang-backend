@@ -1,9 +1,6 @@
 package com.alconn.copang.item;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -11,7 +8,7 @@ import javax.persistence.*;
 @Getter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ItemDetail {
 
     @Id @GeneratedValue
@@ -38,14 +35,28 @@ public class ItemDetail {
 
     private String subImg;
 
-//    @Enumerated(EnumType.STRING)
-//    private ItemMainApply itemMainApply;
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private ItemMainApply itemMainApply=ItemMainApply.NON;
+
+    public void updateAllData(int price,int stockQuantity, String optionName, String optionValue, String mainImg, String subImg){
+        this.price=price;
+        this.stockQuantity=stockQuantity;
+        this.optionName=optionName;
+        this.optionValue=optionValue;
+        this.mainImg=mainImg;
+        this.subImg=subImg;
+    }
 
 
     //ItemDetail 빌드시 후 아이템 추가하여 순환참조 끊는다
     public void itemConnect(Item item){
             this.item=item;
             item.getItemDetails().add(this);
+    }
+
+    public void setItemMainApply(ItemMainApply itemMainApply) {
+        this.itemMainApply = itemMainApply;
     }
 
 

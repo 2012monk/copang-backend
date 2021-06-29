@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 //@Setter
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Item {
     @Id @GeneratedValue
     private Long itemId;
