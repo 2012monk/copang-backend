@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+//저장
 @Getter
 @Builder
 @NoArgsConstructor
@@ -90,11 +91,12 @@ public class ItemDetailForm {
         }
 
     }
+    //업데이트
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class detailUpdate{
+    public static class DetailUpdateClass {
 
         @NotBlank
         private Long itemDetailId;
@@ -115,5 +117,18 @@ public class ItemDetailForm {
         private String mainImg;
 
         private String subImg;
+
+        @Override
+        public String toString() {
+            return "DetailUpdateClass{" +
+                    "itemDetailId=" + itemDetailId +
+                    ", price=" + price +
+                    ", stockQuantity=" + stockQuantity +
+                    ", optionName='" + optionName + '\'' +
+                    ", optionValue='" + optionValue + '\'' +
+                    ", mainImg='" + mainImg + '\'' +
+                    ", subImg='" + subImg + '\'' +
+                    '}';
+        }
     }
 }

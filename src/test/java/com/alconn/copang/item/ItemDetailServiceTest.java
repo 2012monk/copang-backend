@@ -71,7 +71,7 @@ public class ItemDetailServiceTest {
 
         }
         itemDetailList.get(0).setItemMainApply(ItemMainApply.APPLY);
-
+        itemDetailRepository.saveAll(itemDetailList);
         em.flush();
         em.clear();
 
@@ -137,6 +137,39 @@ public class ItemDetailServiceTest {
         System.out.println("id = " + id);
         itemRepository.deleteById(id);
         System.out.println("list2 = " + list2);
+    }
+
+    @Test
+    public void updateTest(){
+        List<ItemDetail> list=findMockData();
+        List<ItemDetail> testList=itemDetailRepository.findItemDetailPage(list.get(0).getItem().getItemId());
+        List<ItemDetailForm.DetailUpdateClass> testUpdateList =new ArrayList<>();
+
+        for(ItemDetail itemDetail:testList){
+            testUpdateList.add(
+                ItemDetailForm.DetailUpdateClass.builder()
+                        .itemDetailId(itemDetail.getItemDetailId())
+                        .price(20000)
+                        .stockQuantity(30)
+                        .optionName("수정")
+                        .optionValue("수정테스트")
+                        .mainImg("수정사진")
+                        .subImg("수정이미지")
+                        .build()
+            );
+
+        }
+
+        ItemForm.ItemFormUpdate itemFormUpdate= ItemForm.ItemFormUpdate.builder()
+                .itemId(testList.get(0).getItem().getItemId())
+                .itemName(testList.get(0).getItem().getItemName())
+                .itemDetailUpdateClassList(testUpdateList)
+                .build();
+
+        ItemForm itemForm=itemDetailService.updateItemDetail(itemFormUpdate);
+
+        em.flush();
+        em.clear();
     }
 
 }

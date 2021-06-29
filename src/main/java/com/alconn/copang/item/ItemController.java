@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/item")
+@RequestMapping(value = "/api/item")
 @Slf4j
 public class ItemController {
 
@@ -27,6 +27,7 @@ public class ItemController {
         return ResponseMessage.<ItemForm>builder()
                 .message("저장완료")
                 .data(itemFormReturn)
+                .code(200)
                 .build();
     }
 
@@ -37,6 +38,7 @@ public class ItemController {
         return ResponseMessage.<List<ItemDetailForm.MainForm>>builder()
                 .message("대표리스트")
                 .data(itemDetailFormList)
+                .code(200)
                 .build();
     }
 
@@ -47,6 +49,7 @@ public class ItemController {
         return ResponseMessage.<ItemForm>builder()
                 .message("상품상세페이지")
                 .data(itemForm)
+                .code(200)
                 .build();
 
     }
@@ -58,6 +61,7 @@ public class ItemController {
         return ResponseMessage.<ItemForm>builder()
                 .message("상품삭제된목록")
                 .data(itemForm)
+                .code(200)
                 .build();
     }
 
@@ -69,20 +73,21 @@ public class ItemController {
         return ResponseMessage.<ItemForm>builder()
                 .message("상품삭제된목록")
                 .data(itemForm)
+                .code(200)
                 .build();
     }
 
-//    //상품 전체 수정
-//    @PutMapping("/update/itemId/update")
-//    public ResponseMessage<ItemForm> itemUpdate(@RequestBody ItemForm.ItemFormUpdate itemForm,
-//                                                @PathVariable(name = "itemId")Long id){
-//        ItemForm itemForm1=itemDetailService.delItem(id);
-//
-//        return ResponseMessage.<ItemForm>builder()
-//                .message("상품삭제된목록")
-//                .data(itemForm1)
-//                .build();
-//    }
+    //상품 전체 수정
+    @PutMapping("/update/itemId/update")
+    public ResponseMessage<ItemForm> itemUpdate(@RequestBody ItemForm.ItemFormUpdate itemForm){
+        ItemForm itemForm1=itemDetailService.updateItemDetail(itemForm);
+
+        return ResponseMessage.<ItemForm>builder()
+                .message("상품전체수정목록")
+                .data(itemForm1)
+                .code(200)
+                .build();
+    }
 
     //옵션하나 수정
 //    @PutMapping("/update/itemDetailId/update")
