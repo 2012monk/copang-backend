@@ -4,9 +4,9 @@ import com.alconn.copang.annotations.InjectId;
 import com.alconn.copang.common.ResponseMessage;
 import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import com.alconn.copang.exceptions.ValidationException;
-import com.alconn.copang.order.dto.OrderForm.Response;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,31 +32,58 @@ public class AddressController {
     }
 
     @PostMapping
-    public ResponseMessage<AddressForm> registerAddress(@InjectId Long clientId, @RequestBody AddressForm form)
+    public ResponseMessage<AddressForm> registerAddress(@InjectId Long clientId,
+        @RequestBody AddressForm form)
         throws ValidationException {
         return ResponseMessage.success(
             service.registerAddress(form, clientId)
         );
     }
 
-
-    @PutMapping("/{addressId}")
-    public ResponseMessage<AddressForm> updateAddress(@PathVariable(name = "addressId") Long addressId, @RequestBody AddressForm form)
-        throws ValidationException, NoSuchEntityExceptions {
-        return  ResponseMessage.success(
-            service.updateAddress(form, addressId)
-        );
-    }
+//    @PutMapping("/{addressId}")
+//    public ResponseMessage<AddressForm> updateAddress(@PathVariable(name = "addressId") Long addressId, @RequestBody AddressForm form)
+//        throws ValidationException, NoSuchEntityExceptions {
+//        return  ResponseMessage.success(
+//            service.updateAddress(form, addressId)
+//        );
+//    }
 
     @PatchMapping("/{addressId}")
-    public ResponseMessage<String> setDefaultAddress(@PathVariable Long addressId, @InjectId Long clientId)
+    public ResponseMessage<String> setDefaultAddress(@PathVariable Long addressId,
+        @InjectId Long clientId)
         throws NoSuchEntityExceptions {
         return ResponseMessage.successMessage(
             service.setPrimaryAddress(addressId, clientId)
         );
     }
 
+    @PostMapping("/default")
+    public ResponseMessage<AddressForm> saveDefault(@InjectId Long clientId,
+        @RequestBody AddressForm form)
+        throws NoSuchEntityExceptions, ValidationException {
+        return ResponseMessage.success(
+            service.registerPrimaryAddress(form, clientId)
+        );
+    }
 
+    @PutMapping("/{addressId}")
+    public ResponseMessage<AddressForm> updateAddress(
+        @PathVariable Long addressId,
+        @InjectId Long clientId, @RequestBody AddressForm form)
+        throws NoSuchEntityExceptions, ValidationException {
+
+        return ResponseMessage.success(
+            service.updateAddress(form, addressId, clientId)
+        );
+    }
+
+    @DeleteMapping("/{addressId}")
+    public ResponseMessage<AddressForm> deleteAddress (@InjectId Long clientId, @PathVariable Long addressId)
+        throws NoSuchEntityExceptions {
+        return ResponseMessage.success(
+            service.deleteAddress(addressId, clientId)
+        );
+    }
 
 
 }

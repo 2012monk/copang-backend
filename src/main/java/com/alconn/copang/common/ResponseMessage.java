@@ -49,7 +49,7 @@ public class ResponseMessage<T> {
 
         public static ResponseMessage<String> successMessage(boolean success) {
             return ResponseMessage.<String>builder()
-                .message("success")
+                .message(success ? "success" : "failed")
                 .code(200)
                 .build();
         }

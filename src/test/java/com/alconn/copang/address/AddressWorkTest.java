@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.alconn.copang.client.Client;
 import com.alconn.copang.client.ClientRepo;
 import javax.persistence.EntityManager;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,6 +29,7 @@ class AddressWorkTest {
     ClientRepo repo;
 
 
+    @Disabled
     @Transactional
     @Test
     void registerAddress() {

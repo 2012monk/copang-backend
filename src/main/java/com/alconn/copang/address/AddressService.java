@@ -20,6 +20,12 @@ public class AddressService {
     // 최댓값 5
     @Transactional
     public AddressForm registerAddress(AddressForm form, Long clientId) throws ValidationException {
+        Address address = saveAddress(form, clientId);
+
+        return mapper.toDto(address);
+    }
+
+    private Address saveAddress(AddressForm form, Long clientId) throws ValidationException {
         List<Address> list = addressRepository.findAddressesByClient_ClientId(clientId);
 
         if (list.size() > 4) {
@@ -32,22 +38,36 @@ public class AddressService {
         }
 
         addressRepository.save(address);
+        return address;
+    }
 
-        AddressForm res = mapper.toDto(address);
-        return res;
+    /**
+     * @param form     등록폼
+     * @param clientId 유저 아이디
+     * @return AddressForm 주소 반환객체
+     * @throws ValidationException    주소 최대갯수 초과시
+     * @throws NoSuchEntityExceptions 주소가 정상적으로 저장되지 않아 기본배송지 설정실패
+     */
+    @Transactional
+    public AddressForm registerPrimaryAddress(AddressForm form, Long clientId)
+        throws ValidationException, NoSuchEntityExceptions {
+        Address address = saveAddress(form, clientId);
+        setPrimaryAddress(address.getAddressId(), clientId);
+
+        return mapper.toDto(address);
     }
 
     @Transactional
     public List<AddressForm> getAllAddresses(Long clientId) {
         List<Address> list = addressRepository.findAddressesByClient_ClientId(clientId);
-        List<AddressForm> res = mapper.toDto(list);
-        return res;
+        return mapper.toDto(list);
     }
 
     @Transactional
-    public AddressForm getPrimaryAddress(Long clientId) {
+    public AddressForm getPrimaryAddress(Long clientId) throws NoSuchEntityExceptions {
         Address address = addressRepository
-            .findAddressByClient_ClientIdAndPriority(clientId, EntityPriority.PRIMARY);
+            .findAddressByClient_ClientIdAndPriority(clientId, EntityPriority.PRIMARY)
+            .orElseThrow(NoSuchEntityExceptions::new);
 
         return mapper.toDto(address);
     }
@@ -57,33 +77,43 @@ public class AddressService {
         Address updateAddress = addressRepository.findById(addressId).orElseThrow(
             NoSuchEntityExceptions::new);
 
-        Address address = addressRepository
-            .findAddressByClient_ClientIdAndPriority(clientId, EntityPriority.PRIMARY);
+        addressRepository
+            .findAddressByClient_ClientIdAndPriority(clientId, EntityPriority.PRIMARY).ifPresent(
+            Address::lowerPriority
+        );
 
-        address.lowerPriority();
         updateAddress.setPrimary();
         return true;
     }
 
     @Transactional
-    public boolean deleteAddress(Long addressId, Long clientId) throws NoSuchEntityExceptions {
-        Address validate = addressRepository.findAddressesByClient_ClientId(clientId).stream().filter(
-            i -> i.getAddressId().equals(addressId)
-        ).findAny().orElseThrow(NoSuchEntityExceptions::new);
-
+    public AddressForm deleteAddress(Long addressId, Long clientId) throws NoSuchEntityExceptions {
+        Address validate = addressRepository.findAddressesByClient_ClientId(clientId).stream()
+            .filter(
+                i -> i.getAddressId().equals(addressId)
+            ).findAny().orElseThrow(NoSuchEntityExceptions::new);
         addressRepository.deleteById(addressId);
 
-        return true;
+        if (validate.getPriority() == EntityPriority.PRIMARY) {
+            List<Address> list = addressRepository.findAddressesByClient_ClientId(clientId);
+            if (!list.isEmpty()) {
+                list.get(0).setPrimary();
+            }
+        }
+
+        return AddressForm.builder().addressId(addressId).clientId(clientId).build();
     }
 
     @Transactional
-    public AddressForm updateAddress(AddressForm form, Long addressId)
-        throws NoSuchEntityExceptions {
-        Address address = addressRepository.findById(addressId).orElseThrow(NoSuchEntityExceptions::new);
+    public AddressForm updateAddress(AddressForm form, Long addressId, Long clientId)
+        throws NoSuchEntityExceptions, ValidationException {
 
-//        address.updateAddress(form.getAddress(), form.getDetail());
-//
-//        address.updateReceiver(form.getReceiverName(), form.getReceiverPhone());
+        Address address = addressRepository.findById(addressId)
+            .orElseThrow(NoSuchEntityExceptions::new);
+
+        if (!address.getClient().getClientId().equals(clientId)) {
+            throw new ValidationException("요청하신 리소스의 권한이 없습니다");
+        }
 
         address.update(form.getAddress(),
             form.getDetail(),
