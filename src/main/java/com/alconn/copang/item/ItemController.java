@@ -43,7 +43,7 @@ public class ItemController {
     }
 
     //상세페이지
-    @GetMapping("/list/itemDetail/{itemId}")
+    @GetMapping("/list/itemId={itemId}")
     public ResponseMessage<ItemForm> itemDetailPageResponse(@PathVariable(name = "itemId")Long id){
         ItemForm itemForm=itemDetailService.findItemDetailPage(id);
         return ResponseMessage.<ItemForm>builder()
@@ -55,7 +55,7 @@ public class ItemController {
     }
 
     //1. 상품 삭제
-    @DeleteMapping("/delete/itemId/{itemId}")
+    @DeleteMapping("/delete/itemId={itemId}")
     public ResponseMessage<ItemForm> itemDel(@PathVariable(name = "itemId")Long id){
         ItemForm itemForm=itemDetailService.delItem(id);
         return ResponseMessage.<ItemForm>builder()
@@ -66,7 +66,7 @@ public class ItemController {
     }
 
     //2. 상품옵션 하나 삭제
-    @DeleteMapping("/delete/itemDetail/{itemDetailId}")
+    @DeleteMapping("/delete/itemDetail={itemDetailId}")
     public ResponseMessage<ItemForm> itemDetailDel(@PathVariable(name = "itemDetailId")Long id){
         ItemForm itemForm
                 =itemDetailService.delItemDetail(id);

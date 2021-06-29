@@ -185,7 +185,7 @@ public class ItemControllerTest {
         List<Item> item = itemService.itemFindAll();
         Long itemId = item.get(0).getItemId();
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/item/list/itemDetail/{itemId}", itemId)
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/item/list/itemId={itemId}", itemId)
                 .characterEncoding("utf-8")
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())
@@ -193,11 +193,8 @@ public class ItemControllerTest {
                         ApiDocumentUtils.getDocumentRequest(),
                         ApiDocumentUtils.getDocumentResponse(),
                         pathParameters(
-                                parameterWithName("itemId").description("상품등록코드").optional()
+                                parameterWithName("itemId").description("상품등록코드")
                         ),
-//                        relaxedRequestFields(
-//                          fieldWithPath("itemId").type(JsonFieldType.NUMBER).description("상품아이디")
-//                        ),
                         relaxedResponseFields(
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
                                 fieldWithPath("data").type(JsonFieldType.OBJECT).description("결과데이터")
@@ -213,10 +210,21 @@ public class ItemControllerTest {
         List<Item> item = itemService.itemFindAll();
         Long itemId = item.get(0).getItemId();
 
-        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/item/delete/itemId/" + itemId)
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/item/delete/itemId={itemId}" , itemId)
                 .characterEncoding("utf-8")
         ).andExpect(status().isOk())
-                .andExpect(jsonPath("$.data").exists()).andDo(print());
+                .andExpect(jsonPath("$.data").exists())
+                .andDo(document("item/delete-item",
+                        ApiDocumentUtils.getDocumentRequest(),
+                        ApiDocumentUtils.getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("itemId").description("상품등록코드")
+                        ),
+                        relaxedResponseFields(
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).description("삭제된 상품정보")
+                        )))
+                .andDo(print());
     }
 
     @DisplayName("상품옵션삭제")
@@ -226,19 +234,20 @@ public class ItemControllerTest {
         List<Item> item = itemService.itemFindAll();
         Long itemDetailId = item.get(0).getItemDetails().get(0).getItemDetailId();
 
-        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/item/delete/itemDetail/" + itemDetailId)
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/item/delete/itemDetail={itemDetailId}" , itemDetailId)
                 .characterEncoding("utf-8")
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())
-//                .andDo(document("item/{method-name}",
-//                        ApiDocumentUtils.getDocumentRequest(),
-//                        ApiDocumentUtils.getDocumentResponse(),
-//                        pathParameters(
-//                                parameterWithName("itemDetailId").description("옵션아이디")
-//                        ),
-//                        relaxedResponseFields(
-//                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지")
-//                        )))
+                .andDo(document("item/delete-itemDetail",
+                        ApiDocumentUtils.getDocumentRequest(),
+                        ApiDocumentUtils.getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("itemDetailId").description("옵션아이디")
+                        ),
+                        relaxedResponseFields(
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).description("삭제된 상품옵션정보")
+                        )))
                 .andDo(print());
     }
 
