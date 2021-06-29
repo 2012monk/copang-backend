@@ -5,7 +5,6 @@ import static com.alconn.copang.ApiDocumentUtils.getDocumentRequest;
 import static com.alconn.copang.ApiDocumentUtils.getDocumentResponse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedRequestFields;
@@ -19,13 +18,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.alconn.copang.auth.LoginToken;
-import com.alconn.copang.common.AccessTokenContainer;
-import com.alconn.copang.exceptions.InvalidTokenException;
-import com.alconn.copang.exceptions.LoginFailedException;
+import com.alconn.copang.auth.AccessTokenContainer;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
