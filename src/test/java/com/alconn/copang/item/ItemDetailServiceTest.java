@@ -1,6 +1,5 @@
 package com.alconn.copang.item;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
-@Disabled
 @SpringBootTest
 @Transactional
 public class ItemDetailServiceTest {
@@ -33,14 +31,14 @@ public class ItemDetailServiceTest {
     EntityManager em;
 
 
-    public Item itemTest(){
+    private Item itemTest(){
         Item item=Item.builder()
                 .itemName("테스트상품")
                 .build();
         return item;
     }
 
-    public ItemDetail itemDetailTest(){
+    private ItemDetail itemDetailTest(){
         ItemDetail itemDetail=ItemDetail.builder()
                 .stockQuantity(10)
                 .price(10000)
@@ -66,10 +64,16 @@ public class ItemDetailServiceTest {
         itemDetailList.add(itemDetail);
         itemDetailList.add(itemDetail2);
 
-//        itemDetailList=itemDetailService.itemDetailSaveList(item,itemDetailList);
+        for(ItemDetail itemDetail1:itemDetailList){
+            itemDetail.setItemMainApply(ItemMainApply.NON);
+            itemDetail.itemConnect(item);
+            //enum 설정하기전에 0번을 적용하는것으로 진행할게요
+
+        }
+        itemDetailList.get(0).setItemMainApply(ItemMainApply.APPLY);
 
         em.flush();
-        em.close();
+        em.clear();
 
         return itemDetailList;
     }
@@ -81,7 +85,7 @@ public class ItemDetailServiceTest {
         findMockData();
         findMockData();
         em.flush();
-        em.close();
+        em.clear();
         List<ItemDetail> list=itemDetailRepository.listItemDetailsMainFind(ItemMainApply.APPLY);
         List<ItemDetailForm> list2= itemMapper.listDomainToDto(list);
         for(ItemDetailForm itemDetailForm:list2){
@@ -101,7 +105,7 @@ public class ItemDetailServiceTest {
         itemDetailRepository.save(itemDetail);
 
         em.flush();
-        em.close();
+        em.clear();
     }
 
     //mockup데이터 디비 확인용
@@ -111,7 +115,7 @@ public class ItemDetailServiceTest {
         findMockData();
         findMockData();
         em.flush();
-        em.close();
+        em.clear();
     }
 
     @Test
@@ -128,10 +132,10 @@ public class ItemDetailServiceTest {
     public void delTest(){
         List<ItemDetail> list=findMockData();
         List<ItemDetailForm> list2=itemMapper.listDomainToDto(list);
-        Long id=list.get(0).getItem().getItemId();
-        em.close();
-        itemRepository.deleteById(id);
         em.flush();
+        Long id=list.get(0).getItem().getItemId();
+        System.out.println("id = " + id);
+        itemRepository.deleteById(id);
         System.out.println("list2 = " + list2);
     }
 
