@@ -47,7 +47,7 @@ public interface ItemMapper {
     List<ItemDetail> listDtoToDomainN(List<ItemDetailForm.DetailForm> detailFormList);
 
 
-    List<ItemDetail> updateItemDetaillistToDomain(List<ItemDetailForm.detailUpdate> detailUpdateList);
+    List<ItemDetail> updateItemDetaillistToDomain(List<ItemDetailForm.DetailUpdateClass> detailUpdateClassList);
 
 
 

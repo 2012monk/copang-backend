@@ -187,6 +187,30 @@ operation::cart/delete-item[snippets='http-request,path-parameters,request-heade
 
 operation::cart/clear-cart[snippets='http-request,request-headers,http-response,response-fields']
 
+[[resources_tag]]
+= 상품 정보 APIs
+
+== 상품 목록
+==== `GET` /api/item/list
+operation::item/get-mainlist[snippets='http-request,http-response']
+
+== 상품 상세 목록
+==== `GET` /api/item/itemId=:itemId
+operation::item/get-itemlist[snippets='http-request,path-parameters,http-response']
+
+
+== 상품 등록
+==== `POST` /api/item
+operation::item/post-save[snippets='http-request,request-fields,http-response,response-fields']
+
+== 상품 삭제
+==== `DELETE` /api/item//delete/itemId=:itemId
+operation::item/delete-item[snippets='http-request,path-parameters,http-response,response-fields']
+
+
+== 상품 옵션 삭제
+==== `GET` /api/item/delete/itemDetail=:itemDetailId
+operation::item/delete-item[snippets='http-response,path-parameters,response-fields']
 
 = 주소 API
 
