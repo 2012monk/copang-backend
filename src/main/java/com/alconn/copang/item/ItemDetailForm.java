@@ -88,5 +88,28 @@ public class ItemDetailForm {
                     ", subImg='" + subImg + '\'' +
                     '}';
         }
+
+    }
+    public static class detailUpdate{
+
+        @NotBlank
+        private Long itemDetailId;
+
+        @NotBlank
+        private int price;
+
+        @NotBlank
+        private int stockQuantity;
+
+        @NotNull
+        private String optionName;
+
+        @NotNull
+        private String optionValue;
+
+        @NotBlank
+        private String mainImg;
+
+        private String subImg;
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
@@ -19,21 +20,8 @@ public class ItemDetailService {
 
     private final ItemService itemService;
 
-    private final EntityManager em;
 
-    //저장로직
-//    public List<ItemDetailForm> itemDetailListSave(List<ItemDetailForm> itemDetailFormList){
-//        //Domain
-//        List<ItemDetail> itemDetailList=itemMapper.listDtoToDomain(itemDetailFormList);
-//        //여기서 enum을 넣어줘야겠는데
-//
-//
-//        itemDetailList=itemDetailSaveList(itemDetailList);
-//
-//        //Dto로 재포장하여 전송
-//        itemDetailFormList=itemMapper.listDomainToDto(itemDetailList);
-//        return itemDetailFormList;
-//    }
+    @Transactional
     public ItemForm itemDetailListSave(ItemForm itemForm){
         //매퍼 풀기
         Item item=Item.builder()
@@ -63,20 +51,11 @@ public class ItemDetailService {
     }
 
     //다중저장과 연관관계 설정, enum 임시저장
-    @Transactional
-    public List<ItemDetail> itemDetailSaveList(Item item,List<ItemDetail> itemDetailList){
+    private List<ItemDetail> itemDetailSaveList(Item item,List<ItemDetail> itemDetailList){
         for(ItemDetail itemDetail:itemDetailList){
             itemDetail.setItemMainApply(ItemMainApply.NON);
             itemDetail.itemConnect(item);
         }
-        //        itemDetailList.replaceAll(new UnaryOperator<ItemDetail>() {
-//            @Override
-//            public ItemDetail apply(ItemDetail itemDetail) {
-//                itemDetail.setItemMainApply(ItemMainApply.NON);
-//                itemDetail.itemConnect(item);
-//                return itemDetail;
-//            }
-//        });
         //enum 설정하기전에 0번을 적용하는것으로 진행할게요
         itemDetailList.get(0).setItemMainApply(ItemMainApply.APPLY);
         return itemDetailRepository.saveAll(itemDetailList);
@@ -110,36 +89,38 @@ public class ItemDetailService {
 
     //옵션 개별 제거
     @Transactional
-    public ItemDetailForm delItemDetail(Long id){
+    public ItemForm delItemDetail(Long id){
         ItemDetail itemDetail=itemDetailRepository.findById(id).get();
-        ItemDetailForm itemDetailForm=itemMapper.domainToDto(itemDetail);
+        List<ItemDetail> itemDetailList=new ArrayList<>();
+        itemDetailList.add(itemDetail);
+
+        ItemForm itemForm=itemMapper.itemDetailToDto(itemDetail.getItem(),itemDetailList);
+
         itemDetailRepository.deleteById(id);
-        return itemDetailForm;
+        return itemForm;
     }
+
+//    public ItemForm.ItemFormUpdate updateItemDetail(Long id,ItemForm.ItemFormUpdate itemFormUpdate){
+//        //풀기
+//        List<ItemDetail> itemDetailList = itemMapper.updateItemDetaillistToDomain(itemFormUpdate.getItemDetailUpdateList());
+//        Item item=itemService.itemFindNum(itemFormUpdate.getItemId());
+//
+//        //업데이트
+//        //연관관계 매핑
+//        for(ItemDetail itemDetail:itemDetailList){
+//            itemDetail.itemConnect(item);
+//        }
+//
+//
+//        //재포장
+//
+//
+//    }
 }
 
 
 
-//    @Transactional
-    //수정
-    //전체 수정
-//    public List<ItemDetailForm> itemDetailUpdate(Long id,List<ItemDetailForm> itemDetailFormList){
-//        //수정 해야될 데이터
-//        List<ItemDetail> itemDetailList = itemMapper.listDtoToDomain(itemDetailFormList);
-//
-//        //id로 찾은 변경전 데이터
-//        List<ItemDetail> itemDetailListFind=itemDetailRepository.findItemDetailPage(id);
-//
-//        for(int i=0; i<itemDetailListFind.size();i++){
-//            itemDetailListFind.get(i).updateAllData(
-//                    itemDetailList.get(i).getPrice(),
-//                    itemDetailList.get(i).getStockQuantity(),
-//                    itemDetailList.get(i).getOptionName(),
-//                    itemDetailList.get(i).getOptionValue(),
-//                    itemDetailList.get(i).getMainImg(),
-//                    itemDetailList.get(i).getSubImg()
-//            );
-//        }
+
 
 
 

@@ -64,7 +64,7 @@ public class ItemDetailServiceTest {
         itemDetailList.add(itemDetail);
         itemDetailList.add(itemDetail2);
 
-        itemDetailList=itemDetailService.itemDetailSaveList(item,itemDetailList);
+//        itemDetailList=itemDetailService.itemDetailSaveList(item,itemDetailList);
 
         em.flush();
         em.close();

@@ -3,7 +3,6 @@ package com.alconn.copang.item;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
-import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 
 import java.util.List;
 
@@ -38,8 +37,17 @@ public interface ItemMapper {
     @Mapping(source = "itemDetailList",target = "itemDetailFormList")
     ItemForm itemDetailToDto(Item item, List<ItemDetail> itemDetailList);
 
+    //업데이트
+//    @Mapping(source = "itemDetailList",target = "itemDetailUpdateList")
+//    ItemForm.ItemFormUpdate itemDetailUpdateToDto(Item item, List<ItemDetail> itemDetailList);
+
+
+
 
     List<ItemDetail> listDtoToDomainN(List<ItemDetailForm.DetailForm> detailFormList);
+
+
+    List<ItemDetail> updateItemDetaillistToDomain(List<ItemDetailForm.detailUpdate> detailUpdateList);
 
 
 

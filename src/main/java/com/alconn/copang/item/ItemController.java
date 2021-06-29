@@ -20,7 +20,6 @@ public class ItemController {
 
     //저장
     @PostMapping("/add")
-//    public ResponseMessage<List<ItemDetailForm>> add( @RequestBody List<ItemDetailForm> itemDetailFormList) {
     public ResponseMessage<ItemForm> add(@RequestBody ItemForm itemForm) {
         System.out.println("" );
         System.out.println("itemForm.toString() = " + itemForm.toString());
@@ -60,87 +59,40 @@ public class ItemController {
                 .message("상품삭제된목록")
                 .data(itemForm)
                 .build();
-
     }
-
 
     //2. 상품옵션 하나 삭제
     @DeleteMapping("/delete/itemDetail/{itemDetailId}")
-    public ResponseMessage<ItemDetailForm> itemDetailDel(@PathVariable(name = "itemDetailId")Long id){
-        ItemDetailForm itemDetailForm=itemDetailService.delItemDetail(id);
-        return ResponseMessage.<ItemDetailForm>builder()
+    public ResponseMessage<ItemForm> itemDetailDel(@PathVariable(name = "itemDetailId")Long id){
+        ItemForm itemForm
+                =itemDetailService.delItemDetail(id);
+        return ResponseMessage.<ItemForm>builder()
                 .message("상품삭제된목록")
-                .data(itemDetailForm)
+                .data(itemForm)
                 .build();
     }
 
-
-
-
-//    @GetMapping("/list")
-//    public ResponseMessage<List<ItemDetailForm>> itemDetailList(){
-////
-////            List<ItemDetail> itemDetails=itemDetailService.listItemDetailsALLFind();
-////            System.out.println(itemDetails.toString());
-////
-////            List<ItemDetailForm> itemDetailForms= itemMapper.listDomainToDto(itemDetails);
-////            System.out.println("itemDetailForm.toString() = " + itemDetailForms.toString());
-//        List<ItemDetailForm> list=itemDetailService.itemDetailFormList();
-//        System.out.println("list.toString() = " + list.toString());
-//        return ResponseMessage.<List<ItemDetailForm>>builder()
-//                .message("전체조회")
-//                .data(list)
+//    //상품 전체 수정
+//    @PutMapping("/update/itemId/{itemId}")
+//    public ResponseMessage<ItemForm> itemUpdate(@RequestBody ItemForm.ItemFormUpdate itemForm,
+//                                                @PathVariable(name = "itemId")Long id){
+//        ItemForm itemForm1=itemDetailService.delItem(id);
+//
+//        return ResponseMessage.<ItemForm>builder()
+//                .message("상품삭제된목록")
+//                .data(itemForm1)
 //                .build();
 //    }
-//
-//    @GetMapping("/listOne")
-//    public ResponseMessage<ItemDetailForm> itemDetailfindOne(@PathVariable Long id){
-//        log.info("id:"+id);
-//        ItemDetail itemDetail=itemDetailService.itemDetailFind(id);
-//
-//        ItemDetailForm itemDetailForm=itemMapper.domainToDto(itemDetail);
+
+    //옵션하나 수정
+//    @PutMapping("/update/itemDetailId/{itemDetailId}")
+//    public ResponseMessage<ItemForm> itemDetailUpdate(@RequestBody ItemForm.ItemFormUpdate itemForm,
+//                                                      @PathVariable(name = "itemDetailId")Long id){
 //
 //        return ResponseMessage.<ItemDetailForm>builder()
-//                .message("상품하나조회")
+//                .message("상품삭제된목록")
 //                .data(itemDetailForm)
 //                .build();
-//        return ResponseMessage.<ItemDetailForm>builder()
-//                .message("상품하나조회")
-//                .data(itemDetailForm)
-//                .build();
-//    }
-
-//
-//
-//    @DeleteMapping("/delete/{id}")
-//    public ResponseMessage itemDetailDelete(@PathVariable Long id){
-//        boolean result=itemDetailService.itemDetailDelete(id);
-//        if(result==true)
-//            return ResponseMessage.builder()
-//                    .message( "삭제가 완료되었습니다")
-//                    .build();
-//
-//        else
-//            return ResponseMessage.builder()
-//                    .message("잘못된 요청입니다")
-//                    .build();
-//    }
-
-
-//
-//
-//    @DeleteMapping("/delete/{id}")
-//    public ResponseMessage itemDetailDelete(@PathVariable Long id){
-//        boolean result=itemDetailService.itemDetailDelete(id);
-//        if(result==true)
-//            return ResponseMessage.builder()
-//                    .message( "삭제가 완료되었습니다")
-//                    .build();
-//
-//        else
-//            return ResponseMessage.builder()
-//                    .message("잘못된 요청입니다")
-//                    .build();
 //    }
 
 }
