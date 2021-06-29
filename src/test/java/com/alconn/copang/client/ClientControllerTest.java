@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.alconn.copang.ApiDocumentUtils;
 import com.alconn.copang.auth.LoginToken;
-import com.alconn.copang.common.AccessTokenContainer;
+import com.alconn.copang.auth.AccessTokenContainer;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;

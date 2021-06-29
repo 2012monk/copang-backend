@@ -12,7 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.alconn.copang.ApiDocumentUtils;
 import com.alconn.copang.auth.LoginToken;
-import com.alconn.copang.common.AccessTokenContainer;
+import com.alconn.copang.auth.AccessTokenContainer;
 import com.alconn.copang.config.SecurityConfig;
 import com.alconn.copang.security.CustomLogoutHandler;
 import com.alconn.copang.security.CustomUserDetailsService;
@@ -31,7 +31,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;

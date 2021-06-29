@@ -7,7 +7,7 @@ import com.alconn.copang.client.Client;
 import com.alconn.copang.client.ClientRepo;
 import com.alconn.copang.client.ClientService;
 import com.alconn.copang.client.Role;
-import com.alconn.copang.common.AccessTokenContainer;
+import com.alconn.copang.auth.AccessTokenContainer;
 import com.alconn.copang.item.Item;
 import com.alconn.copang.item.ItemDetail;
 import com.alconn.copang.item.ItemDetailService;
