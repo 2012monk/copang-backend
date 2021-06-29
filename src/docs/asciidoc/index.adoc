@@ -195,6 +195,7 @@ operation::cart/clear-cart[snippets='http-request,request-headers,http-response,
 operation::item/get-mainlist[snippets='http-request,http-response']
 
 == 상품 상세 목록
+==== `GET` /api/item/itemId=:itemId
 operation::item/get-itemlist[snippets='http-request,path-parameters,http-response']
 
 
@@ -202,13 +203,12 @@ operation::item/get-itemlist[snippets='http-request,path-parameters,http-respons
 ==== `POST` /api/item
 operation::item/post-save[snippets='http-request,request-fields,http-response,response-fields']
 
-
+== 상품 삭제
+==== `DELETE` /api/item//delete/itemId=:itemId
+operation::item/delete-item[snippets='http-request,path-parameters,http-response,response-fields']
 
 == 상품 옵션 삭제
-
-
-== 상품 옵션 삭제
-//==== `GET` /item/delete/itemDetail/:itemDetailId
-//operation::item/delete-item[snippets='http-response,response-fields']
+==== `GET` /api/item/delete/itemDetail=:itemDetailId
+operation::item/delete-item[snippets='http-response,path-parameters,response-fields']
 
 아직 문서화 되지 않았습니정
