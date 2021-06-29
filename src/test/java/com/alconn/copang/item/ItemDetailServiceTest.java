@@ -31,14 +31,14 @@ public class ItemDetailServiceTest {
     EntityManager em;
 
 
-    public Item itemTest(){
+    private Item itemTest(){
         Item item=Item.builder()
                 .itemName("테스트상품")
                 .build();
         return item;
     }
 
-    public ItemDetail itemDetailTest(){
+    private ItemDetail itemDetailTest(){
         ItemDetail itemDetail=ItemDetail.builder()
                 .stockQuantity(10)
                 .price(10000)
