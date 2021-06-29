@@ -186,8 +186,21 @@ operation::cart/delete-item[snippets='http-request,path-parameters,request-heade
 ==== `DELETE` /api/cart
 
 operation::cart/clear-cart[snippets='http-request,request-headers,http-response,response-fields']
+
+
+= 주소 API
+
+== 주소등록
+==== `POST` /api/address
+
+operation::address/create[snippets='http-request,request-headers,request-fields,http-response,response-fields']
+
+== 주소 조회 [유저 기준]
+==== `GET` /api/address
+
+
+operation::address/get-all-address[snippets='http-request,request-headers,http-response,response-fields']
+
 [[resources_tag]]
-== 상품 정보 APIs
-
-
+= 상품 정보 APIs
 아직 문서화 되지 않았습니정
