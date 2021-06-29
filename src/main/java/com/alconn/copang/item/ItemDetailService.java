@@ -4,10 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.UnaryOperator;
 
 @Service
 @Transactional(readOnly = true)
@@ -100,28 +98,50 @@ public class ItemDetailService {
         return itemForm;
     }
 
+    //DTO로 받아서 전체 업데이트
+    @Transactional
+    public ItemForm updateItemDetail(ItemForm.ItemFormUpdate itemFormUpdate){
+        //풀기
+        List<ItemDetailForm.DetailUpdateClass> iDetailUpdateClasses =itemFormUpdate.getItemDetailUpdateClassList();
 
-    //통합업데이트 상품, 상품상세 id = ItemId
-//    public ItemForm.ItemFormUpdate updateItemDetail(ItemForm.ItemFormUpdate itemFormUpdate){
-//        //풀기
-//        List<ItemDetail> itemDetailList = itemDetailRepository.findItemDetailPage(itemFormUpdate.getItemId());
-//
-//
-//
-//        List<ItemDetail> itemDetailList = itemMapper.updateItemDetaillistToDomain(itemFormUpdate.getItemDetailUpdateList());
-//        Item item=itemService.itemFindNum(itemFormUpdate.getItemId());
-//
-//        //업데이트
-//        //연관관계 매핑
-//        for(ItemDetail itemDetail:itemDetailList){
-//            itemDetail.itemConnect(item);
-//        }
-//
-//
-//        //재포장
-//
-//
-//    }
+       //item이 바뀌었는지 확인
+        Item item=itemService.itemFindNum(itemFormUpdate.getItemId());
+
+        boolean perceive=false;
+        if(!item.getItemName().equals(itemFormUpdate.getItemName())){
+            item.nameUpdate(itemFormUpdate.getItemName());
+            perceive=true;
+        }
+
+        //상품 id에 해당하는 옵션조회
+        List<ItemDetail> itemDetailList=itemDetailRepository.findItemDetailPage(itemFormUpdate.getItemId());
+        System.out.println("값 바뀌는지 테스트 = " + itemDetailList.get(0).getMainImg());
+
+        //옵션 변경
+        if(itemFormUpdate.getItemDetailUpdateClassList().size()==itemDetailList.size()){
+            for(int i=0;i<itemDetailList.size();i++){
+                itemDetailList.get(i).updateAllData(iDetailUpdateClasses.get(i).getPrice(),
+                        iDetailUpdateClasses.get(i).getStockQuantity(),
+                        iDetailUpdateClasses.get(i).getOptionName(),
+                        iDetailUpdateClasses.get(i).getOptionValue(),
+                        iDetailUpdateClasses.get(i).getMainImg(),
+                        iDetailUpdateClasses.get(i).getSubImg());
+
+                //연관관계
+                if(perceive)itemDetailList.get(i).itemConnect(item);
+            }
+        }
+        itemDetailRepository.saveAll(itemDetailList);
+
+        //재포장
+        ItemForm itemForm=itemMapper.itemDetailToDto(item,itemDetailList);
+        return itemForm;
+    }
+
+
+    //개별업데이트
+
+
 }
 
 

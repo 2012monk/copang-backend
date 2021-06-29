@@ -30,4 +30,9 @@ public class Item {
     @Builder.Default
     private List<ItemDetail> itemDetails=new ArrayList<>();
 
+
+     public void nameUpdate(String itemName){
+         this.itemName=itemName;
+     }
+
 }
