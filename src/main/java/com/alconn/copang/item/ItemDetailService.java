@@ -100,22 +100,41 @@ public class ItemDetailService {
         return itemForm;
     }
 
-//    public ItemForm.ItemFormUpdate updateItemDetail(Long id,ItemForm.ItemFormUpdate itemFormUpdate){
-//        //풀기
-//        List<ItemDetail> itemDetailList = itemMapper.updateItemDetaillistToDomain(itemFormUpdate.getItemDetailUpdateList());
-//        Item item=itemService.itemFindNum(itemFormUpdate.getItemId());
-//
-//        //업데이트
-//        //연관관계 매핑
-//        for(ItemDetail itemDetail:itemDetailList){
-//            itemDetail.itemConnect(item);
-//        }
-//
-//
-//        //재포장
-//
-//
-//    }
+    //DTO기반으로 업데이트
+    @Transactional
+    public ItemForm updateItemDetail(ItemForm.ItemFormUpdate itemFormUpdate){
+        //풀기
+        List<ItemDetailForm.detailUpdate> iDetailUpdates=itemFormUpdate.getItemDetailUpdateList();
+
+        //상품 id에 해당하는 옵션조회
+        Item item=itemService.itemFindNum(itemFormUpdate.getItemId());
+
+        if(!item.getItemName().equals(itemFormUpdate.getItemName())){
+            item.nameUpdate(itemFormUpdate.getItemName());
+        }
+
+        List<ItemDetail> itemDetailList=itemDetailRepository.findItemDetailPage(itemFormUpdate.getItemId());
+
+
+        //옵션 변경
+        if(itemFormUpdate.getItemDetailUpdateList().size()==itemDetailList.size()){
+            for(int i=0;i<itemDetailList.size();i++){
+                itemDetailList.get(i).updateAllData(iDetailUpdates.get(i).getPrice(),
+                        iDetailUpdates.get(i).getStockQuantity(),
+                        iDetailUpdates.get(i).getOptionName(),
+                        iDetailUpdates.get(i).getOptionValue(),
+                        iDetailUpdates.get(i).getMainImg(),
+                        iDetailUpdates.get(i).getSubImg());
+
+                //연관관계
+                itemDetailList.get(i).itemConnect(item);
+            }
+        }
+
+        //재포장
+        ItemForm itemForm=itemMapper.itemDetailToDto(item,itemDetailList);
+        return itemForm;
+    }
 }
 
 

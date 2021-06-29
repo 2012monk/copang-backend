@@ -90,6 +90,10 @@ public class ItemDetailForm {
         }
 
     }
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class detailUpdate{
 
         @NotBlank

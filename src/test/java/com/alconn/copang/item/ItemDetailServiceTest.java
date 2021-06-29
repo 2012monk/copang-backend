@@ -69,7 +69,7 @@ public class ItemDetailServiceTest {
 //        itemDetailList=itemDetailService.itemDetailSaveList(item,itemDetailList);
 
         em.flush();
-        em.close();
+        em.clear();
 
         return itemDetailList;
     }
@@ -81,7 +81,7 @@ public class ItemDetailServiceTest {
         findMockData();
         findMockData();
         em.flush();
-        em.close();
+        em.clear();
         List<ItemDetail> list=itemDetailRepository.listItemDetailsMainFind(ItemMainApply.APPLY);
         List<ItemDetailForm> list2= itemMapper.listDomainToDto(list);
         for(ItemDetailForm itemDetailForm:list2){
@@ -101,7 +101,7 @@ public class ItemDetailServiceTest {
         itemDetailRepository.save(itemDetail);
 
         em.flush();
-        em.close();
+        em.clear();
     }
 
     //mockup데이터 디비 확인용
@@ -111,7 +111,7 @@ public class ItemDetailServiceTest {
         findMockData();
         findMockData();
         em.flush();
-        em.close();
+        em.clear();
     }
 
     @Test
@@ -129,7 +129,7 @@ public class ItemDetailServiceTest {
         List<ItemDetail> list=findMockData();
         List<ItemDetailForm> list2=itemMapper.listDomainToDto(list);
         Long id=list.get(0).getItem().getItemId();
-        em.close();
+        em.clear();
         itemRepository.deleteById(id);
         em.flush();
         System.out.println("list2 = " + list2);
