@@ -34,15 +34,14 @@ public class OrderForm {
 
         private String tid;
 
-//        private List<OrderItem> orderItemList;
 
         private List<OrderItemForm> orderItems;
 
-        @Positive
-        private int totalAmount;
+        @NotBlank @Positive
+        private Integer totalAmount;
 
-        @Positive
-        private int totalPrice;
+        @NotBlank @Positive
+        private Integer totalPrice;
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
