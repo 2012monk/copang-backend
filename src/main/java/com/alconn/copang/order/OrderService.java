@@ -148,7 +148,7 @@ public class OrderService {
 
         AddressForm address = AddressForm.builder()
                 .receiverName(orders.getAddress().getReceiverName())
-                .city(orders.getAddress().getCity())
+                .address(orders.getAddress().getAddress())
                 .receiverPhone(orders.getAddress().getReceiverPhone())
                 .preRequest(orders.getAddress().getPreRequest())
                 .detail(orders.getAddress().getDetail())

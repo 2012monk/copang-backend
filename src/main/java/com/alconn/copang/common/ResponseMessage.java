@@ -38,4 +38,19 @@ public class ResponseMessage<T> {
         public int getCode() {
             return code;
         }
+
+        public static <T> ResponseMessage<T> success(T data) {
+            return ResponseMessage.<T>builder()
+                .message("success")
+                .code(200)
+                .data(data)
+                .build();
+        }
+
+        public static ResponseMessage<String> successMessage(boolean success) {
+            return ResponseMessage.<String>builder()
+                .message(success ? "success" : "failed")
+                .code(200)
+                .build();
+        }
 }

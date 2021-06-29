@@ -139,7 +139,7 @@ class OrderControllerTest {
                 .builder()
                 .addressId(1L)
                 .detail("철원 1번지")
-                .city("서울")
+                .address("서울")
                 .receiverName("제가 받는사람이에요")
                 .preRequest("빨리요제발")
                 .receiverPhone("010-8989-9898")
@@ -205,7 +205,7 @@ class OrderControllerTest {
                 fieldWithPath("data.totalAmount").description(JsonFieldType.NUMBER).description("상품 총 갯수"),
                 fieldWithPath("data.address").type(JsonFieldType.OBJECT).description("주소정보"),
                 fieldWithPath("data.address.addressId").type(JsonFieldType.NUMBER).description("주소 식별자"),
-                fieldWithPath("data.address.city").type(JsonFieldType.STRING).description("도시"),
+                fieldWithPath("data.address.address").type(JsonFieldType.STRING).description("도시"),
                 fieldWithPath("data.address.detail").type(JsonFieldType.STRING).description("상세주소"),
                 fieldWithPath("data.address.receiverPhone").type(JsonFieldType.STRING).description("받는사람 전화번호"),
                 fieldWithPath("data.address.receiverName").type(JsonFieldType.STRING).description("받는사람 이름"),
@@ -238,7 +238,7 @@ class OrderControllerTest {
                 fieldWithPath("data[].totalAmount").description(JsonFieldType.NUMBER).description("상품 총 갯수"),
                 fieldWithPath("data[].address").type(JsonFieldType.OBJECT).description("주소정보"),
                 fieldWithPath("data[].address.addressId").type(JsonFieldType.NUMBER).description("주소 식별자"),
-                fieldWithPath("data[].address.city").type(JsonFieldType.STRING).description("도시"),
+                fieldWithPath("data[].address.address").type(JsonFieldType.STRING).description("도시"),
                 fieldWithPath("data[].address.detail").type(JsonFieldType.STRING).description("상세주소"),
                 fieldWithPath("data[].address.receiverPhone").type(JsonFieldType.STRING).description("받는사람 전화번호"),
                 fieldWithPath("data[].address.receiverName").type(JsonFieldType.STRING).description("받는사람 이름"),
