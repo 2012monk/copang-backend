@@ -65,14 +65,19 @@ public class ItemDetailForm {
     public static class DetailForm{
         private Long itemDetailId;
 
+        @NotBlank
         private int price;
 
+        @NotBlank
         private int stockQuantity;
 
+        @NotBlank
         private String optionName;
 
+        @NotBlank
         private String optionValue;
 
+        @NotBlank
         private String mainImg;
 
         private String subImg;

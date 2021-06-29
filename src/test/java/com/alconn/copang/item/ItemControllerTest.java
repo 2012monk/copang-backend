@@ -150,7 +150,7 @@ public class ItemControllerTest {
                                 fieldWithPath("data.itemDetailFormList.[].optionValue").type(JsonFieldType.STRING).description("옵션값"),
                                 fieldWithPath("data.itemDetailFormList.[].mainImg").type(JsonFieldType.STRING).description("대표사진"),
                                 fieldWithPath("data.itemDetailFormList.[].itemDetailId").type(JsonFieldType.NUMBER).description("상품옵션등록코드")
-                                )));;
+                                )));
     }
 
     @DisplayName("대표상품페이지")
@@ -210,7 +210,7 @@ public class ItemControllerTest {
         List<Item> item = itemService.itemFindAll();
         Long itemId = item.get(0).getItemId();
 
-        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/item/delete/itemId={itemId}" , itemId)
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/item/delete/{itemId}" , itemId)
                 .characterEncoding("utf-8")
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())
@@ -234,7 +234,7 @@ public class ItemControllerTest {
         List<Item> item = itemService.itemFindAll();
         Long itemDetailId = item.get(0).getItemDetails().get(0).getItemDetailId();
 
-        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/item/delete/itemDetail={itemDetailId}" , itemDetailId)
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/item/delete/item-detail/{itemDetailId}" , itemDetailId)
                 .characterEncoding("utf-8")
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())
@@ -251,44 +251,76 @@ public class ItemControllerTest {
                 .andDo(print());
     }
 
-//    @DisplayName("상품전체수정")
-//    @Test
-//    public void upItemDetail() throws Exception {
-//        save();
-//
-//        //DB에서 상품id하나 가져와서
-//        //fetch join으로 아이템리스트를 전부 가져온다 ( count..)
-//        List<ItemDetail> testList = itemDetailRepository.findItemDetailPage(itemRepository.findAll().get(0).getItemId());
-//
-//        //위의 리스트 수만큼 UpdateForm 생성 후
-//        List<ItemDetailForm.DetailUpdateClass> testUpdateList = new ArrayList<>();
-//
-//        for (ItemDetail itemDetail : testList) {
-//            testUpdateList.add(
-//                    ItemDetailForm.DetailUpdateClass.builder()
-//                            .itemDetailId(itemDetail.getItemDetailId())
-//                            .price(20000)
-//                            .stockQuantity(30)
-//                            .optionName("수정")
-//                            .optionValue("수정테스트")
-//                            .mainImg("수정사진")
-//                            .subImg("수정이미지")
-//                            .build()
-//            );
-//
-//            //ItemFormUpdate으로 포장하여 테스트
-//            ItemForm.ItemFormUpdate itemFormUpdate = ItemForm.ItemFormUpdate.builder()
-//                    .itemId(testList.get(0).getItem().getItemId())
-//                    .itemName(testList.get(0).getItem().getItemName())
-//                    .itemDetailUpdateClassList(testUpdateList)
-//                    .build();
-//
-//            mockMvc.perform(RestDocumentationRequestBuilders.put("/api/item/update/itemId/update")
-//                    .contentType(MediaType.APPLICATION_JSON)
-//                    .content(objectMapper.writeValueAsString(itemFormUpdate))
-//                    .characterEncoding("utf-8")
-//            ).andExpect(status().isOk())
-//                    .andExpect(jsonPath("$.data").exists()).andDo(print());
-//        }
-//    }
+    @DisplayName("상품전체수정")
+    @Test
+    public void upItemDetail() throws Exception {
+        save();
+
+        //DB에서 상품id하나 가져와서
+        //아이템리스트를 전부 가져온다 ( count..)
+        List<ItemDetail> testList = itemDetailRepository.findItemDetailPage(itemRepository.findAll().get(0).getItemId());
+
+        //위의 리스트 수만큼 UpdateForm 생성 후
+        List<ItemDetailForm.DetailUpdateClass> testUpdateList = new ArrayList<>();
+
+            for (ItemDetail itemDetail : testList) {
+                testUpdateList.add(
+                        ItemDetailForm.DetailUpdateClass.builder()
+                                .itemDetailId(itemDetail.getItemDetailId())
+                                .price(20000)
+                                .stockQuantity(30)
+                                .optionName("수정")
+                                .optionValue("수정테스트")
+                                .mainImg("수정사진")
+                                .subImg("수정이미지")
+                                .build()
+                );
+            }
+
+        //ItemFormUpdate으로 포장하여 테스트
+        ItemForm.ItemFormUpdate itemFormUpdate = ItemForm.ItemFormUpdate.builder()
+                        .itemId(testList.get(0).getItem().getItemId())
+                        .itemName(testList.get(0).getItem().getItemName())
+                        .itemDetailUpdateClassList(testUpdateList)
+                        .build();
+            mockMvc.perform(RestDocumentationRequestBuilders.put("/api/item/update/item/list")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(itemFormUpdate))
+                    .characterEncoding("utf-8")
+            ).andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data").exists())
+                    .andDo(document("item/post-save",
+                            ApiDocumentUtils.getDocumentRequest(),
+                            ApiDocumentUtils.getDocumentResponse(),
+                            relaxedRequestFields(
+                                    fieldWithPath("itemId").type(JsonFieldType.NUMBER).description("상품등록코드"),
+                                    fieldWithPath("itemName").type(JsonFieldType.STRING).description("상품명"),
+                                    fieldWithPath("itemDetailUpdateClassList.[].itemDetailId").type(JsonFieldType.NUMBER).description("상품옵션등록코드"),
+                                    fieldWithPath("itemDetailUpdateClassList.[].price").type(JsonFieldType.NUMBER).description("단가"),
+                                    fieldWithPath("itemDetailUpdateClassList.[].stockQuantity").type(JsonFieldType.NUMBER).description("재고"),
+                                    fieldWithPath("itemDetailUpdateClassList.[].optionName").type(JsonFieldType.STRING).description("옵션명"),
+                                    fieldWithPath("itemDetailUpdateClassList.[].optionValue").type(JsonFieldType.STRING).description("옵션값"),
+                                    fieldWithPath("itemDetailUpdateClassList.[].mainImg").type(JsonFieldType.STRING).description("대표사진"),
+                                    fieldWithPath("itemDetailUpdateClassList.[].itemDetailId").type(JsonFieldType.NUMBER).description("상품옵션등록코드"),
+                                    fieldWithPath("itemDetailUpdateClassList.[].subImg").type(JsonFieldType.STRING).description("옵션사진").optional()
+                            ),
+                            relaxedResponseFields(
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
+                                    fieldWithPath("data.itemId").type(JsonFieldType.NUMBER).description("상품등록코드"),
+                                    fieldWithPath("data.itemName").type(JsonFieldType.STRING).description("상품명"),
+
+                                    fieldWithPath("data.itemDetailUpdateClassList").type(JsonFieldType.ARRAY).description("상품옵션리스트"),
+                                    fieldWithPath("data.itemDetailUpdateClassList.[].itemDetailId").type(JsonFieldType.NUMBER).description("상품옵션등록코드"),
+                                    fieldWithPath("data.itemDetailUpdateClassList.[].price").type(JsonFieldType.NUMBER).description("단가"),
+                                    fieldWithPath("data.itemDetailUpdateClassList.[].stockQuantity").type(JsonFieldType.NUMBER).description("재고"),
+                                    fieldWithPath("data.itemDetailUpdateClassList.[].optionName").type(JsonFieldType.STRING).description("옵션명"),
+                                    fieldWithPath("data.itemDetailUpdateClassList.[].optionValue").type(JsonFieldType.STRING).description("옵션값"),
+                                    fieldWithPath("data.itemDetailUpdateClassList.[].mainImg").type(JsonFieldType.STRING).description("대표사진"),
+                                    fieldWithPath("data.itemDetailUpdateClassList.[].subImg").type(JsonFieldType.STRING).description("옵션사진")
+                            )))
+                    .andDo(print());
+            em.flush();
+            em.clear();
+
+    }
 }
