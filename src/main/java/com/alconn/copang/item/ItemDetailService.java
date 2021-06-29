@@ -100,8 +100,14 @@ public class ItemDetailService {
         return itemForm;
     }
 
-//    public ItemForm.ItemFormUpdate updateItemDetail(Long id,ItemForm.ItemFormUpdate itemFormUpdate){
+
+    //통합업데이트 상품, 상품상세 id = ItemId
+//    public ItemForm.ItemFormUpdate updateItemDetail(ItemForm.ItemFormUpdate itemFormUpdate){
 //        //풀기
+//        List<ItemDetail> itemDetailList = itemDetailRepository.findItemDetailPage(itemFormUpdate.getItemId());
+//
+//
+//
 //        List<ItemDetail> itemDetailList = itemMapper.updateItemDetaillistToDomain(itemFormUpdate.getItemDetailUpdateList());
 //        Item item=itemService.itemFindNum(itemFormUpdate.getItemId());
 //

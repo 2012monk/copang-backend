@@ -73,7 +73,7 @@ public class ItemController {
     }
 
 //    //상품 전체 수정
-//    @PutMapping("/update/itemId/{itemId}")
+//    @PutMapping("/update/itemId/update")
 //    public ResponseMessage<ItemForm> itemUpdate(@RequestBody ItemForm.ItemFormUpdate itemForm,
 //                                                @PathVariable(name = "itemId")Long id){
 //        ItemForm itemForm1=itemDetailService.delItem(id);
@@ -85,7 +85,7 @@ public class ItemController {
 //    }
 
     //옵션하나 수정
-//    @PutMapping("/update/itemDetailId/{itemDetailId}")
+//    @PutMapping("/update/itemDetailId/update")
 //    public ResponseMessage<ItemForm> itemDetailUpdate(@RequestBody ItemForm.ItemFormUpdate itemForm,
 //                                                      @PathVariable(name = "itemDetailId")Long id){
 //

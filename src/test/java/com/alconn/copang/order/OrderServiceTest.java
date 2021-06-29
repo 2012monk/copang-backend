@@ -126,7 +126,7 @@ class OrderServiceTest {
             details.add(detail);
         }
         details.forEach(d -> d.itemConnect(item));
-        detailService.itemDetailSaveList(details);
+//        detailService.itemDetailSaveList(details);
         manager.flush();
         manager.clear();
 //        System.out.println("ItemDetail = " + objectMapper.writeValueAsString(details));
