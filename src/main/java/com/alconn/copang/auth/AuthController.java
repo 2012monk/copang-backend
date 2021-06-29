@@ -3,20 +3,15 @@ package com.alconn.copang.auth;
 import com.alconn.copang.client.Client;
 import com.alconn.copang.client.ClientService;
 import com.alconn.copang.client.UserForm;
-import com.alconn.copang.common.AccessTokenContainer;
 import com.alconn.copang.common.ResponseMessage;
 import com.alconn.copang.exceptions.InvalidTokenException;
 import com.alconn.copang.exceptions.LoginFailedException;
 import com.alconn.copang.exceptions.NoSuchUserException;
-import com.alconn.copang.exceptions.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
-import javax.validation.Valid;
 import java.sql.SQLIntegrityConstraintViolationException;
 
 @RequiredArgsConstructor

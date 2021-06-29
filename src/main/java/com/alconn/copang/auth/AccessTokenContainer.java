@@ -1,4 +1,4 @@
-package com.alconn.copang.common;
+package com.alconn.copang.auth;
 
 import com.alconn.copang.client.Role;
 import lombok.AllArgsConstructor;

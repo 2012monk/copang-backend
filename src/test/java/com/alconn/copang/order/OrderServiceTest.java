@@ -7,9 +7,10 @@ import com.alconn.copang.client.Client;
 import com.alconn.copang.client.ClientRepo;
 import com.alconn.copang.client.ClientService;
 import com.alconn.copang.client.Role;
-import com.alconn.copang.common.AccessTokenContainer;
+import com.alconn.copang.auth.AccessTokenContainer;
 import com.alconn.copang.item.Item;
 import com.alconn.copang.item.ItemDetail;
+import com.alconn.copang.item.ItemDetailRepository;
 import com.alconn.copang.item.ItemDetailService;
 import com.alconn.copang.item.ItemRepository;
 import com.alconn.copang.order.dto.OrderForm;
@@ -72,6 +73,8 @@ class OrderServiceTest {
     @Autowired
     private MockMvc mvc;
 
+    @Autowired
+    private ItemDetailRepository itemDetailRepository;
     @DisplayName("주문 요청이 저장된다")
     @Transactional
     @Test
@@ -127,6 +130,7 @@ class OrderServiceTest {
         }
         details.forEach(d -> d.itemConnect(item));
 //        detailService.itemDetailSaveList(details);
+        itemDetailRepository.saveAll(details);
         manager.flush();
         manager.clear();
 //        System.out.println("ItemDetail = " + objectMapper.writeValueAsString(details));
