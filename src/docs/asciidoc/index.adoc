@@ -198,11 +198,11 @@ operation::cart/clear-cart[snippets='http-request,request-headers,http-response,
 operation::item/get-mainlist[snippets='http-request,http-response']
 
 == 상품 상세 목록
-==== `GET` /api/item/itemid=:itemId
+==== `GET` /api/item/list/itemid=:itemId
 operation::item/get-itemlist[snippets='http-request,path-parameters,http-response']
 
 
-== 상품 등록
+== 상품 리스트 등록
 ==== `POST` /api/item/add
 
 상품 새로 등록

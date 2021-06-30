@@ -2,6 +2,7 @@ package com.alconn.copang.item;
 
 
 import com.alconn.copang.ApiDocumentUtils;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,6 +75,10 @@ public class ItemControllerTest {
     @Autowired
     EntityManager em;
 
+    @BeforeEach
+    void setUp() {
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    }
 
     //=================테스트 데이터==========
 

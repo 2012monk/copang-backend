@@ -1,5 +1,6 @@
 package com.alconn.copang.item;
 
+import com.alconn.copang.category.CategoryItem;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -11,10 +12,10 @@ import java.util.List;
 @Entity
 @Getter
 @Builder
-//@Setter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Item {
+
     @Id @GeneratedValue
     private Long itemId;
 
@@ -30,9 +31,20 @@ public class Item {
     @Builder.Default
     private List<ItemDetail> itemDetails=new ArrayList<>();
 
+    //카테고리
+    @ManyToOne
+    private CategoryItem categoryItem;
 
-     public void nameUpdate(String itemName){
+    public void changeCategoryItem(CategoryItem categoryItem){
+        this.categoryItem=categoryItem;
+    }
+
+    //수정
+    public void nameUpdate(String itemName){
          this.itemName=itemName;
      }
+
+
+
 
 }
