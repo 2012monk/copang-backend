@@ -1,5 +1,6 @@
 package com.alconn.copang.order;
 
+import com.alconn.copang.annotations.InjectId;
 import com.alconn.copang.common.ResponseMessage;
 import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import com.alconn.copang.order.dto.OrderForm;
@@ -14,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
-
+    // TODO INJECT ID
     private final OrderService service;
 
     @GetMapping
@@ -51,8 +52,8 @@ public class OrderController {
                 .build();
     }
 
-    @GetMapping("/client/{clientId}")
-    public ResponseMessage<List<OrderForm.Response>> getClientOrders(@PathVariable(name = "clientId") Long clientId) {
+    @GetMapping("/client")
+    public ResponseMessage<List<OrderForm.Response>> getClientOrders(@InjectId Long clientId) {
 
         return ResponseMessage.<List<OrderForm.Response>>builder()
                 .message("success")
