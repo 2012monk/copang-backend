@@ -21,6 +21,7 @@ import com.alconn.copang.auth.LoginToken;
 import com.alconn.copang.auth.AccessTokenContainer;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -53,6 +54,9 @@ public class AuthDocumentTest {
 
     @Autowired
     ObjectMapper mapper;
+
+    @Autowired
+    EntityManager m;
 
     @Transactional
     @Test
@@ -115,7 +119,7 @@ public class AuthDocumentTest {
 
     }
 
-    @Transactional
+//    @Transactional
     @Test
     void signup() throws Exception {
         Client client = getClient();
@@ -151,7 +155,7 @@ public class AuthDocumentTest {
                     fieldWithPath("phone").type(JsonFieldType.STRING).description("휴대전화번호")
                         .optional()
                 ),
-                responseFields(
+                relaxedResponseFields(
                     fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메세지"),
                     fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
                     fieldWithPath("data.clientId").type(JsonFieldType.NUMBER).description("유저 식별자"),
@@ -182,7 +186,7 @@ public class AuthDocumentTest {
     void login() throws Exception {
 
         Client client = Client.builder()
-            .username("쿠팡맨")
+            .username("쿠팡맨13")
             .password("비밀번호123!")
             .description("안녕하세요!")
             .phone("010-0030-9090")

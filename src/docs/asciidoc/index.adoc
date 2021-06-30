@@ -116,7 +116,7 @@ operation::auth/signup-client[snippets='http-request,http-response,request-field
 
 A `GET` request is used to access the index
 
-operation::client/get-one-user[snippets='http-request,http-response,path-parameters,request-headers']
+결operation::client/get-one-user[snippets='http-request,http-response,request-headers']
 
 
 
@@ -152,7 +152,7 @@ operation::orders/get-one-order[snippets='request-headers,path-parameters,http-r
 == 유저 주문 조회하기
 ==== `GET` /api/order/client/:clientId
 
-operation::orders/get-client-order-list[snippets='request-headers,path-parameters,http-request,http-response,response-fields']
+operation::orders/get-client-order-list[snippets='request-headers,http-request,http-response,response-fields']
 
 
 = 장바구니 API

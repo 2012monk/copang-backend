@@ -36,9 +36,9 @@ public class Address {
 //    @ManyToOne(optional = false)
 
 //    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "client_id", updatable = false)
     @ManyToOne
     @JoinColumn(name = "client_id")
-//    @JoinColumn(name = "client_id", updatable = false)
     private Client client;
 
     @Enumerated(EnumType.STRING)

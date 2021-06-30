@@ -1,6 +1,7 @@
 package com.alconn.copang.client;
 
 import com.alconn.copang.annotations.IdentitySecured;
+import com.alconn.copang.annotations.InjectId;
 import com.alconn.copang.common.ResponseMessage;
 import com.alconn.copang.exceptions.ValidationException;
 import com.alconn.copang.exceptions.NoSuchUserException;
@@ -21,8 +22,8 @@ public class ClientController {
     public final ClientService service;
 
     @Secured("ROLE_CLIENT")
-    @GetMapping("/{id}")
-    public ResponseMessage<Client> getUser(@PathVariable(name = "id") Long id) throws NoSuchUserException {
+    @GetMapping()
+    public ResponseMessage<Client> getUser(@InjectId Long id) throws NoSuchUserException {
         Client client = service.getClient(id);
         return ResponseMessage.<Client>builder()
                 .message("success")

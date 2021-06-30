@@ -27,7 +27,7 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
-        dialect: org.hibernate.dialect.MariaDBDialect
+#        dialect: org.hibernate.dialect.MariaDBDialect
 
   jackson:
     serialization:
@@ -43,3 +43,11 @@ server:
       force: true
       force-response: true
       force-request: true
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          trace

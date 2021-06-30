@@ -4,6 +4,7 @@ import com.alconn.copang.address.AddressForm;
 import com.alconn.copang.client.UserForm;
 import com.alconn.copang.order.dto.OrderForm;
 import com.alconn.copang.order.dto.OrderItemForm;
+import com.alconn.copang.utils.TestUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -66,6 +67,9 @@ class OrderControllerTest {
     @MockBean
     OrderService service;
 
+    @Autowired
+    TestUtils utils;
+
 
     @WithMockUser(roles = "USER", password = "password")
     @Test
@@ -107,7 +111,7 @@ class OrderControllerTest {
 
         System.out.println("service = " + mapper.writeValueAsString(service.createOrder(create)));
 
-        String token = genToken();
+        String token = utils.genToken();
 
         System.out.println("token = " + token);
         this.mvc.perform(
@@ -261,13 +265,7 @@ class OrderControllerTest {
     }
 
 
-    private String genToken() {
-        return Jwts.builder()
-                .setIssuer("11")
-                .setAudience("123")
-                .signWith(Keys.secretKeyFor(SignatureAlgorithm.HS512))
-                .compact();
-    }
+
 
 
     @Test
@@ -287,7 +285,7 @@ class OrderControllerTest {
         ResultActions result = this.mvc.perform(
                 RestDocumentationRequestBuilders.
                 patch("/api/orders/{orderId}/proceed", orderId)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + genToken())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + utils.genToken())
         );
 
         result.andExpect(status().isOk())
@@ -326,7 +324,7 @@ class OrderControllerTest {
         ResultActions result = this.mvc.perform(
                 RestDocumentationRequestBuilders.
                         patch("/api/orders/{orderId}/cancel", orderId)
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + genToken())
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + utils.genToken())
         );
 
         result.andExpect(status().isOk())
@@ -364,7 +362,7 @@ class OrderControllerTest {
         ResultActions result = this.mvc.perform(
                 RestDocumentationRequestBuilders.
                 get("/api/orders/{orderId}", 451L)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer "+genToken())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer "+utils.genToken())
         );
 
         result.andExpect(status().isOk())
@@ -410,8 +408,8 @@ class OrderControllerTest {
 
         ResultActions actions = this.mvc.perform(
                 RestDocumentationRequestBuilders.
-                get("/api/orders/client/{clientId}", 1L)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + genToken())
+                get("/api/orders/client")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + utils.genToken())
 
         );
 
@@ -419,9 +417,6 @@ class OrderControllerTest {
                 .andDo(document("orders/{method-name}",
                         getDocumentRequest(),
                         getDocumentResponse(),
-                        pathParameters(
-                                parameterWithName("clientId").description("고객 고유 식별자")
-                        ),
                         getAuthHeader(),
                         getResponseFieldsSnippetList()
                 ));

@@ -32,8 +32,8 @@ logging:
     org:
       hibernate:
         SQL: DEBUG
-#        type:
-#          trace
+        type:
+          trace
 ---
 spring:
   datasource:
@@ -56,10 +56,22 @@ spring:
     hikari:
       maximumPoolSize: 60
       minimum-idle: 10
-      jdbc-url: jdbc:mariadb://main-mariadb.ca2o8h2fpksq.ap-northeast-2.rds.amazonaws.com:3306
+      jdbc-url: jdbc:mariadb://main-mariadb.ca2o8h2fpksq.ap-northeast-2.rds.amazonaws.com:3306/copang
       driver-class-name: org.mariadb.jdbc.Driver
       username: copang
       password: copangmaster
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+#        dialect: org.hibernate.dialect.MariaDB103Dialect
+    generate-ddl: true
 
 ---
 spring:

@@ -44,6 +44,7 @@ public class ClientService {
 
     }
 
+    @Transactional
     public Client register(UserForm userForm) {
         userForm.setRole(Role.CLIENT);
         Client client = mapper.toEntity(userForm);
@@ -113,6 +114,7 @@ public class ClientService {
         return repo.save(subject);
     }
 
+    @Transactional
     // TODO CreationTimeStamp 왜 널이지?
     public Client signupClient(UserForm form) throws SQLIntegrityConstraintViolationException {
 

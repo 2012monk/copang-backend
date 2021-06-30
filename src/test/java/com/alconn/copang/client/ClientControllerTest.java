@@ -172,7 +172,7 @@ class ClientControllerTest {
 
         this.mvc.perform(
             RestDocumentationRequestBuilders.
-                get("/api/user/{clientId}", client.getClientId())
+                get("/api/user")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + container.getAccess_token())
         ).andExpect(status().isOk())
             .andExpect(jsonPath("$.data").exists())
@@ -181,9 +181,6 @@ class ClientControllerTest {
             .andDo(document("client/{method-name}",
                 ApiDocumentUtils.getDocumentRequest(),
                 ApiDocumentUtils.getDocumentResponse(),
-                pathParameters(
-                    parameterWithName("clientId").description("아이디")
-                ),
                 requestHeaders(
                     headerWithName(HttpHeaders.AUTHORIZATION)
                         .description("Bearer scheme Access Token 인증 토큰")
