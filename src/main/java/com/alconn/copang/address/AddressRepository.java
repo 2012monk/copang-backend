@@ -12,4 +12,5 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
 
     Optional<Address> findAddressByClient_ClientIdAndPriority(
         @Param(value = "clientId") Long clientId,@Param(value = "priority") EntityPriority priority);
+
 }
