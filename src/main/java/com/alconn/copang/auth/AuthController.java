@@ -30,7 +30,6 @@ public class AuthController {
                 .message("success")
                 .code(10)
                 .build();
-
     }
 
     // TODO 받아들이는 타입에따라 분기 가능한가?

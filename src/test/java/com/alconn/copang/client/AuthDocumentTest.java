@@ -19,8 +19,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.alconn.copang.auth.LoginToken;
 import com.alconn.copang.auth.AccessTokenContainer;
+import com.alconn.copang.exceptions.InvalidTokenException;
+import com.alconn.copang.exceptions.LoginFailedException;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.oauth2.sdk.token.AccessToken;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +36,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 //@AutoConfigureMockMvc
@@ -168,6 +172,38 @@ public class AuthDocumentTest {
 
                 )
             )).andDo(print());
+    }
+
+    @Transactional
+    @Test
+    void delete() throws Exception {
+        Client client = getClient();
+
+        this.repo.save(client);
+        LoginToken token = getLoginToken(client);
+
+        AccessTokenContainer container = this.service.login(token);
+
+        this.mvc.perform(
+            MockMvcRequestBuilders.delete("/api/user")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + container.getAccess_token())
+        )
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andDo(
+                document(
+                    "auth/delete",
+                    getDocumentRequest(),
+                    getDocumentResponse(),
+                    getAuthHeaderField(),
+                    relaxedResponseFields(
+                        fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메세지"),
+                        fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드")
+                    )
+                )
+            );
+
+
     }
 
     private Client getClient() {
