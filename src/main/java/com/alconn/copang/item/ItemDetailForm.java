@@ -6,7 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-//저장
+//엔티티 1:1 매핑시 사용
 @Getter
 @Builder
 @NoArgsConstructor
@@ -57,12 +57,13 @@ public class ItemDetailForm {
 
     }
 
-    //상세페이지
+    //상세페이지, 저장
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class DetailForm{
+
         private Long itemDetailId;
 
         @NotBlank
@@ -79,6 +80,7 @@ public class ItemDetailForm {
 
         @NotBlank
         private String mainImg;
+
 
         private String subImg;
 
@@ -103,7 +105,7 @@ public class ItemDetailForm {
     @AllArgsConstructor
     public static class DetailUpdateClass {
 
-        @NotBlank
+        @NotNull
         private Long itemDetailId;
 
         @NotBlank

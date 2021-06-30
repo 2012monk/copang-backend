@@ -139,6 +139,30 @@ public class ItemDetailServiceTest {
         System.out.println("list2 = " + list2);
     }
 
+    //단일수정
+    @Test
+    public void updateTestSingle(){
+        List<ItemDetail> list=findMockData();
+        ItemForm.ItemFormUpdateSingle updateSingle=ItemForm.ItemFormUpdateSingle.builder()
+                .itemId(list.get(0).getItem().getItemId())
+                .itemName("신발")
+                .detailUpdateClass(ItemDetailForm.DetailUpdateClass.builder()
+                        .itemDetailId(list.get(0).getItemDetailId())
+                        .price(10000)
+                        .stockQuantity(10)
+                        .optionName("색상")
+                        .optionValue("초록")
+                        .mainImg("신발초록색사진")
+                        .build()
+                )
+                .build();
+        ItemViewForm itemViewForm=itemDetailService.itemSingleUpdate(updateSingle);
+        System.out.println("itemViewForm.getItemId() = " + itemViewForm.getItemId());
+        System.out.println("itemViewForm.getItemId() = " + itemViewForm.getItemName());
+        System.out.println("itemViewForm.getItemDetailViewForm().getMainImg() = " + itemViewForm.getItemDetailViewForm().getMainImg());
+    }
+
+    //전체수정
     @Test
     public void updateTest(){
         List<ItemDetail> list=findMockData();
@@ -166,10 +190,32 @@ public class ItemDetailServiceTest {
                 .itemDetailUpdateClassList(testUpdateList)
                 .build();
 
-        ItemForm itemForm=itemDetailService.updateItemDetail(itemFormUpdate);
+        ItemForm.ItemFormUpdate itemForm=itemDetailService.updateItemDetail(itemFormUpdate);
 
         em.flush();
         em.clear();
     }
+
+    //옵션추가테스트
+    @Test
+    public void itemSingle(){
+        findMockData();
+        Item item=itemRepository.findAll().get(0);
+
+        ItemForm.ItemSingle itemSingle=ItemForm.ItemSingle.builder()
+                .itemId(item.getItemId())
+                .itemName("양말")
+                .detailForm(ItemDetailForm.DetailForm.builder()
+                        .price(100)
+                        .stockQuantity(20)
+                        .optionName("색상")
+                        .optionValue("검은색")
+                        .mainImg("양말사진")
+                        .build())
+                .build();
+        ItemViewForm itemViewForm=itemDetailService.itemSingle(itemSingle);
+        System.out.println("itemViewForm.tp = " + itemViewForm.toString());
+    }
+
 
 }

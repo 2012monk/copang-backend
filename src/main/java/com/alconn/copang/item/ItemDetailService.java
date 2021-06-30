@@ -19,6 +19,7 @@ public class ItemDetailService {
     private final ItemService itemService;
 
 
+    //다중 저장
     @Transactional
     public ItemForm itemDetailListSave(ItemForm itemForm){
         //매퍼 풀기
@@ -32,14 +33,28 @@ public class ItemDetailService {
         //연관관계 매핑
         itemDetailList=itemDetailSaveList(item,itemDetailList);
 
-
         //재포장
         ItemForm itemDetailFormList=itemMapper.itemDetailToDto(item,itemDetailList);
-
         return itemDetailFormList;
     }
 
-    //단일저장 -- 지울지 상의 ( 모든 데이터를 리스트로 받을 지 개별로 받을지 상의 )
+    //옵션 추가
+    public ItemViewForm itemSingle(ItemForm.ItemSingle itemSingle){
+        if(itemSingle.getItemId()!=0&&itemSingle.getItemId()==null) {
+            //에러 발생위치
+        }
+        Item item = itemService.itemFindNum(itemSingle.getItemId());
+
+        ItemDetail itemDetail = itemMapper.saveOneToEntity(itemSingle.getDetailForm());
+
+        itemDetail.itemConnect(item);
+        itemDetail=itemDetailRepository.save(itemDetail);
+        ItemViewForm itemSingleReturn=itemMapper.detailViewForm(itemDetail);
+        return itemSingleReturn;
+    }
+
+
+    //단일저장
     @Transactional
     public ItemDetail itemDetailSave(ItemDetail itemDetail) {
         //완성된 itemDetail이냐 아니냐를 체크해야되는건가?
@@ -100,7 +115,8 @@ public class ItemDetailService {
 
     //DTO로 받아서 전체 업데이트
     @Transactional
-    public ItemForm updateItemDetail(ItemForm.ItemFormUpdate itemFormUpdate){
+//    public ItemForm updateItemDetail(ItemForm.ItemFormUpdate itemFormUpdate){
+    public ItemForm.ItemFormUpdate updateItemDetail(ItemForm.ItemFormUpdate itemFormUpdate){
         //풀기
         List<ItemDetailForm.DetailUpdateClass> iDetailUpdateClasses =itemFormUpdate.getItemDetailUpdateClassList();
 
@@ -134,12 +150,34 @@ public class ItemDetailService {
         itemDetailRepository.saveAll(itemDetailList);
 
         //재포장
-        ItemForm itemForm=itemMapper.itemDetailToDto(item,itemDetailList);
+        ItemForm.ItemFormUpdate itemForm=itemMapper.updateItemForm(item,itemDetailList);
         return itemForm;
     }
 
+    //단일 수정
+    public ItemViewForm itemSingleUpdate(ItemForm.ItemFormUpdateSingle updateSingle){
+        Item item=itemService.itemFindNum(updateSingle.getItemId());
+        if(!item.getItemName().equals(updateSingle.getItemName())) {
+            item.nameUpdate(updateSingle.getItemName());
+            itemService.saveItem(item);
+        }
+        ItemDetail itemDetail=itemDetailRepository.findById(updateSingle.getDetailUpdateClass().getItemDetailId()).get();
+        itemDetail.itemConnect(item);
 
-    //개별업데이트
+        ItemDetailForm.DetailUpdateClass detailUpdateClass=updateSingle.getDetailUpdateClass();
+        itemDetail.updateAllData(
+                detailUpdateClass.getPrice(),
+                detailUpdateClass.getStockQuantity(),
+                detailUpdateClass.getOptionName(),
+                detailUpdateClass.getOptionValue(),
+                detailUpdateClass.getMainImg(),
+                detailUpdateClass.getSubImg()
+        );
+        itemDetailRepository.save(itemDetail);
+        ItemViewForm itemViewForm=itemMapper.detailViewForm(itemDetail);
+        return itemViewForm;
+    }
+
 
 
 }

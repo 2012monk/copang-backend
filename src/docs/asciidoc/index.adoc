@@ -192,26 +192,46 @@ operation::cart/clear-cart[snippets='http-request,request-headers,http-response,
 
 == 상품 목록
 ==== `GET` /api/item/list
+
+상품중에 대표로 선택된 옵션들만 출력됩니다, 현재는 첫번째가 대표로 선택됩니다
+
 operation::item/get-mainlist[snippets='http-request,http-response']
 
 == 상품 상세 목록
-==== `GET` /api/item/itemId=:itemId
+==== `GET` /api/item/itemid=:itemId
 operation::item/get-itemlist[snippets='http-request,path-parameters,http-response']
 
 
 == 상품 등록
-==== `POST` /api/item
+==== `POST` /api/item/add
+
+상품 새로 등록
+
 operation::item/post-save[snippets='http-request,request-fields,http-response,response-fields']
 
+== 상품 옵션 추가
+==== `POST` /api/item/detail
+operation::item/post-save-detail[snippets='http-request,request-fields,http-response,response-fields']
+
+
 == 상품 삭제
-==== `DELETE` /api/item/delete/itemId=:itemId
+==== `DELETE` /api/item/delete/:itemId
+
+상품 삭제시 등록된 모든 상품옵션은 삭제됩니다
+
 operation::item/delete-item[snippets='http-request,path-parameters,http-response,response-fields']
 
 == 상품 옵션 삭제
-==== `GET` /api/item/delete/itemDetail=:itemDetailId
-operation::item/delete-item[snippets='http-response,path-parameters,response-fields']
-==== `GET` /api/item/delete/itemDetail=:itemDetailId
-operation::item/delete-item[snippets='http-response,path-parameters,response-fields']
+==== `GET` /api/item/delete/item-detail=:itemDetailId
+operation::item/delete-item[snippets='http-response,path-parameters,http-response,response-fields']
+
+== 상품 옵션 단일 수정
+==== `PUST` /api/item/update
+operation::item/put-update[snippets='http-request,request-fields,http-response,response-fields']
+
+== 상품 다중 수정
+==== `PUT` /api/item/update/list
+operation::item/put-update-list[snippets='http-request,request-fields,http-response,response-fields']
 
 = 주소 API
 
@@ -252,5 +272,4 @@ operation::address/update-address[snippets='http-request,request-headers,request
 
 
 [[resources_tag]]
-= 상품 정보 APIs
 아직 문서화 되지 않았습니정
