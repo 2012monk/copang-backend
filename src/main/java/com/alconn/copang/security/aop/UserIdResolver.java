@@ -31,6 +31,7 @@ public class UserIdResolver implements HandlerMethodArgumentResolver {
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
         NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         AuthToken authToken = (AuthToken) SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("authToken.getToken() = " + authToken.getToken());
         Client client = provider.resolveUserFromToken(authToken.getToken()).orElseThrow(() -> new UnauthorizedException("인증정보가 잘못 되었습니당!"));
 
         return client.getClientId();

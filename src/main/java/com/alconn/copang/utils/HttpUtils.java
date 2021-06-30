@@ -2,6 +2,7 @@ package com.alconn.copang.utils;
 
 import com.alconn.copang.security.AuthenticationScheme;
 import com.fasterxml.jackson.databind.deser.DataFormatReaders;
+import java.util.Locale;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.parameters.P;
@@ -45,8 +46,8 @@ public class HttpUtils {
 
         Map<String ,String> header = Collections.list(request.getHeaderNames())
                 .stream()
-                .collect(Collectors.toMap(h -> h, request::getHeader));
-        String value = header.get(name);
+                .collect(Collectors.toMap(h -> h.toLowerCase(Locale.ROOT), request::getHeader));
+        String value = header.get(name.toLowerCase(Locale.ROOT));
         return Optional.ofNullable(value);
     }
 
