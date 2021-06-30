@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -20,9 +21,7 @@ public class ItemController {
 
     //저장
     @PostMapping("/add")
-    public ResponseMessage<ItemForm> add(@RequestBody ItemForm itemForm) {
-        System.out.println("" );
-        System.out.println("itemForm.toString() = " + itemForm.toString());
+    public ResponseMessage<ItemForm> add(@Valid @RequestBody ItemForm itemForm) {
         ItemForm itemFormReturn=itemDetailService.itemDetailListSave(itemForm);
         return ResponseMessage.<ItemForm>builder()
                 .message("저장완료")
@@ -30,6 +29,31 @@ public class ItemController {
                 .code(200)
                 .build();
     }
+
+    //단일 옵션추가
+    @PostMapping("/add/detail")
+    public ResponseMessage<ItemViewForm> addOne(@Valid @RequestBody ItemForm.ItemSingle itemForm) {
+        ItemViewForm itemFormReturn=itemDetailService.itemSingle(itemForm);
+        return ResponseMessage.<ItemViewForm>builder()
+                .message("옵션추가완료")
+                .data(itemFormReturn)
+                .code(200)
+                .build();
+    }
+
+    //단일 수정
+    @PutMapping("/update")
+    public ResponseMessage<ItemViewForm> itemUpdate(@Valid @RequestBody ItemForm.ItemFormUpdateSingle itemForm){
+        ItemViewForm itemForm2=itemDetailService.itemSingleUpdate(itemForm);
+        return ResponseMessage.<ItemViewForm>builder()
+                .message("상품단일수정목록")
+                .data(itemForm2)
+                .code(200)
+                .build();
+    }
+
+
+
 
     //메인 대표이미지만 출력
     @GetMapping("/list")
@@ -43,7 +67,7 @@ public class ItemController {
     }
 
     //상세페이지
-    @GetMapping("/list/itemId={itemId}")
+    @GetMapping("/list/itemid={itemId}")
     public ResponseMessage<ItemForm> itemDetailPageResponse(@PathVariable(name = "itemId")Long id){
         ItemForm itemForm=itemDetailService.findItemDetailPage(id);
         return ResponseMessage.<ItemForm>builder()
@@ -55,7 +79,7 @@ public class ItemController {
     }
 
     //1. 상품 삭제
-    @DeleteMapping("/delete/itemId={itemId}")
+    @DeleteMapping("/delete/{itemId}")
     public ResponseMessage<ItemForm> itemDel(@PathVariable(name = "itemId")Long id){
         ItemForm itemForm=itemDetailService.delItem(id);
         return ResponseMessage.<ItemForm>builder()
@@ -66,7 +90,7 @@ public class ItemController {
     }
 
     //2. 상품옵션 하나 삭제
-    @DeleteMapping("/delete/itemDetail={itemDetailId}")
+    @DeleteMapping("/delete/item-detail/{itemDetailId}")
     public ResponseMessage<ItemForm> itemDetailDel(@PathVariable(name = "itemDetailId")Long id){
         ItemForm itemForm
                 =itemDetailService.delItemDetail(id);
@@ -78,13 +102,13 @@ public class ItemController {
     }
 
     //상품 전체 수정
-    @PutMapping("/update/itemId/update")
-    public ResponseMessage<ItemForm> itemUpdate(@RequestBody ItemForm.ItemFormUpdate itemForm){
-        ItemForm itemForm1=itemDetailService.updateItemDetail(itemForm);
+    @PutMapping("/update/list")
+    public ResponseMessage<ItemForm.ItemFormUpdate> itemUpdate(@Valid @RequestBody ItemForm.ItemFormUpdate itemForm){
+        ItemForm.ItemFormUpdate itemForm2=itemDetailService.updateItemDetail(itemForm);
 
-        return ResponseMessage.<ItemForm>builder()
+        return ResponseMessage.<ItemForm.ItemFormUpdate>builder()
                 .message("상품전체수정목록")
-                .data(itemForm1)
+                .data(itemForm2)
                 .code(200)
                 .build();
     }

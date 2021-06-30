@@ -5,10 +5,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+//저장
 @Getter
 @Builder
 @NoArgsConstructor
@@ -16,6 +19,7 @@ import java.util.List;
 public class ItemForm {
     private Long itemId;
 
+    @NotBlank
     private String itemName;
 
     @Builder.Default
@@ -30,6 +34,8 @@ public class ItemForm {
                 '}';
     }
 
+
+    //전체 수정
     @Getter
     @Builder
     @NoArgsConstructor
@@ -53,6 +59,39 @@ public class ItemForm {
                     '}';
         }
     }
+
+    //옵션 수정
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ItemFormUpdateSingle {
+
+        @NotNull
+        private Long itemId;
+
+        @NotBlank
+        private String itemName;
+
+        private ItemDetailForm.DetailUpdateClass detailUpdateClass;
+    }
+
+    //옵션 추가
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ItemSingle{
+
+       @NotNull
+       private Long itemId;
+
+       @NotBlank
+       private String itemName;
+
+       private ItemDetailForm.DetailForm detailForm;
+    }
+
 }
 
 
