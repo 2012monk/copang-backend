@@ -26,7 +26,7 @@ import java.util.OptionalLong;
 @Service
 public class JwtTokenProvider {
 
-    private final int exp = 60 * 60 * 15;
+    private final int exp = 60 * 60 * 24;
 
     private final String issuer = "alconn.co";
 

@@ -187,6 +187,46 @@ operation::cart/delete-item[snippets='http-request,path-parameters,request-heade
 
 operation::cart/clear-cart[snippets='http-request,request-headers,http-response,response-fields']
 
+
+
+= 주소 API
+
+== 주소등록
+==== `POST` /api/address
+
+처음 등록한 주소가 기본주소가 됩니다
+
+operation::address/create[snippets='http-request,request-headers,request-fields,http-response,response-fields']
+
+== 주소 조회 [유저 기준]
+==== `GET` /api/address
+
+operation::address/get-all-address[snippets='http-request,request-headers,http-response,response-fields']
+
+== 주소 삭제
+==== `DELETE` /api/address/:addressid
+
+operation::address/delete-address[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
+
+== 기본주소지 설정
+==== `PATCH` /api/address/:addressid
+
+operation::address/set-default[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
+
+== 기본주소지로 저장하기
+==== `POST` /api/address/default
+
+operation::address/save-default[snippets='http-request,request-headers,request-fields,http-response,response-fields']
+
+== 주소지 수정하기
+==== `PUT` /api/address/:addressid
+
+수정하실 필드만 채워서 보내시면 됩니다
+
+operation::address/update-address[snippets='http-request,request-headers,request-fields,http-response,response-fields']
+
+
+
 [[resources_tag]]
 = 상품 정보 APIs
 

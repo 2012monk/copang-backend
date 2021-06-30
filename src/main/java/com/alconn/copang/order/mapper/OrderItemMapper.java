@@ -6,7 +6,7 @@ import com.alconn.copang.order.dto.OrderItemForm;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
+@Mapper(componentModel = "spring",unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface OrderItemMapper extends EntityMapper<OrderItemForm, OrderItem> {
 
 
