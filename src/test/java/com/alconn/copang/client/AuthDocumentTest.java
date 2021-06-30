@@ -23,7 +23,6 @@ import com.alconn.copang.exceptions.InvalidTokenException;
 import com.alconn.copang.exceptions.LoginFailedException;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nimbusds.oauth2.sdk.token.AccessToken;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
