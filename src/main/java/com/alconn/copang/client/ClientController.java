@@ -41,9 +41,9 @@ public class ClientController {
     }
 
     @Secured("ROLE_CLIENT")
-    @PutMapping("/{id}")
+    @PutMapping
     public ResponseMessage<Client> updateUser(
-            @PathVariable(name = "id") Long id,
+            @InjectId Long id,
             @RequestBody @Valid UserForm form) throws ValidationException, NoSuchUserException {
         return ResponseMessage.<Client>builder()
                 .data(service.updateClient(form, id))
@@ -54,8 +54,8 @@ public class ClientController {
 
     @Secured("ROLE_CLIENT")
     @IdentitySecured
-    @DeleteMapping("/{id}")
-    public ResponseMessage<String> deleteUser(@PathVariable(name = "id") Long id) throws NoSuchUserException {
+    @DeleteMapping
+    public ResponseMessage<String> deleteUser(@InjectId Long id) throws NoSuchUserException {
         service.deleteClient(id);
         return ResponseMessage.<String>builder()
                 .message("success")
