@@ -4,6 +4,7 @@ package com.alconn.copang.item;
 import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 //엔티티 1:1 매핑시 사용
@@ -19,6 +20,9 @@ public class ItemDetailForm {
 
     @NotBlank
     private String itemName;
+
+    @NotEmpty
+    private String itemComment;
 
     @NotBlank
     private int price;

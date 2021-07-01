@@ -2,6 +2,7 @@ package com.alconn.copang.item;
 
 
 import com.alconn.copang.ApiDocumentUtils;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,8 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -74,6 +74,10 @@ public class ItemControllerTest {
     @Autowired
     EntityManager em;
 
+    @BeforeEach
+    void setUp() {
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    }
 
     //=================테스트 데이터==========
 
@@ -102,6 +106,7 @@ public class ItemControllerTest {
 
         ItemForm itemForm = ItemForm.builder()
                 .itemName("상품명")
+                .itemComment("상품설명")
                 .itemDetailFormList(list)
                 .build();
 
@@ -110,6 +115,7 @@ public class ItemControllerTest {
 
     private void testData(){
         Item item=Item.builder()
+                .itemComment("반팔티설명")
                 .itemName("반팔티")
                 .build();
         itemRepository.save(item);
@@ -131,7 +137,7 @@ public class ItemControllerTest {
 
 
     //=======================================
-    @DisplayName("옵션추가")
+    @DisplayName("상품 옵션 추가")
     @Test
     public void optionOneAdd() throws Exception{
         testData();
@@ -139,17 +145,16 @@ public class ItemControllerTest {
         ItemForm.ItemSingle itemSingle=ItemForm.ItemSingle.builder()
                 .itemId(item.getItemId())
                 .itemName("양말")
+                .itemComment("양말설명")
                 .detailForm(ItemDetailForm.DetailForm.builder()
                         .price(100)
                         .stockQuantity(20)
                         .optionName("색상")
                         .optionValue("검은색")
                         .mainImg("양말사진")
+                        .subImg("양말추가사진")
                         .build())
                 .build();
-
-        System.out.println("item.getItemId() = " + item.getItemId());
-        System.out.println("itemSingle = " + itemSingle.getItemId());
 
         mockMvc.perform(post("/api/item/add/detail")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -163,8 +168,8 @@ public class ItemControllerTest {
                         ApiDocumentUtils.getDocumentRequest(),
                         ApiDocumentUtils.getDocumentResponse(),
                         relaxedRequestFields(
-                                fieldWithPath("itemId").type(JsonFieldType.NUMBER).description("상품등록코드"),
                                 fieldWithPath("itemName").type(JsonFieldType.STRING).description("상품명"),
+                                fieldWithPath("itemComment").type(JsonFieldType.STRING).description("상품설명"),
                                 fieldWithPath("detailForm.price").type(JsonFieldType.NUMBER).description("단가"),
                                 fieldWithPath("detailForm.stockQuantity").type(JsonFieldType.NUMBER).description("재고"),
                                 fieldWithPath("detailForm.optionName").type(JsonFieldType.STRING).description("옵션명"),
@@ -176,6 +181,7 @@ public class ItemControllerTest {
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
                                 fieldWithPath("data.itemName").type(JsonFieldType.STRING).description("상품명"),
                                 fieldWithPath("data.itemId").type(JsonFieldType.NUMBER).description("상품등록코드"),
+                                fieldWithPath("data.itemComment").type(JsonFieldType.STRING).description("상품설명"),
 
                                 fieldWithPath("data.itemDetailViewForm").type(JsonFieldType.OBJECT).description("추가할상품옵션정보"),
                                 fieldWithPath("data.itemDetailViewForm.itemDetailId").type(JsonFieldType.NUMBER).description("상품옵션등록코드"),
@@ -189,7 +195,7 @@ public class ItemControllerTest {
     }
 
     //RestDocumentationRequestBuilders -> Rest Doc 작성할 때 사용한다함
-    @DisplayName("상품저장")
+    @DisplayName("상품리스트등록")
     @Test
     public void save() throws Exception {
         ItemForm itemForm = itemFormTest();
@@ -207,18 +213,20 @@ public class ItemControllerTest {
                         ApiDocumentUtils.getDocumentResponse(),
                         relaxedRequestFields(
                               fieldWithPath("itemName").type(JsonFieldType.STRING).description("상품명"),
+                                fieldWithPath("itemComment").type(JsonFieldType.STRING).description("상품설명"),
+
                                 fieldWithPath("itemDetailFormList.[].price").type(JsonFieldType.NUMBER).description("단가"),
                                 fieldWithPath("itemDetailFormList.[].stockQuantity").type(JsonFieldType.NUMBER).description("재고"),
                                 fieldWithPath("itemDetailFormList.[].optionName").type(JsonFieldType.STRING).description("옵션명"),
                                 fieldWithPath("itemDetailFormList.[].optionValue").type(JsonFieldType.STRING).description("옵션값"),
                                 fieldWithPath("itemDetailFormList.[].mainImg").type(JsonFieldType.STRING).description("대표사진"),
-                                fieldWithPath("itemId").type(JsonFieldType.NUMBER).description("상품등록코드").optional(),
-                                fieldWithPath("itemDetailFormList.[].itemDetailId").type(JsonFieldType.NUMBER).description("상품옵션등록코드").optional(),
                                 fieldWithPath("itemDetailFormList.[].subImg").type(JsonFieldType.STRING).description("옵션사진").optional()
                         ),
                         relaxedResponseFields(
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
                                 fieldWithPath("data.itemName").type(JsonFieldType.STRING).description("상품명"),
+                                fieldWithPath("data.itemComment").type(JsonFieldType.STRING).description("상품설명"),
+
                                 fieldWithPath("data.itemId").type(JsonFieldType.NUMBER).description("상품등록코드"),
 
                                 fieldWithPath("data.itemDetailFormList").type(JsonFieldType.ARRAY).description("상품옵션리스트"),
@@ -274,9 +282,21 @@ public class ItemControllerTest {
                         pathParameters(
                                 parameterWithName("itemId").description("상품등록코드")
                         ),
+
                         relaxedResponseFields(
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
-                                fieldWithPath("data").type(JsonFieldType.OBJECT).description("결과데이터")
+                                fieldWithPath("data.itemId").type(JsonFieldType.NUMBER).description("상품등록코드"),
+                                fieldWithPath("data.itemName").type(JsonFieldType.STRING).description("상품명"),
+                                fieldWithPath("data.itemComment").type(JsonFieldType.STRING).description("상품설명"),
+
+                                fieldWithPath("data.itemDetailFormList").type(JsonFieldType.ARRAY).description("상품옵션정보"),
+                                fieldWithPath("data.itemDetailFormList.[].itemDetailId").type(JsonFieldType.NUMBER).description("상품옵션등록코드"),
+                                fieldWithPath("data.itemDetailFormList.[].price").type(JsonFieldType.NUMBER).description("단가"),
+                                fieldWithPath("data.itemDetailFormList.[].stockQuantity").type(JsonFieldType.NUMBER).description("재고"),
+                                fieldWithPath("data.itemDetailFormList.[].optionName").type(JsonFieldType.STRING).description("옵션명"),
+                                fieldWithPath("data.itemDetailFormList.[].optionValue").type(JsonFieldType.STRING).description("옵션값"),
+                                fieldWithPath("data.itemDetailFormList.[].mainImg").type(JsonFieldType.STRING).description("대표사진"),
+                                fieldWithPath("data.itemDetailFormList.[].subImg").type(JsonFieldType.STRING).description("옵션사진").optional()
                         )))
                 .andDo(print());
     }
@@ -338,6 +358,7 @@ public class ItemControllerTest {
         ItemForm.ItemFormUpdateSingle updateSingle=ItemForm.ItemFormUpdateSingle.builder()
                 .itemId(itemDetail.getItem().getItemId())
                 .itemName("신발")
+                .itemComment("신발설명")
                 .detailUpdateClass(ItemDetailForm.DetailUpdateClass.builder()
                         .itemDetailId(itemDetail.getItemDetailId())
                         .price(10000)
@@ -345,6 +366,7 @@ public class ItemControllerTest {
                         .optionName("색상")
                         .optionValue("초록")
                         .mainImg("신발초록색사진")
+                        .subImg("추가옵션사진")
                         .build()
                 )
                 .build();
@@ -360,19 +382,21 @@ public class ItemControllerTest {
                         relaxedRequestFields(
                                 fieldWithPath("itemId").type(JsonFieldType.NUMBER).description("상품등록코드"),
                                 fieldWithPath("itemName").type(JsonFieldType.STRING).description("상품명"),
+                                fieldWithPath("itemComment").type(JsonFieldType.STRING).description("상품설명"),
+
                                 fieldWithPath("detailUpdateClass.itemDetailId").type(JsonFieldType.NUMBER).description("상품옵션등록코드"),
                                 fieldWithPath("detailUpdateClass.price").type(JsonFieldType.NUMBER).description("단가"),
                                 fieldWithPath("detailUpdateClass.stockQuantity").type(JsonFieldType.NUMBER).description("재고"),
                                 fieldWithPath("detailUpdateClass.optionName").type(JsonFieldType.STRING).description("옵션명"),
                                 fieldWithPath("detailUpdateClass.optionValue").type(JsonFieldType.STRING).description("옵션값"),
                                 fieldWithPath("detailUpdateClass.mainImg").type(JsonFieldType.STRING).description("대표사진"),
-                                fieldWithPath("detailUpdateClass.itemDetailId").type(JsonFieldType.NUMBER).description("상품옵션등록코드"),
                                 fieldWithPath("detailUpdate Class.subImg").type(JsonFieldType.STRING).description("옵션사진").optional()
                         ),
                         relaxedResponseFields(
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
                                 fieldWithPath("data.itemId").type(JsonFieldType.NUMBER).description("상품등록코드"),
                                 fieldWithPath("data.itemName").type(JsonFieldType.STRING).description("상품명"),
+                                fieldWithPath("data.itemComment").type(JsonFieldType.STRING).description("상품설명"),
 
                                 fieldWithPath("data.itemDetailViewForm").type(JsonFieldType.OBJECT).description("상품옵션리스트"),
                                 fieldWithPath("data.itemDetailViewForm.itemDetailId").type(JsonFieldType.NUMBER).description("상품옵션등록코드"),
@@ -416,6 +440,7 @@ public class ItemControllerTest {
         ItemForm.ItemFormUpdate itemFormUpdate = ItemForm.ItemFormUpdate.builder()
                         .itemId(testList.get(0).getItem().getItemId())
                         .itemName(testList.get(0).getItem().getItemName())
+                        .itemComment(testList.get(0).getItem().getItemComment())
                         .itemDetailUpdateClassList(testUpdateList)
                         .build();
             mockMvc.perform(RestDocumentationRequestBuilders.put("/api/item/update/list")
@@ -430,19 +455,21 @@ public class ItemControllerTest {
                             relaxedRequestFields(
                                     fieldWithPath("itemId").type(JsonFieldType.NUMBER).description("상품등록코드"),
                                     fieldWithPath("itemName").type(JsonFieldType.STRING).description("상품명"),
+                                    fieldWithPath("itemComment").type(JsonFieldType.STRING).description("상품설명"),
+
                                     fieldWithPath("itemDetailUpdateClassList.[].itemDetailId").type(JsonFieldType.NUMBER).description("상품옵션등록코드"),
                                     fieldWithPath("itemDetailUpdateClassList.[].price").type(JsonFieldType.NUMBER).description("단가"),
                                     fieldWithPath("itemDetailUpdateClassList.[].stockQuantity").type(JsonFieldType.NUMBER).description("재고"),
                                     fieldWithPath("itemDetailUpdateClassList.[].optionName").type(JsonFieldType.STRING).description("옵션명"),
                                     fieldWithPath("itemDetailUpdateClassList.[].optionValue").type(JsonFieldType.STRING).description("옵션값"),
                                     fieldWithPath("itemDetailUpdateClassList.[].mainImg").type(JsonFieldType.STRING).description("대표사진"),
-                                    fieldWithPath("itemDetailUpdateClassList.[].itemDetailId").type(JsonFieldType.NUMBER).description("상품옵션등록코드"),
                                     fieldWithPath("itemDetailUpdateClassList.[].subImg").type(JsonFieldType.STRING).description("옵션사진").optional()
                             ),
                             relaxedResponseFields(
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
                                     fieldWithPath("data.itemId").type(JsonFieldType.NUMBER).description("상품등록코드"),
                                     fieldWithPath("data.itemName").type(JsonFieldType.STRING).description("상품명"),
+                                    fieldWithPath("data.itemComment").type(JsonFieldType.STRING).description("상품설명"),
 
                                     fieldWithPath("data.itemDetailUpdateClassList").type(JsonFieldType.ARRAY).description("상품옵션리스트"),
                                     fieldWithPath("data.itemDetailUpdateClassList.[].itemDetailId").type(JsonFieldType.NUMBER).description("상품옵션등록코드"),

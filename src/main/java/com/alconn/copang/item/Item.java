@@ -1,5 +1,6 @@
 package com.alconn.copang.item;
 
+import com.alconn.copang.category.Category;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -11,15 +12,17 @@ import java.util.List;
 @Entity
 @Getter
 @Builder
-//@Setter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Item {
+
     @Id @GeneratedValue
     private Long itemId;
 
     @Column(nullable = false)
     private String itemName;
+
+    private String itemComment;
 
     @CreationTimestamp
     @Column(name = "item_time",updatable = false)
@@ -30,9 +33,21 @@ public class Item {
     @Builder.Default
     private List<ItemDetail> itemDetails=new ArrayList<>();
 
+    //카테고리
+    @ManyToOne
+    private Category category;
 
-     public void nameUpdate(String itemName){
+    public void changeCategory(Category category){
+        this.category=category;
+    }
+
+    //수정
+    public void nameUpdate(String itemName){
          this.itemName=itemName;
      }
+
+    //코멘트 수정
+    public void commentUpdate(String itemComment){this.itemComment=itemComment;}
+
 
 }
