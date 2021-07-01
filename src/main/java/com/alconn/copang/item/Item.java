@@ -22,7 +22,6 @@ public class Item {
     @Column(nullable = false)
     private String itemName;
 
-    @Column(nullable = false)
     private String itemComment;
 
     @CreationTimestamp

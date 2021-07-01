@@ -34,6 +34,7 @@ public class ItemDetailServiceTest {
     private Item itemTest(){
         Item item=Item.builder()
                 .itemName("테스트상품")
+                .itemComment("상품설명")
                 .build();
         return item;
     }
@@ -146,6 +147,7 @@ public class ItemDetailServiceTest {
         ItemForm.ItemFormUpdateSingle updateSingle=ItemForm.ItemFormUpdateSingle.builder()
                 .itemId(list.get(0).getItem().getItemId())
                 .itemName("신발")
+                .itemComment("신발설명")
                 .detailUpdateClass(ItemDetailForm.DetailUpdateClass.builder()
                         .itemDetailId(list.get(0).getItemDetailId())
                         .price(10000)
@@ -187,6 +189,7 @@ public class ItemDetailServiceTest {
         ItemForm.ItemFormUpdate itemFormUpdate= ItemForm.ItemFormUpdate.builder()
                 .itemId(testList.get(0).getItem().getItemId())
                 .itemName(testList.get(0).getItem().getItemName())
+                .itemComment(testList.get(0).getItem().getItemComment())
                 .itemDetailUpdateClassList(testUpdateList)
                 .build();
 
@@ -205,6 +208,7 @@ public class ItemDetailServiceTest {
         ItemForm.ItemSingle itemSingle=ItemForm.ItemSingle.builder()
                 .itemId(item.getItemId())
                 .itemName("양말")
+                .itemComment("양말설명")
                 .detailForm(ItemDetailForm.DetailForm.builder()
                         .price(100)
                         .stockQuantity(20)

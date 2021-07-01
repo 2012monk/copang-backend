@@ -44,11 +44,9 @@ public class CategoryServiceTest {
 
         Item item=Item.builder()
                 .itemName("양말")
+                .itemComment("양말사진")
                 .build();
         itemRepository.save(item);
-
-        em.flush();
-        em.clear();
     }
 
 

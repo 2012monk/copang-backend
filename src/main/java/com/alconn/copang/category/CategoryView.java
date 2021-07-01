@@ -30,11 +30,12 @@ public class CategoryView {
 
         private Long parentId;
 
-        private List<CategoryListDto> subCategory=new ArrayList<>();
+        @Builder.Default
+        private List<CategoryListDto> cildCategory =new ArrayList<>();
 
 
         public void changeSubCategory(List<CategoryListDto> categoryListDtos){
-            this.subCategory=categoryListDtos;
+            this.cildCategory =categoryListDtos;
         }
 
     }
