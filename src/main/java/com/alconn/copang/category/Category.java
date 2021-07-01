@@ -1,5 +1,6 @@
 package com.alconn.copang.category;
 
+import com.alconn.copang.item.Item;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -17,15 +18,20 @@ import java.util.List;
 public class Category {
 
     @Id @GeneratedValue
-    Long categoryId;
+    private Long categoryId;
 
-    String categoryName;
+    private String categoryName;
 
-    Long parentId;
+    private Long parentId;
+//
+//    @OneToMany(mappedBy = "categoryItem")
+//    private List<Item> item;
 
-    //매핑
-    @OneToMany(mappedBy = "category")
-    @Builder.Default
-    List<CategoryItem> categoryItems=new ArrayList<>();
+    public void changeCategoryprentId(Long parentId){
+
+        this.parentId=parentId;
+    }
+
+
 
 }

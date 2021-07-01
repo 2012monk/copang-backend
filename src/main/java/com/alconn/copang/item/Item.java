@@ -1,6 +1,6 @@
 package com.alconn.copang.item;
 
-import com.alconn.copang.category.CategoryItem;
+import com.alconn.copang.category.Category;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -22,6 +22,9 @@ public class Item {
     @Column(nullable = false)
     private String itemName;
 
+    @Column(nullable = false)
+    private String itemComment;
+
     @CreationTimestamp
     @Column(name = "item_time",updatable = false)
     private LocalDate itemCreate;
@@ -33,10 +36,10 @@ public class Item {
 
     //카테고리
     @ManyToOne
-    private CategoryItem categoryItem;
+    private Category category;
 
-    public void changeCategoryItem(CategoryItem categoryItem){
-        this.categoryItem=categoryItem;
+    public void changeCategory(Category category){
+        this.category=category;
     }
 
     //수정
@@ -44,7 +47,8 @@ public class Item {
          this.itemName=itemName;
      }
 
-
+    //코멘트 수정
+    public void commentUpdate(String itemComment){this.itemComment=itemComment;}
 
 
 }

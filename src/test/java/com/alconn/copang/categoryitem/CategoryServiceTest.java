@@ -1,8 +1,6 @@
 package com.alconn.copang.categoryitem;
 
 import com.alconn.copang.category.Category;
-import com.alconn.copang.category.CategoryItem;
-import com.alconn.copang.category.CategoryItemRepository;
 import com.alconn.copang.category.CategoryRepository;
 import com.alconn.copang.item.Item;
 import com.alconn.copang.item.ItemRepository;
@@ -23,9 +21,6 @@ public class CategoryServiceTest {
 
     @Autowired
     ItemRepository itemRepository;
-
-    @Autowired
-    CategoryItemRepository categoryItemRepository;
 
     @Autowired
     EntityManager em;
@@ -52,16 +47,10 @@ public class CategoryServiceTest {
                 .build();
         itemRepository.save(item);
 
-        CategoryItem categoryItem=CategoryItem.builder()
-                .category(category)
-                .build();
-        categoryItem.changeCategoryCnt(category);
-        categoryItem.changItemCnt(item);
-        categoryItemRepository.save(categoryItem);
-
         em.flush();
         em.clear();
     }
+
 
 
 

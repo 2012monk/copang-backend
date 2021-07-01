@@ -18,6 +18,8 @@ public class ItemViewForm {
 
     private String itemName;
 
+    private String itemComment;
+
     private ItemDetailViewForm itemDetailViewForm;
 
     @Getter

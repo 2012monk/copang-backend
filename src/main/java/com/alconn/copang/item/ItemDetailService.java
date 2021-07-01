@@ -25,6 +25,7 @@ public class ItemDetailService {
         //매퍼 풀기
         Item item=Item.builder()
                 .itemName(itemForm.getItemName())
+                .itemComment(itemForm.getItemComment())
                 .build();
         itemService.saveItem(item);
 
@@ -42,6 +43,7 @@ public class ItemDetailService {
     public ItemViewForm itemSingle(ItemForm.ItemSingle itemSingle){
         if(itemSingle.getItemId()!=0&&itemSingle.getItemId()==null) {
             //에러 발생위치
+
         }
         Item item = itemService.itemFindNum(itemSingle.getItemId());
 
@@ -124,8 +126,10 @@ public class ItemDetailService {
         Item item=itemService.itemFindNum(itemFormUpdate.getItemId());
 
         boolean perceive=false;
-        if(!item.getItemName().equals(itemFormUpdate.getItemName())){
+        if(!item.getItemName().equals(itemFormUpdate.getItemName())||!item.getItemComment().equals(itemFormUpdate.getItemComment())){
             item.nameUpdate(itemFormUpdate.getItemName());
+            item.commentUpdate(itemFormUpdate.getItemComment());
+            itemService.saveItem(item);
             perceive=true;
         }
 
@@ -147,6 +151,7 @@ public class ItemDetailService {
                 if(perceive)itemDetailList.get(i).itemConnect(item);
             }
         }
+
         itemDetailRepository.saveAll(itemDetailList);
 
         //재포장
@@ -159,6 +164,9 @@ public class ItemDetailService {
         Item item=itemService.itemFindNum(updateSingle.getItemId());
         if(!item.getItemName().equals(updateSingle.getItemName())) {
             item.nameUpdate(updateSingle.getItemName());
+            itemService.saveItem(item);
+        } else if (!item.getItemName().equals(updateSingle.getItemComment())) {
+            item.commentUpdate(updateSingle.getItemComment());
             itemService.saveItem(item);
         }
         ItemDetail itemDetail=itemDetailRepository.findById(updateSingle.getDetailUpdateClass().getItemDetailId()).get();

@@ -235,11 +235,11 @@ operation::address/update-address[snippets='http-request,request-headers,request
 
 상품중에 대표로 선택된 옵션들만 출력됩니다, 현재는 첫번째가 대표로 선택됩니다
 
-operation::item/get-mainlist[snippets='http-request,http-response']
+operation::item/get-mainlist[snippets='http-request,http-response,response-fields']
 
 == 상품 상세 목록
 ==== `GET` /api/item/list/itemid=:itemId
-operation::item/get-itemlist[snippets='http-request,path-parameters,http-response']
+operation::item/get-itemlist[snippets='http-request,path-parameters,http-response,response-fields']
 
 
 == 상품 리스트 등록
@@ -263,10 +263,13 @@ operation::item/delete-item[snippets='http-request,path-parameters,http-response
 
 == 상품 옵션 삭제
 ==== `GET` /api/item/delete/item-detail=:itemDetailId
-operation::item/delete-item[snippets='http-response,path-parameters,http-response,response-fields']
+operation::item/delete-itemDetail[snippets='http-request,path-parameters,http-response,response-fields']
 
 == 상품 옵션 단일 수정
 ==== `PUST` /api/item/update
+
+상품 이름과 설명도 수정 가능합니다
+
 operation::item/put-update[snippets='http-request,request-fields,http-response,response-fields']
 
 == 상품 다중 수정

@@ -22,6 +22,9 @@ public class ItemForm {
     @NotBlank
     private String itemName;
 
+    @NotEmpty
+    private String itemComment;
+
     @Builder.Default
     private List<ItemDetailForm.DetailForm> itemDetailFormList=new ArrayList<>();
 
@@ -46,6 +49,10 @@ public class ItemForm {
 
         @NotNull
         private String itemName;
+
+        @NotEmpty
+        private String itemComment;
+
 
         @Builder.Default
         private List<ItemDetailForm.DetailUpdateClass> itemDetailUpdateClassList =new ArrayList<>();
@@ -73,6 +80,9 @@ public class ItemForm {
         @NotBlank
         private String itemName;
 
+        @NotEmpty
+        private String itemComment;
+
         private ItemDetailForm.DetailUpdateClass detailUpdateClass;
     }
 
@@ -88,6 +98,9 @@ public class ItemForm {
 
        @NotBlank
        private String itemName;
+
+       @NotEmpty
+       private String itemComment;
 
        private ItemDetailForm.DetailForm detailForm;
     }
