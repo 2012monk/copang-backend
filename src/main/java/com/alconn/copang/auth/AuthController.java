@@ -71,7 +71,7 @@ public class AuthController {
     private void setRef(HttpServletResponse response, String refToken) {
         int e =1000 * 60 * 60 * 24 * 3;
         Date exp = new Date(new Date().getTime() + e);
-        final String HEADER = "ref=" + refToken +"; path=/; Secure; SameSite-None; HttpOnly; Max-Age=" + e;
+        final String HEADER = "ref=" + refToken +"; path=/; Secure; SameSite=None; HttpOnly; Max-Age=" + e;
         response.setHeader("Set-Cookie", HEADER);
     }
 

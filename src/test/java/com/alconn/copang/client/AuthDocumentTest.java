@@ -259,7 +259,6 @@ public class AuthDocumentTest {
                         .description("AcessToken 인증토큰"),
                     fieldWithPath("data.username").type(JsonFieldType.STRING).description("아이디"),
                     fieldWithPath("data.role").type(JsonFieldType.STRING).description("유저타입")
-
                 )
             ))
             .andDo(print());
