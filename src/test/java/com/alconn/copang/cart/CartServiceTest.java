@@ -110,7 +110,7 @@ class CartServiceTest {
         System.out.println(
             "mapper.writeValueAsString(response) = " + mapper.writeValueAsString(response));
 
-        assertEquals(result.getAmount(), 13);
+        assertEquals(result.getAmount(), 11);
     }
 
     @Transactional
@@ -156,8 +156,7 @@ class CartServiceTest {
 
         m.flush();
         m.clear();
-
-        ReflectionTestUtils.setField(add, "amount", 6);
+        // when
 
         service.addCartItem(client.getClientId(), add);
 
@@ -170,8 +169,8 @@ class CartServiceTest {
         System.out.println(
             "mapper.writeValueAsString(response) = " + mapper.writeValueAsString(response));
 
-        assertEquals(response.getTotalAmount(), 9);
-        assertEquals(response.getTotalPrice(), detail.getPrice() * 9);
+        assertEquals(response.getTotalAmount(), 2);
+        assertEquals(response.getTotalPrice(), detail.getPrice() * 2);
     }
 
     @Transactional
@@ -186,6 +185,27 @@ class CartServiceTest {
                 .build();
 
         service.addCartItem(client.getClientId(), add);
+
+        Item item = Item.builder().itemName("고구마").build();
+
+        ItemDetail detail = ItemDetail.builder()
+            .optionName("박스")
+            .optionValue("5KG")
+            .item(item)
+            .mainImg("no image")
+            .price(56900)
+            .build();
+        detailService.itemDetailSave(detail);
+
+        add =
+            CartForm.Add.builder()
+                .itemDetailId(detail.getItemDetailId())
+                .itemId(detail.getItem().getItemId())
+                .amount(3)
+                .build();
+
+        service.addCartItem(client.getClientId(), add);
+
 
         m.flush();
         m.clear();

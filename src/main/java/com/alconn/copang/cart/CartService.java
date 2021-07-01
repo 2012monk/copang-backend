@@ -4,7 +4,9 @@ import com.alconn.copang.client.ClientRepo;
 import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import com.alconn.copang.exceptions.NoSuchUserException;
 import com.alconn.copang.item.ItemDetail;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -34,20 +36,27 @@ public class CartService {
 
         CartItem cartItem = cart.getCartItems().stream()
             .filter(i -> i.getItem().getItemDetailId().equals(form.getItemDetailId()))
-            .collect(Collectors.toList()).stream().findFirst().orElseGet(() ->
-                CartItem.builder()
-                    .item(ItemDetail.builder().itemDetailId(form.getItemDetailId()).build())
-//                    .amount(form.getAmount())
-                    .build()
-            );
+            .collect(Collectors.toList()).stream().findFirst().orElseGet(() ->null);
+//            .orElseGet(() ->
+//                CartItem.builder()
+//                    .item(ItemDetail.builder().itemDetailId(form.getItemDetailId()).build())
+////                    .amount(form.getAmount())
+//                    .build()
+//            );
 
-        cartItem.updateAmount(cartItem.getAmount() + form.getAmount());
+        if (cartItem == null) {
+            cartItem = CartItem.builder()
+                .item(ItemDetail.builder().itemDetailId(form.getItemDetailId()).build())
+                .build();
+            cart.addCartItem(cartItem);
+        }
+
+        cartItem.updateAmount(cartItem.getAmount() + 1);
 
 //        CartItem cartItem = CartItem.builder()
 //                .item(ItemDetail.builder().itemDetailId(form.getItemDetailId()).build())
 //                .amount(form.getAmount())
 //                .build();
-        cart.addCartItem(cartItem);
         repository.save(cart);
 
 //        Set<ItemDetailForm> items = getItemDetailForms(cart);
@@ -81,14 +90,14 @@ public class CartService {
     }
 
     @Transactional
-    public CartForm.Response clearCart(Long clientId) throws NoSuchEntityExceptions {
-        Cart cart = repository.findCartByClientId(clientId)
-            .orElseThrow(() -> new NoSuchEntityExceptions("카트가 비어있습니다"));
+    public boolean clearCart(Long clientId) throws NoSuchEntityExceptions {
+        repository.findCartByClientId(clientId).ifPresent(repository::delete);
+//        cart.getCartItems().forEach(CartItem::disconnectToCart);
 
-        cart.getCartItems().forEach(CartItem::disconnectToCart);
+//        repository.save(cart);
 
-        CartForm.Response response = mapper.cartToResponse(cart);
-        return response;
+//        CartForm.Response response = mapper.cartToResponse(cart);
+        return true;
     }
 
     private CartItem findCartItem(Long clientId, Long detailId) throws NoSuchEntityExceptions {
