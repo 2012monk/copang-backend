@@ -6,6 +6,7 @@ import com.alconn.copang.client.Role;
 import com.alconn.copang.exceptions.UnauthorizedException;
 import com.alconn.copang.security.AuthToken;
 import com.alconn.copang.security.provider.JwtTokenProvider;
+import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +44,7 @@ public class UserIdResolver implements HandlerMethodArgumentResolver {
         System.out.println("authToken.getToken() = " + authToken.getToken());
         Client client = provider.resolveUserFromToken(authToken.getToken()).orElseThrow(() -> new UnauthorizedException("인증정보가 잘못 되었습니당!"));
 
-        Role role = parameter.getParameterAnnotation(InjectId.class).role();
+        Role role = Objects.requireNonNull(parameter.getParameterAnnotation(InjectId.class)).role();
         if (client.getRole() == role) {
             return client.getClientId();
         }
