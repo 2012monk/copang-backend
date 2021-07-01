@@ -137,7 +137,7 @@ class CartControllerTest {
             CartForm.Add.builder()
                 .itemDetailId(res.getItemDetailId())
                 .itemId(res.getItemId())
-//                .amount(3)
+                .amount(3)
                 .build();
 
         given(cartService.addCartItem(eq(client.getClientId()), any(CartForm.Add.class)))

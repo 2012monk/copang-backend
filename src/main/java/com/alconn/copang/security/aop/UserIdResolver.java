@@ -5,7 +5,9 @@ import com.alconn.copang.client.Client;
 import com.alconn.copang.exceptions.UnauthorizedException;
 import com.alconn.copang.security.AuthToken;
 import com.alconn.copang.security.provider.JwtTokenProvider;
+import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +18,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class UserIdResolver implements HandlerMethodArgumentResolver {
@@ -30,6 +33,11 @@ public class UserIdResolver implements HandlerMethodArgumentResolver {
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
         NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+        // DEBUG 용 Header
+        HttpServletRequest request
+            = (HttpServletRequest) webRequest.getNativeRequest();
+
+        log.info("requested URI : {}", request.getRequestURI());
         AuthToken authToken = (AuthToken) SecurityContextHolder.getContext().getAuthentication();
         System.out.println("authToken.getToken() = " + authToken.getToken());
         Client client = provider.resolveUserFromToken(authToken.getToken()).orElseThrow(() -> new UnauthorizedException("인증정보가 잘못 되었습니당!"));
