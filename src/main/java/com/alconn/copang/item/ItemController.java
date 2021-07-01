@@ -1,6 +1,8 @@
 package com.alconn.copang.item;
 
+import com.alconn.copang.annotations.InjectId;
 import com.alconn.copang.aop.GlobalExceptionHandler;
+import com.alconn.copang.client.Role;
 import com.alconn.copang.common.ResponseMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +23,7 @@ public class ItemController {
 
     //저장
     @PostMapping("/add")
-    public ResponseMessage<ItemForm> add(@Valid @RequestBody ItemForm itemForm) {
+    public ResponseMessage<ItemForm> add(@Valid @RequestBody ItemForm itemForm, @InjectId(role = Role.SELLER) Long sellerId) {
         ItemForm itemFormReturn=itemDetailService.itemDetailListSave(itemForm);
         return ResponseMessage.<ItemForm>builder()
                 .message("저장완료")

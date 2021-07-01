@@ -2,6 +2,7 @@ package com.alconn.copang.security.aop;
 
 import com.alconn.copang.annotations.InjectId;
 import com.alconn.copang.client.Client;
+import com.alconn.copang.client.Role;
 import com.alconn.copang.exceptions.UnauthorizedException;
 import com.alconn.copang.security.AuthToken;
 import com.alconn.copang.security.provider.JwtTokenProvider;
@@ -42,6 +43,12 @@ public class UserIdResolver implements HandlerMethodArgumentResolver {
         System.out.println("authToken.getToken() = " + authToken.getToken());
         Client client = provider.resolveUserFromToken(authToken.getToken()).orElseThrow(() -> new UnauthorizedException("인증정보가 잘못 되었습니당!"));
 
-        return client.getClientId();
+        Role role = parameter.getParameterAnnotation(InjectId.class).role();
+        if (client.getRole() == role) {
+            return client.getClientId();
+        }
+        else{
+            throw new UnauthorizedException("요청하신 리소스에 대한 권한이 없습니다");
+        }
     }
 }

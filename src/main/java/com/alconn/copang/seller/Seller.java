@@ -21,4 +21,6 @@ public class Seller extends Client {
     @Column(unique = true)
     private Long sellerCode;
 
+
+
 }
