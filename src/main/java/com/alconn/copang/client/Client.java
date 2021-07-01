@@ -29,7 +29,7 @@ public class Client {
 
     @Id
     @GeneratedValue
-    private Long clientId;
+    protected Long clientId;
 
     //    @Column(unique = true)
     private String username;

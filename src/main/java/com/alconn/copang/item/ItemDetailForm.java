@@ -59,6 +59,7 @@ public class ItemDetailForm {
 
         private String mainImg;
 
+        private Long sellerId;
     }
 
     //상세페이지, 저장

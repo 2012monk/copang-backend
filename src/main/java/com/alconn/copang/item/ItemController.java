@@ -24,6 +24,7 @@ public class ItemController {
     //저장
     @PostMapping("/add")
     public ResponseMessage<ItemForm> add(@Valid @RequestBody ItemForm itemForm, @InjectId(role = Role.SELLER) Long sellerId) {
+//        itemForm.setSellerId(sellerId);
         ItemForm itemFormReturn=itemDetailService.itemDetailListSave(itemForm);
         return ResponseMessage.<ItemForm>builder()
                 .message("저장완료")
