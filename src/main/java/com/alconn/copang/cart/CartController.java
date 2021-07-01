@@ -30,9 +30,9 @@ public class CartController {
         return id;
     }
 
-    @Secured("ROLE_CLIENT")
+//    @Secured("ROLE_CLIENT")
     @PostMapping("/item")
-    public ResponseMessage<?> addItem(@RequestBody CartForm.Add addForm,@InjectId Long clientId)
+    public ResponseMessage<?> addItem(@Validated @RequestBody CartForm.Add addForm,@InjectId Long clientId)
         throws NoSuchUserException {
 
         return ResponseMessage.builder()

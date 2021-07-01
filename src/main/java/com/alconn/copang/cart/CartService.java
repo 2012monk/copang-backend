@@ -133,7 +133,6 @@ public class CartService {
 
     }
 
-    @Transactional
     public CartForm.Response getCart(Long clientId) {
         Cart cart = repository.findCartByClientId(clientId).orElseGet(Cart::new);
 

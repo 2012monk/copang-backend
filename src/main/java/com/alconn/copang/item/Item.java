@@ -1,6 +1,8 @@
 package com.alconn.copang.item;
 
 import com.alconn.copang.category.Category;
+import com.alconn.copang.client.Client;
+import com.alconn.copang.seller.Seller;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -21,6 +23,10 @@ public class Item {
 
     @Column(nullable = false)
     private String itemName;
+
+    @ManyToOne
+    @JoinColumn(name = "seller_id")
+    private Seller seller;
 
     private String itemComment;
 

@@ -2,6 +2,7 @@ package com.alconn.copang.cart;
 
 import com.alconn.copang.item.ItemDetailForm;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,11 +18,14 @@ public class CartForm {
     @Getter
     public static class Add {
 
+        @NotNull
         private Long itemId;
 
+        @NotNull
         private Long itemDetailId;
 
-        private int amount;
+        @NotNull
+        private Integer amount;
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
