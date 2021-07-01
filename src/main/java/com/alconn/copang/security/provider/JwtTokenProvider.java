@@ -26,7 +26,7 @@ import java.util.OptionalLong;
 @Service
 public class JwtTokenProvider {
 
-    private final int exp = 60 * 60 * 24;
+    private final int exp = 1000 * 60 * 60 * 24;
 
     private final String issuer = "alconn.co";
 
@@ -36,7 +36,7 @@ public class JwtTokenProvider {
 
     private final ObjectMapper mapper;
 
-    private final int refExp = 60 * 60 * 24 * 3;
+    private final int refExp = 1000 * 60 * 60 * 24 * 3;
 
     @Value("${spring.jwt.secret}")
     private String keyString;
@@ -48,20 +48,20 @@ public class JwtTokenProvider {
         key = new SecretKeySpec(Base64.encodeBase64(keyString.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256.getJcaName());
     }
 
-    public String createRefreshToken(Client user) {
+    public String createRefreshToken(String name) {
         Date now = new Date();
 
         Date exp = new Date(now.getTime() + refExp);
 
         Claims claims = Jwts.claims();
-        claims.put("uid", user.getClientId());
+        claims.put("username", name);
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuer(issuer)
                 .setSubject(REFRESH_TOKEN)
                 .setIssuedAt(now)
                 .setExpiration(exp)
-                .setAudience(user.getUsername())
+                .setAudience(name)
                 .signWith(key)
                 .compact();
     }
