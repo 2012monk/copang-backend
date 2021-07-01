@@ -100,27 +100,34 @@ operation::auth/with-auth[snippets='http-request,request-headers']
 = Auth
 
 == Login 로그인 요청
+==== `POST` /api/auth/login
 
 operation::auth/login[snippets='http-request,http-response,request-fields,response-fields']
 
 == SignUp 회원가입 요청
+==== `POST` /api/auth/signup
+
 operation::auth/signup-client[snippets='http-request,http-response,request-fields,response-fields']
 
 
+== 회원 탈퇴
+==== `DELETE` /api/user
+
+operation::c
 
 [[client]]
 = Client 유저 서비스
 
 [[]]
 == 유저 정보 가져오기
-
-A `GET` request is used to access the index
-
-operation::client/get-one-user[snippets='http-request,http-response,path-parameters,request-headers']
+==== `GET` /api/user
 
 
+operation::client/get-one-user[snippets='http-request,http-response,request-headers']
 
-`GET`
+
+
+===== `GET` /api/user/list
 
 
 operation::client/get-user-list[snippets='http-request,request-headers,http-response,response-fields']
@@ -152,7 +159,7 @@ operation::orders/get-one-order[snippets='request-headers,path-parameters,http-r
 == 유저 주문 조회하기
 ==== `GET` /api/order/client/:clientId
 
-operation::orders/get-client-order-list[snippets='request-headers,path-parameters,http-request,http-response,response-fields']
+operation::orders/get-client-order-list[snippets='request-headers,http-request,http-response,response-fields']
 
 
 = 장바구니 API

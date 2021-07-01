@@ -224,7 +224,7 @@ class ClientControllerTest {
 
         ResultActions result = this.mvc.perform(
             RestDocumentationRequestBuilders.
-                put("/api/user/{clientId}", client.getClientId())
+                put("/api/user")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(form))
                 .characterEncoding("utf-8")
@@ -235,9 +235,6 @@ class ClientControllerTest {
             .andDo(document("client/{method-name}",
                 ApiDocumentUtils.getDocumentRequest(),
                 ApiDocumentUtils.getDocumentResponse(),
-                pathParameters(
-                    parameterWithName("clientId").description("아이디")
-                ),
                 requestHeaders(
                     headerWithName(HttpHeaders.AUTHORIZATION)
                         .description("Bearer scheme Access Token 인증 토큰")
