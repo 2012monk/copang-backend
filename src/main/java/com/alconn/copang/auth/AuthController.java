@@ -7,6 +7,9 @@ import com.alconn.copang.common.ResponseMessage;
 import com.alconn.copang.exceptions.InvalidTokenException;
 import com.alconn.copang.exceptions.LoginFailedException;
 import com.alconn.copang.exceptions.NoSuchUserException;
+import java.util.Date;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -55,11 +58,21 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseMessage<AccessTokenContainer> login(@RequestBody LoginToken loginToken) throws InvalidTokenException, LoginFailedException {
+    public ResponseMessage<AccessTokenContainer> login(@RequestBody LoginToken loginToken, HttpServletResponse response) throws InvalidTokenException, LoginFailedException {
+        AccessTokenContainer container = service.login(loginToken);
+        String refToken = service.getRefreshToken(loginToken.getUsername());
+        setRef(response, refToken);
         return ResponseMessage.<AccessTokenContainer>builder()
                 .message("success")
                 .data(service.login(loginToken))
                 .build();
+    }
+
+    private void setRef(HttpServletResponse response, String refToken) {
+        int e =1000 * 60 * 60 * 24 * 3;
+        Date exp = new Date(new Date().getTime() + e);
+        final String HEADER = "ref=" + refToken +"; path=/; Secure; SameSite=None; HttpOnly; Max-Age=" + e;
+        response.setHeader("Set-Cookie", HEADER);
     }
 
 

@@ -91,26 +91,8 @@ public class ClientService {
             throw new ValidationException("업데이트시 유저아이디가 존재해야합니다");
         }
         Client subject = repo.findById(id).orElseThrow(ValidationException::new);
-//        Client subject = repo.findClientByUsername(form.getUsername()).orElseThrow(NoSuchUserException::new);
-//        Client client = Client.builder()
-//                .id(subject.getId())
-//                .username(form.getUsername())
-//                .realName(form.getRealName())
-//                .password(form.getPassword())
-//                .mobile(form.getMobile())
-//                .description(form.getDescription())
-//                .build();
-//        Client c = mapper.map(form, Client.class);
-//        form.setId(subject.getClientId());
-//        Client up = mapper.toEntity(form);
-        subject.updateInfo(form.getPhone(), form.getRealName());
 
-//        System.out.println("\n\n\n\n\n\n\n\n "+subject.getRealName());
-//        System.out.println("\n\n\n\n\n\n\n\n "+form.getRealName());
-//        mapper.updateFromDto(form, subject);
-//        System.out.println("\n\n\n\n\n\n\n\n "+form.getRealName());
-//        System.out.println("\n\n\n\n\n\n\n\n "+subject.getRealName());
-//        return repo.save(client);
+        subject.updateInfo(form.getPhone(), form.getRealName());
         return repo.save(subject);
     }
 
@@ -145,5 +127,9 @@ public class ClientService {
             e.printStackTrace();
             throw new NoSuchUserException("요청하신 정보가 잘못되었습니다");
         }
+    }
+
+    public String getRefreshToken(String username){
+        return provider.createRefreshToken(username);
     }
 }
