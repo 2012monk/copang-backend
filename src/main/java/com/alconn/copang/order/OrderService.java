@@ -84,7 +84,7 @@ public class OrderService {
                 .stream().map(i ->
                 OrderItemForm.builder()
                     .itemDetailId(i.getItemDetail().getItemDetailId())
-                    .itemId(i.getId())
+                    .itemId(i.getOrderItemId())
                     .itemName(i.getItemDetail().getItem().getItemName())
                     .optionName(i.getItemDetail().getOptionName())
                     .optionValue(i.getItemDetail().getOptionValue())
@@ -132,14 +132,12 @@ public class OrderService {
     public List<OrderForm.Response> listOrderClient(Long clientId) {
         List<Orders> ordersList = repo.findOrdersByClient_ClientId(clientId);
 
-        List<OrderForm.Response> responses = ordersList.stream().map(o ->
+        return ordersList.stream().map(o ->
                 OrderForm.Response.builder()
                         .orderId(o.getOrderId())
                         .orderItems(
                                 o.getOrderItemList().stream().map(orderItemMapper::toDto).collect(Collectors.toList())).build()
         ).collect(Collectors.toList());
-
-        return responses;
 
     }
 
@@ -154,34 +152,32 @@ public class OrderService {
                 .detail(orders.getAddress().getDetail())
                 .addressId(orders.getAddress().getAddressId())
                 .build();
-        OrderForm.Response response =
-                OrderForm.Response
-                .builder()
-                .orderId(orderId)
-                .orderStatus(orders.getOrderState())
-                .address(address)
-                .orderDate(orders.getOrderDate())
-                .totalAmount(orders.getTotalAmount())
-                .totalPrice(orders.getTotalPrice())
-                .orderItems(
-                        orders.getOrderItemList()
-                        .stream().map(i ->
-                                OrderItemForm.builder()
-                                .amount(i.getAmount())
-                                .unitTotal(i.getTotal())
-                                .price(i.getItemDetail().getPrice())
-                                .itemId(i.getItemDetail().getItem().getItemId())
-                                .itemDetailId(i.getItemDetail().getItemDetailId())
-                                .itemName(i.getItemDetail().getItem().getItemName())
-                                .optionName(i.getItemDetail().getOptionName())
-                                .optionValue(i.getItemDetail().getOptionValue())
-                                .build()
-                        ).collect(Collectors.toList())
-                )
-                .client(clientMapper.toResponse(orders.getClient()))
-                .build();
 
-        return response;
+        return OrderForm.Response
+        .builder()
+        .orderId(orderId)
+        .orderStatus(orders.getOrderState())
+        .address(address)
+        .orderDate(orders.getOrderDate())
+        .totalAmount(orders.getTotalAmount())
+        .totalPrice(orders.getTotalPrice())
+        .orderItems(
+                orders.getOrderItemList()
+                .stream().map(i ->
+                        OrderItemForm.builder()
+                        .amount(i.getAmount())
+                        .unitTotal(i.getUnitTotal())
+                        .price(i.getItemDetail().getPrice())
+                        .itemId(i.getItemDetail().getItem().getItemId())
+                        .itemDetailId(i.getItemDetail().getItemDetailId())
+                        .itemName(i.getItemDetail().getItem().getItemName())
+                        .optionName(i.getItemDetail().getOptionName())
+                        .optionValue(i.getItemDetail().getOptionValue())
+                        .build()
+                ).collect(Collectors.toList())
+        )
+        .client(clientMapper.toResponse(orders.getClient()))
+        .build();
 
     }
 }

@@ -14,14 +14,11 @@ import lombok.experimental.SuperBuilder;
 
 @NoArgsConstructor @AllArgsConstructor
 @SuperBuilder
-@Entity
+//@Entity
 public class Seller extends Client {
 
     @GeneratedValue
     @Column(unique = true)
     private Long sellerCode;
-
-    private String sellerName;
-
 
 }
