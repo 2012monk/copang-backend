@@ -2,16 +2,21 @@ package com.alconn.copang.order.dto;
 
 import com.alconn.copang.item.ItemDetail;
 import com.alconn.copang.order.OrderItem;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@JsonInclude(Include.NON_NULL)
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
 @Getter
 public class OrderItemForm {
+
+    private Long orderItemId;
 
     private String itemName;
 
@@ -23,9 +28,9 @@ public class OrderItemForm {
 
     private Long itemId;
 
-    private int price;
+    private Integer price;
 
-    private int amount;
+    private Integer amount;
 
-    private int unitTotal;
+    private Integer unitTotal;
 }

@@ -91,18 +91,14 @@ public class ClientService {
             throw new ValidationException("업데이트시 유저아이디가 존재해야합니다");
         }
         Client subject = repo.findById(id).orElseThrow(ValidationException::new);
-
         subject.updateInfo(form.getPhone(), form.getRealName());
         return repo.save(subject);
     }
 
     @Transactional
-    // TODO CreationTimeStamp 왜 널이지?
     public Client signupClient(UserForm form) throws SQLIntegrityConstraintViolationException {
 
-        if (checkUsername(form.getUsername())){
-            throw new SQLIntegrityConstraintViolationException("아이디가 중복되었습니다");
-        }
+        checkOverlapUser(form);
         form.setRole(Role.CLIENT);
         Client client = mapper.toEntity(form);
 //        Client client = mapper.toEntityClass(form, Client.class);
@@ -111,10 +107,21 @@ public class ClientService {
 
     /**
      *
+     * @param form 등록폼
+     * @throws SQLIntegrityConstraintViolationException 중복된 아이디가 있으면 Exception
+     */
+    private void checkOverlapUser(UserForm form) throws SQLIntegrityConstraintViolationException {
+        if (checkUsername(form.getUsername())){
+            throw new SQLIntegrityConstraintViolationException("아이디가 중복되었습니다");
+        }
+    }
+
+    /**
+     *
      * @param username 유저 아이디
      * @return 조회된 유저가 있으면 True
      */
-    public boolean checkUsername(String username) {
+    private boolean checkUsername(String username) {
         return repo.findClientByUsername(username).isPresent();
     }
 
@@ -124,12 +131,20 @@ public class ClientService {
             repo.deleteById(id);
             return true;
         }catch (Exception e){
-            e.printStackTrace();
+            log.info("invalid data",e);
             throw new NoSuchUserException("요청하신 정보가 잘못되었습니다");
         }
     }
 
-    public String getRefreshToken(String username){
-        return provider.createRefreshToken(username);
+    @Transactional
+    public UserForm.Response registerSeller(UserForm form) throws SQLIntegrityConstraintViolationException {
+        checkOverlapUser(form);
+        form.setRole(Role.SELLER);
+        Client client = mapper.toEntity(form);
+
+        repo.save(client);
+
+        return mapper.toResponse(client);
+
     }
 }
