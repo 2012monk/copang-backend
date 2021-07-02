@@ -3,25 +3,13 @@ package com.alconn.copang.categoryitem;
 import com.alconn.copang.category.*;
 import com.alconn.copang.category.dto.CategoryRequest;
 import com.alconn.copang.category.dto.CategoryView;
+import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import static org.hamcrest.MatcherAssert.*;
-
-import static org.mockito.BDDMockito.given;
-import static org.hamcrest.core.Is.is;
-import static org.mockito.Mockito.*;
-
 
 @SpringBootTest
  public class CategoryFindTest {
@@ -45,10 +33,12 @@ import static org.mockito.Mockito.*;
         System.out.println("categoryListDto.toString() = " + categoryListDto.toString());
     }
 
+
     private List<Category> categortyadd() {
         Category test1=Category.builder()
                         .categoryName("메인1")
                         .parentId(0l)
+                .layer(1)
                         .build();
         Category test2=Category.builder()
                 .categoryName("메인2")
@@ -117,6 +107,4 @@ import static org.mockito.Mockito.*;
 
         return categoryList;
     }
-
-
 }

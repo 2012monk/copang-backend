@@ -15,6 +15,7 @@ public class CategoryRequest {
 
     private Long categoryId;
 
+    //저장
     @Getter
     @Builder
     @AllArgsConstructor
@@ -44,6 +45,4 @@ public class CategoryRequest {
 
         private Long parentId;
    }
-
-
 }

@@ -21,6 +21,32 @@ public class CategoryService {
 
     final CategoryMapper categoryMapper;
 
+    //자식 등록시 상위 객체가 있으면 Y로 변경
+    //null은 컨트롤러단에서 들어오지못함
+    //카테고리 등록시
+    @Transactional
+    public CategoryView save(CategoryRequest.CategorySave categorySave) throws NoSuchEntityExceptions {
+        Category category=categoryMapper.topToEntity(categorySave);
+
+        //최상위 카테고리 셋팅
+        if(categorySave.getParentId()==0){
+            category.changeCategoryprentId(0L);
+            category.changeChildCheck("N");
+            category.changeLayer(1);
+        }
+
+        else {
+            //부모 컬럼 수정 ( 부모가 없다면 parentid는 0으로 들어와야한다 )
+            Category category2=categoryRepository.findById(category.getParentId()).orElseThrow((()->new NoSuchEntityExceptions("등록된 parentId가 없습니다")));
+            category2.changeChildCheck("Y");
+            categoryRepository.save(category2);
+            category.changeChildCheck("N");
+            category.changeLayer(category2.getLayer()+1);
+        }
+        categoryRepository.save(category);
+        return categoryMapper.toDto(category);
+    }
+
 
     @Transactional
     public CategoryView categorydelete(Long id) throws NoSuchElementException{
@@ -101,31 +127,27 @@ public class CategoryService {
         });
     }
 //====================
+// =====카테고리 3분류가지만 출력====
+        public CategoryView.CategoryListDto layerCategory(){
+            Map<Long, List<CategoryView.CategoryListDto>> parentGroup = categoryRepository.findLayer()
+                    .stream()
+                    .   map(category -> CategoryView.CategoryListDto.builder()
+                            .categoryId(category.getCategoryId())
+                            .categoryName(category.getCategoryName())
+                            .parentId(category.getParentId())
+                            .build()).collect(groupingBy(c->c.getParentId()));
 
-    //자식 등록시 상위 객체가 있으면 Y로 변경
-    //null은 컨트롤러단에서 들어오지못함
-    //카테고리 등록시
-    @Transactional
-    public CategoryView save(CategoryRequest.CategorySave categorySave) throws NoSuchEntityExceptions {
-        Category category=categoryMapper.topToEntity(categorySave);
+            CategoryView.CategoryListDto rootCategoryDto=  CategoryView.CategoryListDto.builder()
+                    .categoryId(0l)
+                    .categoryName("Root")
+                    .cildCategory(null)
+                    .build();
+            childCategoryadd(rootCategoryDto, parentGroup);
 
-        //최상위 카테고리 셋팅
-        if(categorySave.getParentId()==0){
-            category.changeCategoryprentId(0L);
-            category.changeChildCheck("N");
-            category.changeLayer(1);
+
+            return rootCategoryDto;
         }
+//====================
 
-        else {
-            //부모 컬럼 수정 ( 부모가 없다면 parentid는 0으로 들어와야한다 )
-            Category category2=categoryRepository.findById(category.getParentId()).orElseThrow((()->new NoSuchEntityExceptions("등록된 parentId가 없습니다")));
-            category2.changeChildCheck("Y");
-            categoryRepository.save(category2);
-            category.changeChildCheck("N");
-            category.changeLayer(category2.getLayer()+1);
-        }
-        categoryRepository.save(category);
-        return categoryMapper.toDto(category);
-    }
 
 }

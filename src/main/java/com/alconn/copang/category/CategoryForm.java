@@ -17,8 +17,6 @@ public class CategoryForm {
 
     private Long parentId;
 
-
-
     //대표카테고리
     @Getter
     @Builder
@@ -28,8 +26,6 @@ public class CategoryForm {
 
         @NotBlank
         private String categoryName;
-
-
     }
 
     //일반 카테고리
@@ -45,11 +41,4 @@ public class CategoryForm {
         @NotNull
         private Long parentId;
     }
-
-
-
-
-    //수정용
-
-
 }

@@ -50,30 +50,14 @@ public class CategoryServiceTest {
                 .parentId(0l)
                 .categoryName("의류")
                 .build();
+            categoryService.save(category);
+
         CategoryRequest.CategorySave category2= CategoryRequest.CategorySave.builder()
-                .parentId(1l)
+                .parentId(categoryRepository.findAll().get(0).getCategoryId())
                 .categoryName("청바지")
                 .build();
-        CategoryRequest.CategorySave category3= CategoryRequest.CategorySave.builder()
-                .parentId(2l)
-                .categoryName("검은바지")
-                .build();
-        CategoryRequest.CategorySave category4= CategoryRequest.CategorySave.builder()
-                .parentId(3l)
-                .categoryName("하얀바지")
-                .build();
-        try{
-            categoryService.save(category);
             categoryService.save(category2);
-            categoryService.save(category3);
-            categoryService.save(category4);
-        }catch (NullPointerException e){
-            System.out.println("실제 컨트롤러는 null값 입력안됨");
-        }
-        Category category1=categoryRepository.findById(2l).get();
-        List<Category> layTest=categoryRepository.findLayer();
-        System.out.println(layTest.toString());
-        System.out.println("category1.getLayer() = " + category1.getLayer());
+
 
     }
 

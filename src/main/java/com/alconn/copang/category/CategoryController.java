@@ -15,17 +15,14 @@ public class CategoryController {
     final CategoryService categoryService;
 
 
-    //페이지 조회용
-//    @GetMapping("/main")
-//    public ResponseMessage<CategoryView.CategoryListDto> layerList(){
-//        return
-//
-//
-//    }
-
-
-
-
+//    페이지 조회용
+    @GetMapping("/main")
+    public ResponseMessage<CategoryView.CategoryListDto> layerList(){
+        return ResponseMessage.<CategoryView.CategoryListDto>builder()
+                .message("대중소분류카테고리")
+                .data(categoryService.layerCategory())
+                .build();
+    }
 
     //상품 등록용 카테고리 전체조회
     @GetMapping("/list")

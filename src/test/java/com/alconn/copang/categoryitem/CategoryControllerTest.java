@@ -63,48 +63,84 @@ public class CategoryControllerTest {
                 .build();
         categoryRepository.save(category);
     }
-    private void createCategory1(){
+
+    //저장용 목데이터
+    private void testData(){
         Category category=Category.builder()
-                .parentId(1l)
+                .categoryName("의류")
+                .parentId(0l)
+                .layer(1)
+                .build();
+
+        categoryRepository.save(category);
+
+        Category category2= Category.builder()
+                .parentId(category.getCategoryId())
                 .categoryName("티셔츠")
+                .layer(2)
                 .build();
-        categoryRepository.save(category);
-    }
-    private void createCategory2(){
-        Category category=Category.builder()
-                .parentId(1l)
-                .categoryName("바지")
-                .build();
-        categoryRepository.save(category);
-    }
-    private void createCategory3(){
-        Category category=Category.builder()
-                .parentId(0L)
-                .categoryName("가구")
-                .build();
-        categoryRepository.save(category);
-    }
-    private void createCategory4(){
-        Category category=Category.builder()
-                .parentId(3L)
+        categoryRepository.save(category2);
+
+
+        Category category3= Category.builder()
+                .parentId(category2.getCategoryId())
                 .categoryName("반팔티")
+                .layer(3)
                 .build();
-        categoryRepository.save(category);
+        categoryRepository.save(category3);
+
+        Category category4= Category.builder()
+                .parentId(category3.getCategoryId())
+                .categoryName("검은색")
+                .layer(4)
+                .build();
+        categoryRepository.save(category4);
+
     }
-    //========================
-    CategoryRequest.CategorySave categorySave= CategoryRequest.CategorySave.builder()
-            .parentId(0l)
-            .categoryName("의류")
-            .build();
-    CategoryRequest.CategorySave categorySave2= CategoryRequest.CategorySave.builder()
-            .parentId(1l)
-            .categoryName("청바지")
-            .build();
-    //===================
 
     @BeforeEach
     void setUp() {
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    }
+
+
+    @Test
+    public void layerListTest() throws Exception{
+        testData();
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/category/main")
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("utf-8")
+        ).andExpect(status().isOk()).andDo(print()).andDo(document("category/get-list-main",
+                ApiDocumentUtils.getDocumentRequest(),
+                ApiDocumentUtils.getDocumentResponse(),
+                relaxedResponseFields(
+                        fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
+                        fieldWithPath("data.categoryId").type(JsonFieldType.NUMBER).description("카테고리번호"),
+                        fieldWithPath("data.categoryName").type(JsonFieldType.STRING).description("카테고리명"),
+                        fieldWithPath("data.parentId").type(JsonFieldType.NUMBER).description("부모카테고리번호").optional(),
+                        fieldWithPath("data.cildCategory").type(JsonFieldType.ARRAY).description("자식카테고리번호").optional()
+        )));
+    }
+
+
+    @Test
+    public void listTest() throws Exception{
+        createCategory();
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/category/list")
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("utf-8")
+        ).andExpect(status().isOk()).andDo(print()).andDo(document("category/get-list",
+                ApiDocumentUtils.getDocumentRequest(),
+                ApiDocumentUtils.getDocumentResponse(),
+                relaxedResponseFields(
+                        fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
+                        fieldWithPath("data.categoryId").type(JsonFieldType.NUMBER).description("카테고리번호"),
+                        fieldWithPath("data.categoryName").type(JsonFieldType.STRING).description("카테고리명"),
+                        fieldWithPath("data.parentId").type(JsonFieldType.NUMBER).description("부모카테고리번호").optional(),
+                        fieldWithPath("data.cildCategory").type(JsonFieldType.ARRAY).description("자식카테고리번호").optional()
+                )));
     }
 
 
@@ -161,26 +197,7 @@ public class CategoryControllerTest {
 
     }
 
-    @Test
-    public void listTest() throws Exception{
-        createCategory();
-        createCategory4();
-        createCategory1();createCategory2();createCategory3();
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/category/list")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding("utf-8")
-        ).andExpect(status().isOk()).andDo(print()).andDo(document("category/get-list",
-                ApiDocumentUtils.getDocumentRequest(),
-                ApiDocumentUtils.getDocumentResponse(),
-                relaxedResponseFields(
-                        fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
-                        fieldWithPath("data.categoryId").type(JsonFieldType.NUMBER).description("카테고리번호"),
-                        fieldWithPath("data.categoryName").type(JsonFieldType.STRING).description("카테고리명"),
-                        fieldWithPath("data.parentId").type(JsonFieldType.NUMBER).description("부모카테고리번호").optional(),
-                        fieldWithPath("data.cildCategory").type(JsonFieldType.ARRAY).description("자식카테고리번호").optional()
-                )));
-    }
 
     @Test
     public void saveTest() throws Exception{
