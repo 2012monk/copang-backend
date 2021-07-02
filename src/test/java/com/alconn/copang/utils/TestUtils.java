@@ -7,14 +7,17 @@ import com.alconn.copang.exceptions.InvalidTokenException;
 import com.alconn.copang.item.Item;
 import com.alconn.copang.item.ItemDetail;
 import com.alconn.copang.security.provider.JwtTokenProvider;
+import com.alconn.copang.seller.Seller;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 @Component
+//@Repository
 public class TestUtils {
 
     public static Client client;
@@ -33,6 +36,17 @@ public class TestUtils {
             .phone("010-0030-9090")
             .realName("길동홍길동")
             .role(Role.CLIENT)
+            .build();
+    }
+
+    public Seller getSeller() {
+        return Seller.builder()
+            .username("coppang-seller")
+            .password("비밀번호123!")
+            .description("안녕하세요!")
+            .phone("010-0030-9090")
+            .realName("길동홍길동")
+            .role(Role.SELLER)
             .build();
     }
 
