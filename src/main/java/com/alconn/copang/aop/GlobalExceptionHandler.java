@@ -71,6 +71,7 @@ public class GlobalExceptionHandler {
         log.warn("지정하지 않은 Exception ", e);
         return ResponseMessage.<String>builder()
                 .message("서버에러입니다")
+                .data(e.getMessage())
                 .code(-1001)
                 .build();
     }
@@ -148,6 +149,7 @@ public class GlobalExceptionHandler {
             .data(e.getMessage())
             .build();
     }
+
 
 
 //    @ExceptionHandler(MethodArgumentNotValidException.class)

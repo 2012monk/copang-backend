@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 
 import static com.alconn.copang.ApiDocumentUtils.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -98,18 +99,17 @@ class OrderControllerTest {
                 .orderItems(orderItems)
                 .build();
 
-        given(service.createOrder(any(OrderForm.Create.class))).willReturn(response);
+        given(service.createOrder(any(OrderForm.Create.class), eq(client.getClientId()))).willReturn(response);
 
         // when
         OrderForm.Create create = OrderForm.Create.builder()
-                .clientId(1L)
                 .addressId(1L)
                 .orderItems(orderItems)
                 .totalAmount(4)
                 .totalPrice(80000)
                 .build();
 
-        System.out.println("service = " + mapper.writeValueAsString(service.createOrder(create)));
+        System.out.println("service = " + mapper.writeValueAsString(service.createOrder(create, client.getClientId())));
 
         String token = utils.genToken();
 

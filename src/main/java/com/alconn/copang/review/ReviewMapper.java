@@ -13,8 +13,8 @@ public interface ReviewMapper {
 
 
     //TODO 주문과 연동시 풀기
-    @Mapping(source = "form.orderItemId", target = "orderItem.id", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(source = "form.itemDetailId", target = "orderItem.itemDetail.itemDetailId", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+//    @Mapping(source = "form.orderItemId", target = "orderItem.id", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+//    @Mapping(source = "form.itemDetailId", target = "orderItem.itemDetail.itemDetailId", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "clientId", target = "writer.clientId")
     Review toEntity(ReviewForm.Request form, Long clientId);
 

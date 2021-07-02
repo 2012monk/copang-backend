@@ -19,7 +19,6 @@ import java.util.List;
 @Getter
 @Builder
 @Entity
-
 public class Orders {
 
     @Id @GeneratedValue

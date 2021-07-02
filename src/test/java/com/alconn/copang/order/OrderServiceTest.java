@@ -148,7 +148,6 @@ class OrderServiceTest {
 
         // Order 요청폼 작성
         OrderForm.Create create = OrderForm.Create.builder()
-            .clientId(1L)
             .addressId(1L)
             .orderItems(orderItemForms)
             .totalAmount(12)
@@ -177,7 +176,7 @@ class OrderServiceTest {
             .andExpect(jsonPath("$..totalPrice").value(create.getTotalPrice()))
             .andDo(print());
 
-        OrderForm.Response o = this.service.createOrder(create);
+        OrderForm.Response o = this.service.createOrder(create, client.getClientId());
         System.out
             .println("this.service.createOrder(create) = " + objectMapper.writeValueAsString(o));
 
