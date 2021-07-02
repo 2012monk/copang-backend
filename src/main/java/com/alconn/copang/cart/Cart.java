@@ -34,6 +34,13 @@ public class Cart {
 
     private int totalAmount;
 
+    public void clearCart(){
+        cartItems = null;
+//        cartItems.forEach(CartItem::disconnectToCart);
+//        this.cartItems = new HashSet<>(1);
+
+    }
+
     public void addCartItem(CartItem item) {
         this.cartItems.add(item);
         item.connectToCart(this);

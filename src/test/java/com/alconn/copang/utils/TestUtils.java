@@ -4,6 +4,8 @@ import com.alconn.copang.client.Client;
 import com.alconn.copang.client.ClientRepo;
 import com.alconn.copang.client.Role;
 import com.alconn.copang.exceptions.InvalidTokenException;
+import com.alconn.copang.item.Item;
+import com.alconn.copang.item.ItemDetail;
 import com.alconn.copang.security.provider.JwtTokenProvider;
 import java.util.List;
 import java.util.Map;
@@ -58,27 +60,17 @@ public class TestUtils {
         return "Bearer " + genToken();
     }
 
-    public <T> JsonFieldType convert(Class<T> tClass) {
-        if (tClass.isAssignableFrom(String.class)) {
-            return JsonFieldType.STRING;
-        }
-
-        if (tClass.isAssignableFrom(Number.class)) {
-            return JsonFieldType.NUMBER;
-        }
-
-        if(tClass.isAssignableFrom(Map.class)) {
-            return JsonFieldType.OBJECT;
-        }
-
-        if(tClass.isAssignableFrom(List.class) || tClass.isAssignableFrom(Set.class)) {
-            return JsonFieldType.ARRAY;
-        }
-
-        if (tClass.isAssignableFrom(Boolean.class)){
-            return JsonFieldType.BOOLEAN;
-        }
-
-        return JsonFieldType.OBJECT;
+    public ItemDetail getItemDetail() {
+        return ItemDetail.builder()
+            .optionName("테스트용")
+            .optionValue("빨간색")
+            .price(5000)
+            .stockQuantity(10)
+            .mainImg("no image")
+            .item(
+                Item.builder()
+                .itemName("신발1")
+                .build()
+            ).build();
     }
 }

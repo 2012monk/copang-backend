@@ -26,7 +26,7 @@ import java.util.OptionalLong;
 @Service
 public class JwtTokenProvider {
 
-    private final int exp = 60 * 60 * 24;
+    private final int exp = 1000 * 60 * 60 * 24;
 
     private final String issuer = "alconn.co";
 
@@ -36,7 +36,7 @@ public class JwtTokenProvider {
 
     private final ObjectMapper mapper;
 
-    private final int refExp = 60 * 60 * 24 * 3;
+    private final int refExp = 1000 * 60 * 60 * 24 * 3;
 
     @Value("${spring.jwt.secret}")
     private String keyString;

@@ -34,7 +34,6 @@ public class OrderForm {
 
         private String tid;
 
-
         private List<OrderItemForm> orderItems;
 
         @NotBlank @Positive

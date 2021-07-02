@@ -1,6 +1,8 @@
 package com.alconn.copang.cart;
 
 import com.alconn.copang.common.JoinItemBaseEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -11,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.CreationTimestamp;
 
 @SuperBuilder
 @NoArgsConstructor
@@ -29,6 +32,10 @@ public class CartItem extends JoinItemBaseEntity {
 
     private int unitTotal;
 
+    @JsonFormat(timezone = "Asia/Seoul", pattern = "yyyy-MM-dd")
+    @CreationTimestamp
+    private LocalDateTime registerDate;
+
     public int calculateTotal() {
         int result = this.item.getPrice() * this.amount;
         return result;
@@ -39,7 +46,7 @@ public class CartItem extends JoinItemBaseEntity {
     }
 
     public void disconnectToCart() {
-        cart.deleteItem(this);
+//        cart.deleteItem(this);
         this.cart = null;
     }
 
@@ -60,6 +67,7 @@ public class CartItem extends JoinItemBaseEntity {
 
     public void addAmount(@Positive int amount) {
         this.amount += amount;
+        this.unitTotal = this.amount * this.item.getPrice();
     }
 
     public void updateAmount(@Positive int amount) {
