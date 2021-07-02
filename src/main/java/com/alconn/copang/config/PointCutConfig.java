@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 public interface PointCutConfig {
 
-    @Pointcut("@annotation(org.springframework.web.bind.annotation.RestController)")
+    @Pointcut(value = "@annotation(org.springframework.web.bind.annotation.RestController)")
     default void restControllers(){}
 
     @Pointcut(value = "@annotation(com.alconn.copang.annotations.IdentitySecured)")
@@ -15,5 +15,24 @@ public interface PointCutConfig {
     // parameter annotation 에서 포인트컷 적용안됨
     @Pointcut(value = "@annotation(com.alconn.copang.annotations.InjectId)")
     default void injectId(){}
+
+    @Pointcut(value = "@annotation(org.springframework.web.bind.annotation.RequestMapping)")
+    default void mappings(){};
+
+
+    @Pointcut("@annotation(org.springframework.web.bind.annotation.GetMapping)")
+    default void get(){};
+
+    @Pointcut("@annotation(org.springframework.web.bind.annotation.PostMapping)")
+    default void post(){};
+    @Pointcut("@annotation(org.springframework.web.bind.annotation.DeleteMapping)")
+    default void delete(){};
+    @Pointcut("@annotation(org.springframework.web.bind.annotation.PutMapping)")
+    default void put() {};
+    @Pointcut("@annotation(org.springframework.web.bind.annotation.PatchMapping)")
+    default void patch(){};
+
+
+
 //    @Pointcut(value = "execution(* *(.., @InjectId (*), ..))")
 }
