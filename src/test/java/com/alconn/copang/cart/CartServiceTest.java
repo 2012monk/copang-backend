@@ -129,6 +129,8 @@ class CartServiceTest {
                 .build();
         service.addCartItem(client.getClientId(), add);
 
+        m.flush();
+        m.clear();
         CartItemForm result = service
             .updateAmountItem(client.getClientId(), detail.getItemDetailId(), 60);
 
@@ -139,7 +141,7 @@ class CartServiceTest {
             service.getCart(client.getClientId());
 
         System.out.println(
-            "mapper.writeValueAsString(response) = " + mapper.writeValueAsString(response));
+            "mapper.writeValueAsString(response) = " + mapper.writeValueAsString(result));
 
         assertEquals(response.getTotalAmount(), 60);
         assertEquals(response.getTotalPrice(), detail.getPrice() * 60);
