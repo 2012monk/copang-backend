@@ -1,8 +1,10 @@
 package com.alconn.copang.category;
 
+import com.alconn.copang.category.dto.CategoryRequest;
+import com.alconn.copang.category.dto.CategoryView;
 import com.alconn.copang.common.ResponseMessage;
+import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -11,36 +13,63 @@ import org.springframework.web.bind.annotation.*;
 public class CategoryController {
 
     final CategoryService categoryService;
+    //카테고리 id기반으로 상품출력하는것
 
 
 
+    //페이지 조회용 대중소분류
 
 
+    //상품 등록용 카테고리 전체조회
+    @GetMapping("/list")
+    public ResponseMessage<CategoryView.CategoryListDto> list(){
 
-    //부모 카테고리
-    @PostMapping("/top")
-    public ResponseMessage<CategoryView> parentSave(@RequestBody CategoryForm.CategorySaveTop categorySaveTop){
-            return ResponseMessage.<CategoryView>builder()
-                .message("메인카테고리저장")
-                .data(categoryService.saveTop(categorySaveTop))
+        return ResponseMessage.<CategoryView.CategoryListDto>builder()
+                .message("전체카테고리리스트")
+                .data(categoryService.rootCategory(0l))
                 .build();
     }
 
-    //자식카테고리
-    @PostMapping("/bottom")
-    public ResponseMessage<CategoryView> childSave(@RequestBody CategoryForm.CategorySaveForm categorySaveForm){
+    //카테고리 제거
+    @DeleteMapping("/delete/{categoryId}")
+    public ResponseMessage<CategoryView> del(@PathVariable(name = "categoryId") Long id) throws NoSuchEntityExceptions {
+        //id값이 없을경우 에러확인
+
+        CategoryView categoryView=categoryService.categorydelete(id);
+        if (categoryView==null){
             return ResponseMessage.<CategoryView>builder()
-                    .message("서브카테고리저장")
-                    .data(categoryService.categorySave(categorySaveForm))
+                            .message("하위 카테고리를 먼저 제거해주세요")
+                            .build();
+        }
+        else
+            return ResponseMessage.<CategoryView>builder()
+                    .message("카테고리삭제")
+                    .data(categoryView)
                     .build();
     }
 
 
+    //수정
+    @PutMapping("/update")
+    public ResponseMessage<CategoryView> update(@RequestBody CategoryRequest.CategoryUpdate categoryUpdate) throws  NoSuchEntityExceptions{
+
+        return ResponseMessage.<CategoryView>builder()
+                .message("카테고리 수정")
+                .data(categoryService.categoryupdate(categoryUpdate))
+                .build();
+    }
 
 
 
 
-
+    //카테고리 등록
+    @PostMapping("/add")
+    public ResponseMessage<CategoryView> save(@RequestBody CategoryRequest.CategorySave categorySave) throws NoSuchEntityExceptions {
+            return ResponseMessage.<CategoryView>builder()
+                .message("메인카테고리저장")
+                .data(categoryService.save(categorySave))
+                .build();
+    }
 
 
 }

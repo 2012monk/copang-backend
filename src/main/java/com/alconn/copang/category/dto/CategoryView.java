@@ -1,10 +1,12 @@
-package com.alconn.copang.category;
+package com.alconn.copang.category.dto;
 
 import lombok.*;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+//등록, 수정, 삭제 뷰
 @Getter
 @Builder
 @AllArgsConstructor
@@ -18,6 +20,7 @@ public class CategoryView {
     private Long parentId;
 
 
+    //조회용
     @Getter
     @Builder
     @AllArgsConstructor
@@ -30,7 +33,6 @@ public class CategoryView {
 
         private Long parentId;
 
-        @Builder.Default
         private List<CategoryListDto> cildCategory =new ArrayList<>();
 
 
@@ -38,6 +40,15 @@ public class CategoryView {
             this.cildCategory =categoryListDtos;
         }
 
+        @Override
+        public String toString() {
+            return "CategoryListDto{" +
+                    "categoryId=" + categoryId +
+                    ", categoryName='" + categoryName + '\'' +
+                    ", parentId=" + parentId +
+                    ", cildCategory=" + cildCategory +
+                    '}';
+        }
     }
 
 }
