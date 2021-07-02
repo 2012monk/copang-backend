@@ -4,6 +4,7 @@ import com.alconn.copang.item.ItemDetail;
 import com.alconn.copang.order.OrderItem;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,19 +19,23 @@ public class OrderItemForm {
 
     private Long orderItemId;
 
+    @NotNull(message = "상품아이디는 필수입니다")
+    private Long itemId;
+
+    @NotNull(message = "옵션 아이디는 필수값입니다")
+    private Long itemDetailId;
+
+    @NotNull(message = "수량은 필수입니다")
+    private Integer amount;
+
     private String itemName;
 
-    private Long itemDetailId;
 
     private String optionName;
 
     private String optionValue;
 
-    private Long itemId;
-
     private Integer price;
-
-    private Integer amount;
 
     private Integer unitTotal;
 }

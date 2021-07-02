@@ -16,8 +16,9 @@ public interface OrderMapper extends EntityMapper<OrderForm, Orders> {
 
 
 //    @Mapping(source = "dto.itemDetailId", target = "itemDetail.itemDetailId")
-    @Mapping(source = ".", target = "itemDetail.item")
-    @Mapping(source = ".", target = "itemDetail.")
+//    @Mapping(source = "dto.", target = "itemDetail.item")
+//    @Mapping(source = "dto.", target = "itemDetail.")
+//    @Mapping(source = "dto.orderItems.", target = "orderItemList.itemDetail.item")
     @Mapping(source = "dto.orderItems", target = "orderItemList")
     @Mapping(source = "clientId", target = "client.clientId")
     @Mapping(source = "dto.addressId", target = "address.addressId")
