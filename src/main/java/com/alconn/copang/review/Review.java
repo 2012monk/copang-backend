@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,7 +30,7 @@ public class Review {
     @GeneratedValue
     private Long reviewId;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "order_item_id")
     private OrderItem orderItem;
 
@@ -55,7 +56,7 @@ public class Review {
 
 
 
-    @JsonFormat(pattern = "yyyy.MM.dd", locale = "Seoul/Asia", shape = JsonFormat.Shape.STRING)
+
     @Column(updatable = false)
     @CreationTimestamp
     private LocalDateTime registerDate;

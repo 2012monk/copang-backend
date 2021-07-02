@@ -7,7 +7,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-    List<Review> findReviewsByOrderItem_ItemDetail_ItemDetailId(
-        @Param(value = "itemDetailId") Long itemDetailId, Sort sort);
+    List<Review> findReviewsByOrderItem_ItemDetail_Item_ItemId(
+        @Param(value = "itemId") Long itemId, Sort sort);
 
+    List<Review> findReviewsByWriter_ClientId(@Param(value = "clientId") Long clientId);
 }

@@ -2,10 +2,14 @@ package com.alconn.copang.review;
 
 import com.alconn.copang.client.UserForm;
 import com.alconn.copang.order.dto.OrderItemForm;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -41,6 +45,7 @@ public class ReviewForm {
 
     }
 
+    @JsonInclude(Include.NON_NULL)
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
@@ -51,9 +56,13 @@ public class ReviewForm {
 
         private Long itemId;
 
-        private UserForm.Response writer;
+        private Long orderId;
 
-        private OrderItemForm orderItem;
+        private Long itemDetailId;
+
+        private Long orderItemId;
+
+        private String writerName;
 
         private String content;
 
@@ -63,8 +72,35 @@ public class ReviewForm {
 
         private boolean satisfied;
 
+        private String title;
+
+        private String itemName;
+
+        private String optionName;
+
+        private String optionValue;
+
+        private Integer amount;
+
+
+        @JsonFormat(pattern = "yyyy.MM.dd", locale = "Seoul/Asia", shape = JsonFormat.Shape.STRING)
         private LocalDateTime registerDate;
 
 
+    }
+
+    @NoArgsConstructor @AllArgsConstructor
+    @Builder
+    @Getter
+    public static class Update {
+        private String content;
+
+        private String image;
+
+        private int rating;
+
+        private Boolean satisfied;
+
+        private String title;
     }
 }

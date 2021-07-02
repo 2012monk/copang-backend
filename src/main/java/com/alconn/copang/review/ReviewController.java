@@ -7,12 +7,14 @@ import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import com.alconn.copang.exceptions.UnauthorizedException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -32,6 +34,7 @@ public class ReviewController {
     // TODO 아이템조회시 주문여부 확인해서 boolean 전달
 
     @PostMapping("/register")
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseMessage<ReviewForm.Response> postReview(
         @RequestBody ReviewForm.Request requestForm,
         @InjectId Long clientId) {
@@ -58,7 +61,7 @@ public class ReviewController {
     @PutMapping("/{reviewId}")
     public ResponseMessage<ReviewForm.Response> updateReview(
         @InjectId Long clientId,
-        @RequestBody ReviewForm.Request request,
+        @RequestBody ReviewForm.Update request,
         @PathVariable Long reviewId
     ) throws NoSuchEntityExceptions, UnauthorizedException {
         return ResponseMessage.success(

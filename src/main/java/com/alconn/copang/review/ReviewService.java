@@ -4,6 +4,8 @@ import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import com.alconn.copang.exceptions.UnauthorizedException;
 import com.alconn.copang.review.ReviewForm.Request;
 import com.alconn.copang.review.ReviewForm.Response;
+import com.alconn.copang.review.ReviewForm.Update;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +28,7 @@ public class ReviewService {
 
     public List<Response> getReviewByItem(Long itemId) {
 
-        List<Review> list = repository.findReviewsByOrderItem_ItemDetail_ItemDetailId(itemId, Sort.by(Direction.ASC, "rating"));
+        List<Review> list = repository.findReviewsByOrderItem_ItemDetail_Item_ItemId(itemId, Sort.by(Direction.ASC, "rating"));
 
         return list.stream().map(mapper::toDto).collect(Collectors.toList());
     }
@@ -35,12 +37,11 @@ public class ReviewService {
     public Response postReview(Request requestForm, Long clientId) {
         Review review = mapper.toEntity(requestForm, clientId);
         repository.save(review);
-
         return mapper.toDto(review);
     }
 
     @Transactional
-    public Response updateReview(Request request, Long clientId, Long reviewId)
+    public Response updateReview(Update request, Long clientId, Long reviewId)
         throws NoSuchEntityExceptions, UnauthorizedException {
 
         Review review = repository.findById(reviewId).orElseThrow(NoSuchEntityExceptions::new);
@@ -64,10 +65,16 @@ public class ReviewService {
 
 
     public List<Response> getUserReview(Long clientId) {
-        return null;
+        List<Review> list = repository.findReviewsByWriter_ClientId(clientId)
+            .stream().sorted(Comparator.comparing(Review::getRegisterDate))
+            .collect(Collectors.toList());
+        return mapper.toDto(list);
     }
 
+    // TODO Implement Me
     public List<Response> getSellerReview(Long sellerId) {
         return null;
     }
+
+
 }
