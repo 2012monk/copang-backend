@@ -6,6 +6,7 @@ import com.alconn.copang.exceptions.UnauthorizedException;
 import com.alconn.copang.exceptions.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
+import org.hibernate.TransientPropertyValueException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.core.Ordered;
@@ -129,7 +130,28 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
+    @ExceptionHandler(TransientPropertyValueException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseMessage<String > handleUnSaved(TransientPropertyValueException e) {
+        return ResponseMessage.<String>builder()
+            .message("요청 하신 정보가 잘못 되었습니다!")
+            .code(-11)
+            .data(e.getMessage())
+            .build();
+    }
 
+
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    public ResponseMessage<String> handleUnmapped(MethodArgumentNotValidException e) {
+//        return ResponseMessage.<String>builder()
+//            .message("요청하신 형식이 올바르지 않습니다")
+//            .code(-111)
+//            .data(e.getMessage() + "\n" + e.getAllErrors().stream().map(
+//                DefaultMessageSourceResolvable::getDefaultMessage).collect(
+//                Collectors.joining("\n")))
+//            .build();
+//    }
 
 
 }

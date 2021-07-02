@@ -7,9 +7,6 @@ import com.alconn.copang.common.ResponseMessage;
 import com.alconn.copang.exceptions.InvalidTokenException;
 import com.alconn.copang.exceptions.LoginFailedException;
 import com.alconn.copang.exceptions.NoSuchUserException;
-import java.util.Date;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -35,15 +32,13 @@ public class AuthController {
                 .build();
     }
 
-    // TODO 받아들이는 타입에따라 분기 가능한가?
-//    @PostMapping("/signup")
+//    @PostMapping("/signup/seller")
 //    @ResponseStatus(HttpStatus.CREATED)
-//    public ResponseMessage<Client> createClient(@RequestBody Client client) {
-//        return ResponseMessage.<Client>builder()
-//                .data(service.signupClient(client))
-//                .message("created")
-//                .code(200)
-//                .build();
+//    public ResponseMessage<UserForm.Response> registerSeller(@RequestBody @Validated UserForm form)
+//        throws SQLIntegrityConstraintViolationException {
+//        return ResponseMessage.success(
+//            service.registerSeller(form)
+//        );
 //    }
 
 
@@ -58,21 +53,11 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseMessage<AccessTokenContainer> login(@RequestBody LoginToken loginToken, HttpServletResponse response) throws InvalidTokenException, LoginFailedException {
-        AccessTokenContainer container = service.login(loginToken);
-        String refToken = service.getRefreshToken(loginToken.getUsername());
-        setRef(response, refToken);
+    public ResponseMessage<AccessTokenContainer> login(@RequestBody LoginToken loginToken) throws InvalidTokenException, LoginFailedException {
         return ResponseMessage.<AccessTokenContainer>builder()
                 .message("success")
                 .data(service.login(loginToken))
                 .build();
-    }
-
-    private void setRef(HttpServletResponse response, String refToken) {
-        int e =1000 * 60 * 60 * 24 * 3;
-        Date exp = new Date(new Date().getTime() + e);
-        final String HEADER = "ref=" + refToken +"; path=/; Secure; SameSite=None; HttpOnly; Max-Age=" + e;
-        response.setHeader("Set-Cookie", HEADER);
     }
 
 

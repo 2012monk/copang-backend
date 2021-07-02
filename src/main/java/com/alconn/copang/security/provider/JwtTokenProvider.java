@@ -48,20 +48,20 @@ public class JwtTokenProvider {
         key = new SecretKeySpec(Base64.encodeBase64(keyString.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256.getJcaName());
     }
 
-    public String createRefreshToken(String name) {
+    public String createRefreshToken(Client user) {
         Date now = new Date();
 
         Date exp = new Date(now.getTime() + refExp);
 
         Claims claims = Jwts.claims();
-        claims.put("username", name);
+        claims.put("uid", user.getClientId());
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuer(issuer)
                 .setSubject(REFRESH_TOKEN)
                 .setIssuedAt(now)
                 .setExpiration(exp)
-                .setAudience(name)
+                .setAudience(user.getUsername())
                 .signWith(key)
                 .compact();
     }
