@@ -157,7 +157,7 @@ operation::orders/proceed-order[snippets='request-headers,path-parameters,http-r
 operation::orders/get-one-order[snippets='request-headers,path-parameters,http-request,http-response,response-fields']
 
 == 유저 주문 조회하기
-==== `GET` /api/order/client/:clientId
+==== `GET` /api/order/client
 
 operation::orders/get-client-order-list[snippets='request-headers,http-request,http-response,response-fields']
 
@@ -172,7 +172,7 @@ operation::cart/get-client-cart[snippets='http-request,request-headers,http-resp
 == 장바구니 아이템추가
 ==== `POST` /api/cart/item
 
-기존에 존재하는 아이템 업데이트시 수량이 추가됩니다
+기존에 존재하는 아이템에 추가시 수량이 추가됩니다
 
 
 operation::cart/add-cart-item[snippets='http-request,request-headers,request-fields,http-response,response-fields']
