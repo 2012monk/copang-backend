@@ -1,7 +1,6 @@
 package com.alconn.copang.cart;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
 import lombok.Builder;
@@ -44,7 +43,8 @@ public class CartItemForm {
 
     private Integer unitTotal;
 
-    @JsonFormat(pattern = "yyyy-MM-dd", locale = "Asia/Seoul", shape = Shape.STRING)
+//    @JsonFormat(pattern = "yyyy//MM/dd", timezone = "Asia/Seoul", shape = Shape.STRING)
+    @JsonFormat(timezone = "Seoul/Asia", pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime registerDate;
 
 

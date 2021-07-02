@@ -39,9 +39,9 @@ public class UserIdResolver implements HandlerMethodArgumentResolver {
         HttpServletRequest request
             = (HttpServletRequest) webRequest.getNativeRequest();
 
-        log.info("requested URI : {}", request.getRequestURI());
         AuthToken authToken = (AuthToken) SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("authToken.getToken() = " + authToken.getToken());
+        log.info("requested URI : {}", request.getRequestURI());
+        log.info("authToken.getToken() = " + authToken.getToken());
         Client client = provider.resolveUserFromToken(authToken.getToken()).orElseThrow(() -> new UnauthorizedException("인증정보가 잘못 되었습니당!"));
 
         Role role = Objects.requireNonNull(parameter.getParameterAnnotation(InjectId.class)).role();
