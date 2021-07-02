@@ -1,4 +1,4 @@
-package com.alconn.copang.item;
+package com.alconn.copang.item.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

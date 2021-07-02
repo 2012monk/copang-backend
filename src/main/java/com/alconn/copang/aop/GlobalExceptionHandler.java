@@ -141,17 +141,17 @@ public class GlobalExceptionHandler {
     }
 
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseMessage<String> handleUnmapped(MethodArgumentNotValidException e) {
-        return ResponseMessage.<String>builder()
-            .message("요청하신 형식이 올바르지 않습니다")
-            .code(-111)
-            .data(e.getMessage() + "\n" + e.getAllErrors().stream().map(
-                DefaultMessageSourceResolvable::getDefaultMessage).collect(
-                Collectors.joining("\n")))
-            .build();
-    }
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    public ResponseMessage<String> handleUnmapped(MethodArgumentNotValidException e) {
+//        return ResponseMessage.<String>builder()
+//            .message("요청하신 형식이 올바르지 않습니다")
+//            .code(-111)
+//            .data(e.getMessage() + "\n" + e.getAllErrors().stream().map(
+//                DefaultMessageSourceResolvable::getDefaultMessage).collect(
+//                Collectors.joining("\n")))
+//            .build();
+//    }
 
 
 }

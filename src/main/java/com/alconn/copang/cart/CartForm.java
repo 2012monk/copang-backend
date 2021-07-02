@@ -1,6 +1,5 @@
 package com.alconn.copang.cart;
 
-import com.alconn.copang.item.ItemDetailForm;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -8,7 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
 import java.util.Set;
 
 public class CartForm {

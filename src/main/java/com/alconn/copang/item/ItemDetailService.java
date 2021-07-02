@@ -1,5 +1,11 @@
 package com.alconn.copang.item;
 
+import com.alconn.copang.exceptions.NoSuchEntityExceptions;
+import com.alconn.copang.item.dto.ItemDetailForm;
+import com.alconn.copang.item.dto.ItemForm;
+import com.alconn.copang.item.dto.ItemViewForm;
+import com.alconn.copang.item.mapper.ItemMapper;
+import com.alconn.copang.seller.Seller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,15 +27,16 @@ public class ItemDetailService {
 
     //다중 저장
     @Transactional
-    public ItemForm itemDetailListSave(ItemForm itemForm){
+    public ItemForm itemDetailListSave(ItemForm itemForm, Long sellerId){
         //매퍼 풀기
         Item item=Item.builder()
                 .itemName(itemForm.getItemName())
                 .itemComment(itemForm.getItemComment())
+                .seller(Seller.builder().clientId(sellerId).build())
                 .build();
         itemService.saveItem(item);
 
-        List<ItemDetail> itemDetailList=itemMapper.listDtoToDomainN(itemForm.getItemDetailFormList());
+        List<ItemDetail> itemDetailList = itemMapper.listDtoToDomainN(itemForm.getItemDetailFormList());
 
         //연관관계 매핑
         itemDetailList=itemDetailSaveList(item,itemDetailList);
@@ -40,7 +47,7 @@ public class ItemDetailService {
     }
 
     //옵션 추가
-    public ItemViewForm itemSingle(ItemForm.ItemSingle itemSingle){
+    public ItemViewForm itemSingle(ItemForm.ItemSingle itemSingle) throws NoSuchEntityExceptions {
         if(itemSingle.getItemId()!=0&&itemSingle.getItemId()==null) {
             //에러 발생위치
 
@@ -118,7 +125,8 @@ public class ItemDetailService {
     //DTO로 받아서 전체 업데이트
     @Transactional
 //    public ItemForm updateItemDetail(ItemForm.ItemFormUpdate itemFormUpdate){
-    public ItemForm.ItemFormUpdate updateItemDetail(ItemForm.ItemFormUpdate itemFormUpdate){
+    public ItemForm.ItemFormUpdate updateItemDetail(ItemForm.ItemFormUpdate itemFormUpdate)
+        throws NoSuchEntityExceptions {
         //풀기
         List<ItemDetailForm.DetailUpdateClass> iDetailUpdateClasses =itemFormUpdate.getItemDetailUpdateClassList();
 
@@ -160,7 +168,8 @@ public class ItemDetailService {
     }
 
     //단일 수정
-    public ItemViewForm itemSingleUpdate(ItemForm.ItemFormUpdateSingle updateSingle){
+    public ItemViewForm itemSingleUpdate(ItemForm.ItemFormUpdateSingle updateSingle)
+        throws NoSuchEntityExceptions {
         Item item=itemService.itemFindNum(updateSingle.getItemId());
         if(!item.getItemName().equals(updateSingle.getItemName())) {
             item.nameUpdate(updateSingle.getItemName());

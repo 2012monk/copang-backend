@@ -5,6 +5,7 @@ import com.alconn.copang.client.ClientRepo;
 import com.alconn.copang.client.Role;
 import com.alconn.copang.exceptions.InvalidTokenException;
 import com.alconn.copang.security.provider.JwtTokenProvider;
+import com.alconn.copang.seller.Seller;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,6 +47,10 @@ public class TestUtils {
             .build();
     }
 
+    public String genHeader(Client client) throws InvalidTokenException {
+        return "Bearer " + genToken(client);
+    }
+
     public String genToken(Client client) throws InvalidTokenException {
         return provider.createAccessToken(client).orElseThrow(InvalidTokenException::new);
     }
@@ -54,31 +59,47 @@ public class TestUtils {
         return genToken(generateMockClient());
     }
 
+    public String genSellerHeader() throws InvalidTokenException {
+        Client cl = getSeller();
+        return "Bearer " + provider.createAccessToken(cl).orElseThrow(InvalidTokenException::new);
+    }
+
+    public Seller getSellerC() {
+        return Seller.builder()
+            .username("coppang143")
+            .password("비밀번호123!")
+            .description("안녕하세요!")
+            .phone("010-0030-9090")
+            .realName("길동홍길동")
+            .role(Role.SELLER)
+            .build();
+    }
+
+    public Client getSeller() {
+        return Client.builder()
+            .clientId(1L)
+            .username("coppang143")
+            .password("비밀번호123!")
+            .description("안녕하세요!")
+            .phone("010-0030-9090")
+            .realName("길동홍길동")
+            .role(Role.SELLER)
+            .build();
+    }
+
+    public Client getRealSeller() {
+        return Client.builder()
+            .username("coppang143")
+            .password("비밀번호123!")
+            .description("안녕하세요!")
+            .phone("010-0030-9090")
+            .realName("길동홍길동")
+            .role(Role.SELLER)
+            .build();
+    }
+
     public String genAuthHeader() throws InvalidTokenException {
         return "Bearer " + genToken();
     }
 
-    public <T> JsonFieldType convert(Class<T> tClass) {
-        if (tClass.isAssignableFrom(String.class)) {
-            return JsonFieldType.STRING;
-        }
-
-        if (tClass.isAssignableFrom(Number.class)) {
-            return JsonFieldType.NUMBER;
-        }
-
-        if(tClass.isAssignableFrom(Map.class)) {
-            return JsonFieldType.OBJECT;
-        }
-
-        if(tClass.isAssignableFrom(List.class) || tClass.isAssignableFrom(Set.class)) {
-            return JsonFieldType.ARRAY;
-        }
-
-        if (tClass.isAssignableFrom(Boolean.class)){
-            return JsonFieldType.BOOLEAN;
-        }
-
-        return JsonFieldType.OBJECT;
-    }
 }

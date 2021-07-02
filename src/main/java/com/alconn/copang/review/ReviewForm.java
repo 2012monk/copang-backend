@@ -1,11 +1,8 @@
 package com.alconn.copang.review;
 
 import com.alconn.copang.client.UserForm;
-import com.alconn.copang.item.ItemDetailForm;
-import com.alconn.copang.order.OrderItem;
 import com.alconn.copang.order.dto.OrderItemForm;
 import java.time.LocalDateTime;
-import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -83,7 +83,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/**/login", "/**/signup").permitAll()
 //                    .anyRequest().hasRole("GUEST")
                 // TODO 권한관계 설정하기
-                    .anyRequest().hasAnyRole("GUEST", "CLIENT", "ADMIN")
+                    .anyRequest().hasAnyRole("GUEST", "CLIENT", "ADMIN", "SELLER")
 //                    .anyRequest().authenticated()
                 .and()
 //                    .csrf().disable()

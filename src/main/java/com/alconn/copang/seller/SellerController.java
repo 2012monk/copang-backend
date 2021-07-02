@@ -2,7 +2,7 @@ package com.alconn.copang.seller;
 
 import com.alconn.copang.annotations.InjectId;
 import com.alconn.copang.common.ResponseMessage;
-import com.alconn.copang.item.ItemDetailForm;
+import com.alconn.copang.item.dto.ItemDetailForm;
 import com.alconn.copang.shipment.Shipment;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

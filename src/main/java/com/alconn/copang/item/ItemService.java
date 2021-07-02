@@ -1,5 +1,6 @@
 package com.alconn.copang.item;
 
+import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +33,9 @@ public class ItemService {
         return itemRepository.findAll();
     }
 
-    public Item itemFindNum(Long id){
+    public Item itemFindNum(Long id) throws NoSuchEntityExceptions {
         // NosuchElementException
-        return itemRepository.findById(id).get();
+        return itemRepository.findById(id).orElseThrow(NoSuchEntityExceptions::new);
     }
 
     //삭제

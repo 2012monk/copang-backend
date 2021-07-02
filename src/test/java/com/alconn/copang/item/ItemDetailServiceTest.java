@@ -1,5 +1,18 @@
 package com.alconn.copang.item;
 
+import com.alconn.copang.client.Client;
+import com.alconn.copang.client.ClientRepo;
+import com.alconn.copang.exceptions.NoSuchEntityExceptions;
+import com.alconn.copang.item.dto.ItemDetailForm;
+import com.alconn.copang.item.dto.ItemForm;
+import com.alconn.copang.item.dto.ItemViewForm;
+import com.alconn.copang.item.mapper.ItemMapper;
+import com.alconn.copang.seller.Seller;
+import com.alconn.copang.seller.SellerRepository;
+import com.alconn.copang.utils.TestUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +43,32 @@ public class ItemDetailServiceTest {
     @Autowired
     EntityManager em;
 
+    @Autowired
+    TestUtils utils;
+
+    @Autowired
+    ClientRepo repo;
+
+    Seller seller;
+
+    @Autowired
+    SellerRepository repository;
+
+    @BeforeEach
+    void setUp() {
+        seller = repository.save(utils.getSellerC());
+    }
+
+    @AfterEach
+    void clean() {
+        repository.deleteAll();
+    }
 
     private Item itemTest(){
         Item item=Item.builder()
                 .itemName("테스트상품")
                 .itemComment("상품설명")
+                .seller(seller)
                 .build();
         return item;
     }
@@ -109,6 +143,7 @@ public class ItemDetailServiceTest {
         em.clear();
     }
 
+    @Disabled
     //mockup데이터 디비 확인용
     @Test
     @Commit
@@ -142,9 +177,9 @@ public class ItemDetailServiceTest {
 
     //단일수정
     @Test
-    public void updateTestSingle(){
+    public void updateTestSingle() throws NoSuchEntityExceptions {
         List<ItemDetail> list=findMockData();
-        ItemForm.ItemFormUpdateSingle updateSingle=ItemForm.ItemFormUpdateSingle.builder()
+        ItemForm.ItemFormUpdateSingle updateSingle= ItemForm.ItemFormUpdateSingle.builder()
                 .itemId(list.get(0).getItem().getItemId())
                 .itemName("신발")
                 .itemComment("신발설명")
@@ -166,7 +201,7 @@ public class ItemDetailServiceTest {
 
     //전체수정
     @Test
-    public void updateTest(){
+    public void updateTest() throws NoSuchEntityExceptions {
         List<ItemDetail> list=findMockData();
         List<ItemDetail> testList=itemDetailRepository.findItemDetailPage(list.get(0).getItem().getItemId());
         List<ItemDetailForm.DetailUpdateClass> testUpdateList =new ArrayList<>();
@@ -201,7 +236,7 @@ public class ItemDetailServiceTest {
 
     //옵션추가테스트
     @Test
-    public void itemSingle(){
+    public void itemSingle() throws NoSuchEntityExceptions {
         findMockData();
         Item item=itemRepository.findAll().get(0);
 
