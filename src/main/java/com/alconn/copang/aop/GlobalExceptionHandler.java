@@ -12,6 +12,7 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.validation.ObjectError;
@@ -71,6 +72,7 @@ public class GlobalExceptionHandler {
         log.warn("지정하지 않은 Exception ", e);
         return ResponseMessage.<String>builder()
                 .message("서버에러입니다")
+                .data(e.getMessage())
                 .code(-1001)
                 .build();
     }
@@ -139,7 +141,7 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
-    @ExceptionHandler(TransientPropertyValueException.class)
+    @ExceptionHandler({TransientPropertyValueException.class, InvalidDataAccessApiUsageException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseMessage<String > handleUnSaved(TransientPropertyValueException e) {
         return ResponseMessage.<String>builder()
