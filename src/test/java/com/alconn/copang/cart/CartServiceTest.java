@@ -226,4 +226,37 @@ class CartServiceTest {
 
         assertEquals(response.getCartItems().size(), 0);
     }
+
+    @Transactional
+    @Test
+    void deleteOneItem() throws NoSuchEntityExceptions {
+
+        Item item = Item.builder().itemName("고구마").build();
+
+        ItemDetail detail = ItemDetail.builder()
+            .optionName("박스")
+            .optionValue("5KG")
+            .item(item)
+            .mainImg("no image")
+            .price(56900)
+            .build();
+        detailService.itemDetailSave(detail);
+        repo.save(client);
+        CartForm.Add add =
+            CartForm.Add.builder()
+                .itemDetailId(detail.getItemDetailId())
+                .itemId(detail.getItem().getItemId())
+                .amount(3)
+                .build();
+
+        service.addCartItem(client.getClientId(), add);
+
+        m.flush();
+        m.clear();
+
+        service.deleteItem(client.getClientId(), detail.getItemDetailId());
+
+        m.flush();
+        m.clear();
+    }
 }

@@ -74,11 +74,7 @@ public class CartService {
     @Transactional
     public boolean clearCart(Long clientId) throws NoSuchEntityExceptions {
         repository.findCartByClientId(clientId).ifPresent(repository::delete);
-//        cart.getCartItems().forEach(CartItem::disconnectToCart);
 
-//        repository.save(cart);
-
-//        CartForm.Response response = mapper.cartToResponse(cart);
         return true;
     }
 

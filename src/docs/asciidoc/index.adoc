@@ -153,12 +153,12 @@ operation::orders/start-order[snippets='http-request,request-fields,request-head
 operation::orders/proceed-order[snippets='request-headers,path-parameters,http-request,http-response,response-fields']
 
 == 주문 단건 조회
-==== `GET` /api/order/:orderId
+==== `GET` /api/orders/:orderId
 
 operation::orders/get-one-order[snippets='request-headers,path-parameters,http-request,http-response,response-fields']
 
 == 유저 주문 조회하기
-==== `GET` /api/order/client
+==== `GET` /api/orders/client
 
 operation::orders/get-client-order-list[snippets='request-headers,http-request,http-response,response-fields']
 

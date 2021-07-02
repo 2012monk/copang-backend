@@ -47,7 +47,7 @@ public class CartItem extends JoinItemBaseEntity {
     }
 
     public void disconnectToCart() {
-//        cart.deleteItem(this);
+        cart.deleteItem(this);
         this.cart = null;
     }
 
