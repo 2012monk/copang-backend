@@ -4,13 +4,16 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
@@ -44,7 +47,8 @@ public class CartItemForm {
 
     private Integer unitTotal;
 
-    @JsonFormat(pattern = "yyyy-MM-dd", locale = "Asia/Seoul", shape = Shape.STRING)
+//    @JsonFormat(pattern = "yyyy//MM/dd", timezone = "Asia/Seoul", shape = Shape.STRING)
+    @JsonFormat(timezone = "Seoul/Asia", pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime registerDate;
 
 

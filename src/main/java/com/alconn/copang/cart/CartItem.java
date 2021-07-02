@@ -32,7 +32,8 @@ public class CartItem extends JoinItemBaseEntity {
 
     private int unitTotal;
 
-    @JsonFormat(timezone = "Asia/Seoul", pattern = "yyyy-MM-dd")
+//    @JsonFormat(timezone = "Asia/Seoul", pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy/MM/dd-HH:mm", locale = "Seoul/Asia", shape = JsonFormat.Shape.STRING)
     @CreationTimestamp
     private LocalDateTime registerDate;
 

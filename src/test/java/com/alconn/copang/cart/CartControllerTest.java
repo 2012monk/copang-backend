@@ -30,6 +30,7 @@ import com.alconn.copang.exceptions.InvalidTokenException;
 import com.alconn.copang.exceptions.LoginFailedException;
 import com.alconn.copang.utils.TestUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -196,6 +197,7 @@ class CartControllerTest {
                 .optionValue("1KG")
                 .amount(50)
                 .price(4500)
+                .registerDate(LocalDateTime.now())
                 .build();
         CartForm.Add add =
             CartForm.Add.builder()
@@ -242,7 +244,8 @@ class CartControllerTest {
                         fieldWithPath("data.optionValue").type(JsonFieldType.STRING)
                             .description("옵션값"),
                         fieldWithPath("data.amount").type(JsonFieldType.NUMBER).description("수량"),
-                        fieldWithPath("data.price").type(JsonFieldType.NUMBER).description("가격")
+                        fieldWithPath("data.price").type(JsonFieldType.NUMBER).description("가격"),
+                        fieldWithPath("data.registerDate").type(JsonFieldType.STRING).description("최초 추가 날짜")
                     )
 
                 )
