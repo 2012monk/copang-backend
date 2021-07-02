@@ -56,12 +56,12 @@ public class CategoryControllerTest {
     EntityManager em;
 
     //======== 테스트 데이터 ================
-    private void createCategory(){
+    private Category createCategory(){
         Category category=Category.builder()
                 .parentId(0L)
                 .categoryName("의류")
                 .build();
-        categoryRepository.save(category);
+        return categoryRepository.save(category);
     }
 
     //저장용 목데이터
@@ -146,10 +146,10 @@ public class CategoryControllerTest {
 
     @Test
     public void updateTest() throws Exception{
-        createCategory();
+        Category category=createCategory();
 
         CategoryRequest.CategoryUpdate categoryUpdate= CategoryRequest.CategoryUpdate.builder()
-                .categoryId(1l)
+                .categoryId(category.getCategoryId())
                 .categoryName("가구")
                 .build();
 
@@ -177,7 +177,7 @@ public class CategoryControllerTest {
     @Test
     public void delTest() throws Exception{
         createCategory();
-        Long categoryId=categoryRepository.findById(1l).get().getCategoryId();
+        Long categoryId=categoryRepository.findAll().get(0).getCategoryId();
 
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/category/delete/{categoryId}",categoryId)
                 .contentType(MediaType.APPLICATION_JSON)
