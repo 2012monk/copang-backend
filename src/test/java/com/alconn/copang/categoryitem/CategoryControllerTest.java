@@ -41,7 +41,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 @AutoConfigureMockMvc
 @SpringBootTest
 @AutoConfigureRestDocs
-public class CategortControllerTest {
+public class CategoryControllerTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -92,7 +92,15 @@ public class CategortControllerTest {
         categoryRepository.save(category);
     }
     //========================
-
+    CategoryRequest.CategorySave categorySave= CategoryRequest.CategorySave.builder()
+            .parentId(0l)
+            .categoryName("의류")
+            .build();
+    CategoryRequest.CategorySave categorySave2= CategoryRequest.CategorySave.builder()
+            .parentId(1l)
+            .categoryName("청바지")
+            .build();
+    //===================
 
     @BeforeEach
     void setUp() {
@@ -180,6 +188,7 @@ public class CategortControllerTest {
                 .categoryName("의류")
                 .parentId(0l)
                 .build();
+
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/category/add")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(categorySave))

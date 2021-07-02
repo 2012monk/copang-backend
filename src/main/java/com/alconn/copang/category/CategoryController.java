@@ -13,11 +13,18 @@ import org.springframework.web.bind.annotation.*;
 public class CategoryController {
 
     final CategoryService categoryService;
-    //카테고리 id기반으로 상품출력하는것
+
+
+    //페이지 조회용
+//    @GetMapping("/main")
+//    public ResponseMessage<CategoryView.CategoryListDto> layerList(){
+//        return
+//
+//
+//    }
 
 
 
-    //페이지 조회용 대중소분류
 
 
     //상품 등록용 카테고리 전체조회

@@ -40,15 +40,7 @@ public class CategoryView {
             this.cildCategory =categoryListDtos;
         }
 
-        @Override
-        public String toString() {
-            return "CategoryListDto{" +
-                    "categoryId=" + categoryId +
-                    ", categoryName='" + categoryName + '\'' +
-                    ", parentId=" + parentId +
-                    ", cildCategory=" + cildCategory +
-                    '}';
-        }
+
     }
 
 }

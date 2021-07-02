@@ -22,6 +22,10 @@ public class Category {
     @Builder.Default
     private String childCheck="N";
 
+    //대중소용
+    @Builder.Default
+    private int layer=1;
+
 
     public void changeCategoryprentId(Long parentId){
 
@@ -36,5 +40,17 @@ public class Category {
         this.childCheck=check;
     }
 
+    public void changeLayer(int layer){this.layer=layer;}
 
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "categoryId=" + categoryId +
+                ", categoryName='" + categoryName + '\'' +
+                ", parentId=" + parentId +
+                ", childCheck='" + childCheck + '\'' +
+                ", layer=" + layer +
+                '}';
+    }
 }

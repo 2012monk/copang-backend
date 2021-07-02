@@ -39,7 +39,7 @@ public class CategoryService {
     }
 
 
-//  수정 -> 이름 변경
+//  수정
     @Transactional
     public CategoryView categoryupdate (CategoryRequest.CategoryUpdate categoryUpdate) throws NoSuchElementException{
         Category categor=categoryRepository.findById(categoryUpdate.getCategoryId()).orElseThrow(()->new NoSuchElementException("등록된 카테고리가 아닙니다"));
@@ -82,6 +82,7 @@ public class CategoryService {
                     .build();
             childCategoryadd(rootCategoryDto, parentGroup);
 
+
             return rootCategoryDto;
         }
     private void childCategoryadd(CategoryView.CategoryListDto rootCategoryDto, Map<Long, List<CategoryView.CategoryListDto>> parentGroup) {
@@ -108,9 +109,11 @@ public class CategoryService {
     public CategoryView save(CategoryRequest.CategorySave categorySave) throws NoSuchEntityExceptions {
         Category category=categoryMapper.topToEntity(categorySave);
 
+        //최상위 카테고리 셋팅
         if(categorySave.getParentId()==0){
             category.changeCategoryprentId(0L);
             category.changeChildCheck("N");
+            category.changeLayer(1);
         }
 
         else {
@@ -119,6 +122,7 @@ public class CategoryService {
             category2.changeChildCheck("Y");
             categoryRepository.save(category2);
             category.changeChildCheck("N");
+            category.changeLayer(category2.getLayer()+1);
         }
         categoryRepository.save(category);
         return categoryMapper.toDto(category);

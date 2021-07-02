@@ -45,7 +45,6 @@ import static org.mockito.Mockito.*;
         System.out.println("categoryListDto.toString() = " + categoryListDto.toString());
     }
 
-
     private List<Category> categortyadd() {
         Category test1=Category.builder()
                         .categoryName("메인1")
