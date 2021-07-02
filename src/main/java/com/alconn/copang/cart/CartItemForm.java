@@ -1,19 +1,15 @@
 package com.alconn.copang.cart;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
