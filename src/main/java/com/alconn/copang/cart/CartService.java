@@ -5,6 +5,7 @@ import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import com.alconn.copang.exceptions.NoSuchUserException;
 import com.alconn.copang.item.ItemDetail;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,12 +38,6 @@ public class CartService {
         CartItem cartItem = cart.getCartItems().stream()
             .filter(i -> i.getItem().getItemDetailId().equals(form.getItemDetailId()))
             .collect(Collectors.toList()).stream().findFirst().orElseGet(() ->null);
-//            .orElseGet(() ->
-//                CartItem.builder()
-//                    .item(ItemDetail.builder().itemDetailId(form.getItemDetailId()).build())
-////                    .amount(form.getAmount())
-//                    .build()
-//            );
 
         if (cartItem == null) {
             cartItem = CartItem.builder()
@@ -51,26 +46,13 @@ public class CartService {
             cart.addCartItem(cartItem);
         }
 
-        cartItem.updateAmount(cartItem.getAmount() + 1);
+        // 기존의 존재하던 장바구니아이템 수량에 가산
+        cartItem.updateAmount(cartItem.getAmount() + form.getAmount());
 
-//        CartItem cartItem = CartItem.builder()
-//                .item(ItemDetail.builder().itemDetailId(form.getItemDetailId()).build())
-//                .amount(form.getAmount())
-//                .build();
         repository.save(cart);
-
-//        Set<ItemDetailForm> items = getItemDetailForms(cart);
 
         CartItemForm res = mapper.cartItemToDto(cartItem);
 
-        CartForm.Response response =
-            CartForm.Response.builder()
-                .cartId(cart.getCartId())
-                .cartItemId(cartItem.getCartItemId())
-                .totalAmount(cartItem.getAmount())
-                .itemId(form.getItemId())
-                .itemDetailId(form.getItemDetailId())
-                .build();
         return res;
 
     }
@@ -105,9 +87,8 @@ public class CartService {
             .orElseThrow(() -> new NoSuchEntityExceptions("카트가 비어있습니다"));
         Set<CartItem> items = cart.getCartItems();
 
-        CartItem item = items.stream().filter(i -> i.getItem().getItemDetailId().equals(detailId))
+        return items.stream().filter(i -> i.getItem().getItemDetailId().equals(detailId))
             .findFirst().orElseThrow(() -> new NoSuchEntityExceptions("아이템이 없습니다"));
-        return item;
     }
 
     @Transactional
@@ -149,8 +130,9 @@ public class CartService {
         cart.setTotalAmount();
         cart.setTotalPrice();
         cart.getCartItems().forEach(i -> System.out.println("i.getoption() = " + i.getItem().getOptionName()));
-        Set<CartItemForm> items = getItemDetailForms(cart);
-        items.forEach(i -> System.out.println("i.getItemName() = " + i.getItemName()));
+        List<CartItemForm> items = getItemDetailForms(cart);
+        items.forEach(CartItemForm::calculateUnitTotal);
+
         CartForm.Response r = mapper.cartToResponse(cart);
         CartForm.Response response
             = CartForm.Response.builder()
@@ -161,15 +143,16 @@ public class CartService {
             .totalAmount(cart.getTotalAmount())
             .build();
 
+
         return r;
 
     }
 
 //    @Transactional
-    private Set<CartItemForm> getItemDetailForms(Cart cart) {
+    private List<CartItemForm> getItemDetailForms(Cart cart) {
         return cart.getCartItems()
             .stream().map(mapper::cartItemToDto)
-//                .stream().map(i -> mapper.cartItemToDto(i.getItem(), i.getItem().getItem(), i.getAmount()))
-            .collect(Collectors.toCollection(HashSet::new));
+            .sorted(Comparator.comparing(CartItemForm::getRegisterDate))
+            .collect(Collectors.toCollection(ArrayList::new));
     }
 }

@@ -1,6 +1,8 @@
 package com.alconn.copang.cart;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -40,4 +42,12 @@ public class CartItemForm {
     private String subImg;
 
     private Integer unitTotal;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDateTime registerDate;
+
+
+    public void calculateUnitTotal() {
+        this.unitTotal = this.price * this.amount;
+    }
 }
