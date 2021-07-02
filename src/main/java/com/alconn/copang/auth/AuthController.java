@@ -32,15 +32,13 @@ public class AuthController {
                 .build();
     }
 
-    // TODO 받아들이는 타입에따라 분기 가능한가?
-//    @PostMapping("/signup")
+//    @PostMapping("/signup/seller")
 //    @ResponseStatus(HttpStatus.CREATED)
-//    public ResponseMessage<Client> createClient(@RequestBody Client client) {
-//        return ResponseMessage.<Client>builder()
-//                .data(service.signupClient(client))
-//                .message("created")
-//                .code(200)
-//                .build();
+//    public ResponseMessage<UserForm.Response> registerSeller(@RequestBody @Validated UserForm form)
+//        throws SQLIntegrityConstraintViolationException {
+//        return ResponseMessage.success(
+//            service.registerSeller(form)
+//        );
 //    }
 
 

@@ -6,6 +6,7 @@ import com.alconn.copang.exceptions.UnauthorizedException;
 import com.alconn.copang.exceptions.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
+import org.hibernate.TransientPropertyValueException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.core.Ordered;
@@ -14,6 +15,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,9 +39,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UnauthorizedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     protected ResponseMessage<String> handleUnauthorizedException(UnauthorizedException e) {
-        log.warn("working\n\n\n====" + e.getMessage());
-        e.printStackTrace();
-
         return  ResponseMessage.<String>builder()
                 .message(e.getMessage())
                 .code(e.getCode()).build();
@@ -54,11 +53,22 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
-//    @ExceptionHandler({Exception.class,RuntimeException.class})
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    protected ResponseMessage<String> methodNotAllowed(HttpServletRequest request, Exception e){
+        log.warn("요청 주소 {}\n{}\n",request.getRequestURI(), request.getRequestURL());
+        return ResponseMessage.<String>builder()
+            .message("허용되지 않은 method")
+            .data(e.getMessage())
+            .code(-1001)
+            .build();
+    }
+
+    @ExceptionHandler({Exception.class,RuntimeException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected ResponseMessage<String> handleInternalServerError(HttpServletRequest request, Exception e){
-        System.out.println("ExceptionHandle! \n\n\n\n\n\n\n\n\n");
-        e.printStackTrace(System.out);
+        log.warn("요청 주소 {}\n{}\n",request.getRequestURI(), request.getRequestURL());
+        log.warn("지정하지 않은 Exception ", e);
         return ResponseMessage.<String>builder()
                 .message("서버에러입니다")
                 .code(-1001)
@@ -129,7 +139,28 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
+    @ExceptionHandler(TransientPropertyValueException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseMessage<String > handleUnSaved(TransientPropertyValueException e) {
+        return ResponseMessage.<String>builder()
+            .message("요청 하신 정보가 잘못 되었습니다!")
+            .code(-11)
+            .data(e.getMessage())
+            .build();
+    }
 
+
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    public ResponseMessage<String> handleUnmapped(MethodArgumentNotValidException e) {
+//        return ResponseMessage.<String>builder()
+//            .message("요청하신 형식이 올바르지 않습니다")
+//            .code(-111)
+//            .data(e.getMessage() + "\n" + e.getAllErrors().stream().map(
+//                DefaultMessageSourceResolvable::getDefaultMessage).collect(
+//                Collectors.joining("\n")))
+//            .build();
+//    }
 
 
 }

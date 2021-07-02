@@ -11,6 +11,7 @@ monk;
 :operation-http-response-title: 에제 응답
 :operation-request-fields-title: 요청 data
 :operation-response-fields-title: 응답 data
+:operation-response-fields-data-title: 응답 데이터 필드
 
 
 [[Introduction]]
@@ -157,7 +158,7 @@ operation::orders/proceed-order[snippets='request-headers,path-parameters,http-r
 operation::orders/get-one-order[snippets='request-headers,path-parameters,http-request,http-response,response-fields']
 
 == 유저 주문 조회하기
-==== `GET` /api/order/client/:clientId
+==== `GET` /api/order/client
 
 operation::orders/get-client-order-list[snippets='request-headers,http-request,http-response,response-fields']
 
@@ -172,7 +173,7 @@ operation::cart/get-client-cart[snippets='http-request,request-headers,http-resp
 == 장바구니 아이템추가
 ==== `POST` /api/cart/item
 
-기존에 존재하는 아이템 업데이트시 수량이 추가됩니다
+기존에 존재하는 아이템에 추가시 수량이 추가됩니다
 
 
 operation::cart/add-cart-item[snippets='http-request,request-headers,request-fields,http-response,response-fields']
@@ -283,43 +284,30 @@ operation::item/put-update[snippets='http-request,request-fields,http-response,r
 ==== `PUT` /api/item/update/list
 operation::item/put-update-list[snippets='http-request,request-fields,http-response,response-fields']
 
-= 주소 API
 
-== 주소등록
-==== `POST` /api/address
+[[review]]
+= Review API
 
-처음 등록한 주소가 기본주소가 됩니다
+== 리뷰등록
+==== `POST` /api/review/register
 
-operation::address/create[snippets='http-request,request-headers,request-fields,http-response,response-fields']
-
-== 주소 조회 [유저 기준]
-==== `GET` /api/address
-
-operation::address/get-all-address[snippets='http-request,request-headers,http-response,response-fields']
-
-== 주소 삭제
-==== `DELETE` /api/address/:addressid
-
-operation::address/delete-address[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
-
-== 기본주소지 설정
-==== `PATCH` /api/address/:addressid
-
-operation::address/set-default[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
-
-== 기본주소지로 저장하기
-==== `POST` /api/address/default
-
-operation::address/save-default[snippets='http-request,request-headers,request-fields,http-response,response-fields']
-
-== 주소지 수정하기
-==== `PUT` /api/address/:addressid
-
-수정하실 필드만 채워서 보내시면 됩니다
-
-operation::address/update-address[snippets='http-request,request-headers,request-fields,http-response,response-fields']
+operation::review/post[snippets='http-request,request-headers,request-fields,http-response,response-fields,response-fields-data']
 
 
+== 리뷰 가져오기 [유저기준]
+==== `GET` /api/review/user
 
-[[resources_tag]]
-아직 문서화 되지 않았습니정
+operation::review/user[snippets='http-request,request-headers,http-response']
+operation::review/post[snippets='response-fields,response-fields-data']
+
+== 리뷰 수정하기
+==== `POST` /api/review/:reviewId
+
+수정하실 필드만 보내시면 됩니다
+
+operation::review/update-review[snippets='http-request,request-headers,request-fields,http-response']
+operation::review/post[snippets='response-fields,response-fields-data']
+
+== 리뷰 가져오기 [상품 기준]
+==== `GET` /api/review/:itemId
+

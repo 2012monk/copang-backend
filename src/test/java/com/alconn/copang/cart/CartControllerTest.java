@@ -30,10 +30,11 @@ import com.alconn.copang.exceptions.InvalidTokenException;
 import com.alconn.copang.exceptions.LoginFailedException;
 import com.alconn.copang.utils.TestUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.Disabled;
@@ -196,6 +197,7 @@ class CartControllerTest {
                 .optionValue("1KG")
                 .amount(50)
                 .price(4500)
+                .registerDate(LocalDateTime.now())
                 .build();
         CartForm.Add add =
             CartForm.Add.builder()
@@ -242,7 +244,8 @@ class CartControllerTest {
                         fieldWithPath("data.optionValue").type(JsonFieldType.STRING)
                             .description("옵션값"),
                         fieldWithPath("data.amount").type(JsonFieldType.NUMBER).description("수량"),
-                        fieldWithPath("data.price").type(JsonFieldType.NUMBER).description("가격")
+                        fieldWithPath("data.price").type(JsonFieldType.NUMBER).description("가격"),
+                        fieldWithPath("data.registerDate").type(JsonFieldType.STRING).description("최초 추가 날짜")
                     )
 
                 )
@@ -269,7 +272,7 @@ class CartControllerTest {
             });
         }};
 
-        Set<CartItemForm> cartItemForms = maps.keySet().stream().map(
+        List<CartItemForm> cartItemForms = maps.keySet().stream().map(
             n -> CartItemForm.builder()
                 .itemName(n)
                 .optionValue((String) maps.get(n)[0])
@@ -280,7 +283,7 @@ class CartControllerTest {
                 .itemId((Long) maps.get(n)[4])
                 .unitTotal((Integer) maps.get(n)[1] * (Integer) maps.get(n)[3])
                 .build()
-        ).collect(Collectors.toCollection(HashSet::new));
+        ).collect(Collectors.toCollection(ArrayList::new));
 
         int total = cartItemForms.stream().mapToInt(c -> c.getAmount() * c.getPrice()).sum();
         int amount = cartItemForms.stream().mapToInt(CartItemForm::getAmount).sum();

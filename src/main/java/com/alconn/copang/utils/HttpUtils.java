@@ -24,7 +24,7 @@ public class HttpUtils {
 
         try{
 
-            String authentication = getHeader(request, HttpHeaders.AUTHORIZATION).orElse("no token ");
+            String authentication = getHeader(request, HttpHeaders.AUTHORIZATION).orElse("no token");
             String requestScheme = authentication.split(" ")[0];
             String value = authentication.split(" ")[1];
 

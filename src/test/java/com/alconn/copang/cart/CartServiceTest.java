@@ -14,6 +14,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -60,6 +62,7 @@ class CartServiceTest {
         init = true;
     }
 
+    @DisplayName("장바구니에 상품추가")
     @Transactional
     @Test
     void addCartItem() throws NoSuchUserException, JsonProcessingException {
@@ -72,7 +75,6 @@ class CartServiceTest {
                 .build();
 
         service.addCartItem(client.getClientId(), add);
-//        System.out.println("service = " + mapper.writeValueAsString(response));
 
         m.flush();
         m.clear();
@@ -84,6 +86,7 @@ class CartServiceTest {
     }
 
 
+    @DisplayName("기존에 있던 상품에 가산")
     @Transactional
     @Test
     void addItemAmount() throws NoSuchEntityExceptions, JsonProcessingException {
@@ -110,7 +113,8 @@ class CartServiceTest {
         System.out.println(
             "mapper.writeValueAsString(response) = " + mapper.writeValueAsString(response));
 
-        assertEquals(result.getAmount(), 11);
+        assertEquals(result.getAmount(), 13);
+        assertEquals(result.getUnitTotal(), 13 * result.getPrice());
     }
 
     @Transactional
@@ -125,6 +129,8 @@ class CartServiceTest {
                 .build();
         service.addCartItem(client.getClientId(), add);
 
+        m.flush();
+        m.clear();
         CartItemForm result = service
             .updateAmountItem(client.getClientId(), detail.getItemDetailId(), 60);
 
@@ -135,7 +141,7 @@ class CartServiceTest {
             service.getCart(client.getClientId());
 
         System.out.println(
-            "mapper.writeValueAsString(response) = " + mapper.writeValueAsString(response));
+            "mapper.writeValueAsString(response) = " + mapper.writeValueAsString(result));
 
         assertEquals(response.getTotalAmount(), 60);
         assertEquals(response.getTotalPrice(), detail.getPrice() * 60);
@@ -168,9 +174,8 @@ class CartServiceTest {
 
         System.out.println(
             "mapper.writeValueAsString(response) = " + mapper.writeValueAsString(response));
-
-        assertEquals(response.getTotalAmount(), 2);
-        assertEquals(response.getTotalPrice(), detail.getPrice() * 2);
+        assertEquals(response.getTotalAmount(), 6);
+        assertEquals(response.getTotalPrice(), detail.getPrice() * 6);
     }
 
     @Transactional
