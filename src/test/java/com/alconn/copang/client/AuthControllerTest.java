@@ -123,9 +123,6 @@ class AuthControllerTest {
 
     @Test
     void authenticationTest() throws Exception {
-        // TODO DataIntegity Exception Handling
-//        repo.save(client);
-//        repo.save(client);
 
         LoginToken token = new LoginToken();
         ReflectionTestUtils.setField(token, "username", client.getUsername());

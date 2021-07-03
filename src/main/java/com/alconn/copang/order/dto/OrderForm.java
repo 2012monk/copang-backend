@@ -47,14 +47,12 @@ public class OrderForm {
 
         private Long orderId;
 
-        private Long clientId;
+//        private Long clientId;
 
         @JsonFormat(timezone = "Seoul/Asia", pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime orderDate;
 
         private OrderStatus orderStatus;
-
-//        private Address address;
 
         private AddressForm address;
 

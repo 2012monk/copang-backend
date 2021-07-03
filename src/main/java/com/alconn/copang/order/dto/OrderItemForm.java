@@ -19,7 +19,7 @@ public class OrderItemForm {
 
     private Long orderItemId;
 
-    @NotNull(message = "상품아이디는 필수입니다")
+//    @NotNull(message = "상품아이디는 필수입니다")
     private Long itemId;
 
     @NotNull(message = "옵션 아이디는 필수값입니다")
@@ -29,7 +29,6 @@ public class OrderItemForm {
     private Integer amount;
 
     private String itemName;
-
 
     private String optionName;
 

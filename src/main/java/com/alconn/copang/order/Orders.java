@@ -48,9 +48,7 @@ public class Orders {
     @UpdateTimestamp
     private LocalDateTime lastUpdatedDate;
 
-    // TODO 주문과 주소 연결하기
-//    @OneToOne(optional = false)
-    @OneToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "address_id")
     private Address address;
 
@@ -82,5 +80,15 @@ public class Orders {
 
     public void doneOrder() {
         this.orderState = OrderStatus.DONE;
+    }
+
+    public void connectOrderItems() {
+        this.orderItemList.forEach(o -> o.setOrders(this));
+    }
+
+    public void calculateTotal() {
+        this.orderItemList.forEach(OrderItem::calculateTotal);
+        this.totalAmount = this.orderItemList.stream().mapToInt(OrderItem::getAmount).sum();
+        this.totalPrice = this.orderItemList.stream().mapToInt(OrderItem::getUnitTotal).sum();
     }
 }

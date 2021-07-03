@@ -9,6 +9,7 @@ import com.alconn.copang.exceptions.ValidationException;
 import com.alconn.copang.security.provider.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,8 @@ public class ClientService {
     private final ClientRepo repo;
 
     private final JwtTokenProvider provider;
+
+    private final BCryptPasswordEncoder passwordEncoder;
 
     public AccessTokenContainer login(LoginToken token) throws LoginFailedException, InvalidTokenException {
         Client client = repo.findClientByUsername(token.getUsername()).orElseThrow(LoginFailedException::new);
