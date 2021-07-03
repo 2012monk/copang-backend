@@ -1,4 +1,4 @@
-package com.alconn.copang.question;
+package com.alconn.copang.inquiry;
 
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;

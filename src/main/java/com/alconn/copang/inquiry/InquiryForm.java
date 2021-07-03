@@ -1,4 +1,4 @@
-package com.alconn.copang.question;
+package com.alconn.copang.inquiry;
 
 
 import java.time.LocalDateTime;

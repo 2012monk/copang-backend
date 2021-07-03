@@ -1,7 +1,6 @@
-package com.alconn.copang.question;
+package com.alconn.copang.inquiry;
 
 import com.alconn.copang.seller.Seller;
-import javax.mail.MailSessionDefinition;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;

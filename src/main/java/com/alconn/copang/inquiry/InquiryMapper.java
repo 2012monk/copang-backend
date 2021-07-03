@@ -1,6 +1,5 @@
-package com.alconn.copang.question;
+package com.alconn.copang.inquiry;
 
-import javax.persistence.MappedSuperclass;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;

@@ -1,8 +1,7 @@
-package com.alconn.copang.question;
+package com.alconn.copang.inquiry;
 
 import com.alconn.copang.client.Client;
 import com.alconn.copang.item.ItemDetail;
-import com.alconn.copang.seller.Seller;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

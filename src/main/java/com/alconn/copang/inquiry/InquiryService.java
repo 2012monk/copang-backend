@@ -1,4 +1,4 @@
-package com.alconn.copang.question;
+package com.alconn.copang.inquiry;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
