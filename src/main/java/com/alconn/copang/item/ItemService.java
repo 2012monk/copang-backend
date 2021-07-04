@@ -32,9 +32,9 @@ public class ItemService {
         return itemRepository.findAll();
     }
 
-    public Item itemFindNum(Long id){
+    public Item itemFindNum(Long id) {
         // NosuchElementException
-        return itemRepository.findById(id).get();
+        return itemRepository.findById(id).orElseThrow(()->new NoSuchElementException("등록된 상품 아닙니다"));
     }
 
     //삭제

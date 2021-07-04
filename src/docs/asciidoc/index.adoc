@@ -249,6 +249,10 @@ operation::item/get-mainlist[snippets='http-request,http-response,response-field
 ==== `GET` /api/item/list/itemid=:itemId
 operation::item/get-itemlist[snippets='http-request,path-parameters,http-response,response-fields']
 
+== 카테고리 상품 목록
+==== `GET` /api/item/list/categoryid=:categoryId
+operation::item/get-categorymainlist[snippets='http-request,path-parameters,http-response,response-fields']
+
 
 == 상품 리스트 등록
 ==== `POST` /api/item/add

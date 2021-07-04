@@ -2,6 +2,8 @@ package com.alconn.copang.item;
 
 
 import com.alconn.copang.ApiDocumentUtils;
+import com.alconn.copang.category.Category;
+import com.alconn.copang.category.CategoryRepository;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -70,7 +72,10 @@ public class ItemControllerTest {
 
     @Autowired
     ItemDetailService itemDetailService;
-
+    //=====
+    @Autowired
+    CategoryRepository categoryRepository;
+    //=====
     @Autowired
     EntityManager em;
 
@@ -80,9 +85,21 @@ public class ItemControllerTest {
     }
 
     //=================테스트 데이터==========
-
+    //=====
+    private Category categorySave() {
+        Category category = Category.builder()
+                .parentId(0l)
+                .categoryName("테스트")
+                .layer(1)
+                .build();
+        return category;
+    }
+//=====
 
     private ItemForm itemFormTest() {
+//=====
+        categoryRepository.save(categorySave());
+//=====
         List<ItemDetailForm.DetailForm> list = new ArrayList<>();
 
         ItemDetailForm.DetailForm detailForm = ItemDetailForm.DetailForm.builder()
@@ -101,32 +118,49 @@ public class ItemControllerTest {
                 .stockQuantity(200)
                 .subImg("옵션사진")
                 .build();
+
         list.add(detailForm2);
         list.add(detailForm);
 
         ItemForm itemForm = ItemForm.builder()
                 .itemName("상품명")
                 .itemComment("상품설명")
+                //=====
+                .categoryId(categoryRepository.findAll().get(0).getCategoryId())
+                //=====
                 .itemDetailFormList(list)
                 .build();
-
+        System.out.println("itemForm.getCategoryId() = " + itemForm.getCategoryId());
         return itemForm;
     }
 
-    private void testData(){
-        Item item=Item.builder()
+    private void testData() {
+        //=====
+        Category category = Category.builder()
+                .parentId(0l)
+                .categoryName("테스트")
+                .layer(1)
+                .build();
+
+        categoryRepository.save(category);
+        //=====
+
+        Item item = Item.builder()
                 .itemComment("반팔티설명")
                 .itemName("반팔티")
+                .category(categoryRepository.findAll().get(0))
                 .build();
+        item.changeCategory(category);
         itemRepository.save(item);
 
-        ItemDetail itemDetail= ItemDetail.builder()
+        ItemDetail itemDetail = ItemDetail.builder()
                 .price(100)
                 .stockQuantity(20)
                 .optionName("색상")
                 .optionValue("검은색")
                 .mainImg("양말사진")
                 .build();
+
         itemDetail.itemConnect(item);
 
         itemDetailRepository.save(itemDetail);
@@ -135,8 +169,10 @@ public class ItemControllerTest {
     }
 
 
-
     //=======================================
+
+
+
     @DisplayName("상품 옵션 추가")
     @Test
     public void optionOneAdd() throws Exception{
@@ -200,6 +236,8 @@ public class ItemControllerTest {
     public void save() throws Exception {
         ItemForm itemForm = itemFormTest();
 
+
+
         mockMvc.perform(post("/api/item/add")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(itemForm))
@@ -214,6 +252,7 @@ public class ItemControllerTest {
                         relaxedRequestFields(
                               fieldWithPath("itemName").type(JsonFieldType.STRING).description("상품명"),
                                 fieldWithPath("itemComment").type(JsonFieldType.STRING).description("상품설명"),
+                                fieldWithPath("categoryId").type(JsonFieldType.NUMBER).description("카테고리번호"),
 
                                 fieldWithPath("itemDetailFormList.[].price").type(JsonFieldType.NUMBER).description("단가"),
                                 fieldWithPath("itemDetailFormList.[].stockQuantity").type(JsonFieldType.NUMBER).description("재고"),
@@ -226,8 +265,8 @@ public class ItemControllerTest {
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
                                 fieldWithPath("data.itemName").type(JsonFieldType.STRING).description("상품명"),
                                 fieldWithPath("data.itemComment").type(JsonFieldType.STRING).description("상품설명"),
-
                                 fieldWithPath("data.itemId").type(JsonFieldType.NUMBER).description("상품등록코드"),
+                                fieldWithPath("data.categoryId").type(JsonFieldType.NUMBER).description("카테고리번호"),
 
                                 fieldWithPath("data.itemDetailFormList").type(JsonFieldType.ARRAY).description("상품옵션리스트"),
 
@@ -359,6 +398,9 @@ public class ItemControllerTest {
                 .itemId(itemDetail.getItem().getItemId())
                 .itemName("신발")
                 .itemComment("신발설명")
+                //=====
+                .categoryId(categoryRepository.findAll().get(0).getCategoryId())
+                //=====
                 .detailUpdateClass(ItemDetailForm.DetailUpdateClass.builder()
                         .itemDetailId(itemDetail.getItemDetailId())
                         .price(10000)
@@ -383,6 +425,7 @@ public class ItemControllerTest {
                                 fieldWithPath("itemId").type(JsonFieldType.NUMBER).description("상품등록코드"),
                                 fieldWithPath("itemName").type(JsonFieldType.STRING).description("상품명"),
                                 fieldWithPath("itemComment").type(JsonFieldType.STRING).description("상품설명"),
+                                fieldWithPath("categoryId").type(JsonFieldType.NUMBER).description("카테고리번호"),
 
                                 fieldWithPath("detailUpdateClass.itemDetailId").type(JsonFieldType.NUMBER).description("상품옵션등록코드"),
                                 fieldWithPath("detailUpdateClass.price").type(JsonFieldType.NUMBER).description("단가"),
@@ -397,6 +440,7 @@ public class ItemControllerTest {
                                 fieldWithPath("data.itemId").type(JsonFieldType.NUMBER).description("상품등록코드"),
                                 fieldWithPath("data.itemName").type(JsonFieldType.STRING).description("상품명"),
                                 fieldWithPath("data.itemComment").type(JsonFieldType.STRING).description("상품설명"),
+                                fieldWithPath("data.categoryId").type(JsonFieldType.NUMBER).description("카테고리번호"),
 
                                 fieldWithPath("data.itemDetailViewForm").type(JsonFieldType.OBJECT).description("상품옵션리스트"),
                                 fieldWithPath("data.itemDetailViewForm.itemDetailId").type(JsonFieldType.NUMBER).description("상품옵션등록코드"),
@@ -441,6 +485,11 @@ public class ItemControllerTest {
                         .itemId(testList.get(0).getItem().getItemId())
                         .itemName(testList.get(0).getItem().getItemName())
                         .itemComment(testList.get(0).getItem().getItemComment())
+
+                        //====
+                        .categoryId(categoryRepository.findAll().get(0).getCategoryId())
+                        //====
+
                         .itemDetailUpdateClassList(testUpdateList)
                         .build();
             mockMvc.perform(RestDocumentationRequestBuilders.put("/api/item/update/list")
@@ -457,6 +506,10 @@ public class ItemControllerTest {
                                     fieldWithPath("itemName").type(JsonFieldType.STRING).description("상품명"),
                                     fieldWithPath("itemComment").type(JsonFieldType.STRING).description("상품설명"),
 
+                                    //====
+                                    fieldWithPath("categoryId").type(JsonFieldType.NUMBER).description("카테고리번호"),
+                                    //====
+
                                     fieldWithPath("itemDetailUpdateClassList.[].itemDetailId").type(JsonFieldType.NUMBER).description("상품옵션등록코드"),
                                     fieldWithPath("itemDetailUpdateClassList.[].price").type(JsonFieldType.NUMBER).description("단가"),
                                     fieldWithPath("itemDetailUpdateClassList.[].stockQuantity").type(JsonFieldType.NUMBER).description("재고"),
@@ -470,6 +523,10 @@ public class ItemControllerTest {
                                     fieldWithPath("data.itemId").type(JsonFieldType.NUMBER).description("상품등록코드"),
                                     fieldWithPath("data.itemName").type(JsonFieldType.STRING).description("상품명"),
                                     fieldWithPath("data.itemComment").type(JsonFieldType.STRING).description("상품설명"),
+
+                                    //====
+                                    fieldWithPath("data.categoryId").type(JsonFieldType.NUMBER).description("카테고리번호"),
+                                    //====
 
                                     fieldWithPath("data.itemDetailUpdateClassList").type(JsonFieldType.ARRAY).description("상품옵션리스트"),
                                     fieldWithPath("data.itemDetailUpdateClassList.[].itemDetailId").type(JsonFieldType.NUMBER).description("상품옵션등록코드"),

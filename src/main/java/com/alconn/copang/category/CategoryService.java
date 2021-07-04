@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -91,6 +92,34 @@ public class CategoryService {
         return categoryMapper.toDto(categor);
     }
 
+    //아이템 조회용 카테고리 id 추출
+    public List<Long> childCategoryExtract(Long id){
+        //부모 카테고리 조회 자식여부 확인 -> 없으면 저장
+        List<Category> td= categoryRepository.findByParentId(id);
+        List<Long> idtest=new ArrayList<>();
+        if(td.size()>0){
+            for(int i=0; i<td.size();i++){
+                if(td.get(i).getChildCheck().equalsIgnoreCase("y")){
+                   idtest.addAll(childCategoryExtract(td.get(i).getCategoryId()));
+                }
+                else {
+                    idtest.add(td.get(i).getCategoryId());
+                }
+            }
+        }
+        else
+            try {
+                categoryRepository.findById(id);
+                idtest.add(id);
+            }catch (Exception e){
+                throw new NoSuchElementException("없는 카테고리입니다");
+            }
+
+        return idtest;
+    }
+
+
+
 //======전체 조회용====
         public CategoryView.CategoryListDto rootCategory(Long id){
             Map<Long, List<CategoryView.CategoryListDto>> parentGroup = categoryRepository.findAll()
@@ -131,7 +160,7 @@ public class CategoryService {
         public CategoryView.CategoryListDto layerCategory(){
             Map<Long, List<CategoryView.CategoryListDto>> parentGroup = categoryRepository.findLayer()
                     .stream()
-                    .   map(category -> CategoryView.CategoryListDto.builder()
+                    .map(category -> CategoryView.CategoryListDto.builder()
                             .categoryId(category.getCategoryId())
                             .categoryName(category.getCategoryName())
                             .parentId(category.getParentId())

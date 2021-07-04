@@ -79,4 +79,65 @@ public class CategoryServiceTest {
         return test;
     }
 //===
+    //특정 카테고리 선택시
+    // 그 카테고리의 가장 최하단에 있는 자식카테고리 출력
+    @Test
+    public void childCategoryExtractTest(){
+        Category category =Category.builder()
+                .categoryName("의류")
+                .parentId(0l)
+                .childCheck("Y")
+                .build();
+        categoryRepository.save(category);
+
+        Category category2 =Category.builder()
+                .categoryName("티셔츠")
+                .parentId(category.getCategoryId())
+                .childCheck("Y")
+                .build();
+        categoryRepository.save(category2);
+
+        Category category3=Category.builder()
+                .categoryName("티셔츠")
+                .parentId(category2.getCategoryId())
+                .childCheck("Y")
+                .build();
+        categoryRepository.save(category3);
+
+        Category category4=Category.builder()
+                .categoryName("반팔티")
+                .parentId(category3.getCategoryId())
+                .childCheck("N")
+                .build();
+        categoryRepository.save(category4);
+        
+        Category category5=Category.builder()
+                .categoryName("티셔츠")
+                .parentId(category3.getCategoryId())
+                .childCheck("Y")
+                .build();
+        categoryRepository.save(category5);
+
+        Category category6=Category.builder()
+                .categoryName("티셔츠")
+                .parentId(category5.getCategoryId())
+                .childCheck("N")
+                .build();
+        categoryRepository.save(category6);
+
+        Category category7=Category.builder()
+                .categoryName("티셔츠")
+                .parentId(category3.getCategoryId())
+                .childCheck("N")
+                .build();
+        categoryRepository.save(category7);
+
+        List<Long> id=categoryService.childCategoryExtract(3l);
+        System.out.println("id.toString() = " + id.toString());
+
+    }
+
+
+
+
 }

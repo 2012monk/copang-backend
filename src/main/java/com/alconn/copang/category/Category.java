@@ -1,8 +1,11 @@
 package com.alconn.copang.category;
 
+import com.alconn.copang.item.Item;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,9 +29,11 @@ public class Category {
     @Builder.Default
     private int layer=1;
 
+    @OneToMany(mappedBy = "category")
+    @Builder.Default
+    List<Item> itemList=new ArrayList<>();
 
     public void changeCategoryprentId(Long parentId){
-
         this.parentId=parentId;
     }
 
