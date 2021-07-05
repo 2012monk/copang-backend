@@ -14,6 +14,7 @@ public interface ClientMapper extends EntityMapper<UserForm, Client> {
 
     UserForm c(final Client client);
 
+
     UserForm.Response toResponse(final Client client);
 
 //    @Mapping(target = "id", ignore = true)
