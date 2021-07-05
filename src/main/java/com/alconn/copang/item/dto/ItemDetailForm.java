@@ -1,13 +1,13 @@
 package com.alconn.copang.item.dto;
 
 
-import com.alconn.copang.client.UserForm;
-import com.alconn.copang.seller.Seller;
-import lombok.*;
-import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 //엔티티 1:1 매핑시 사용
 @Getter
@@ -64,16 +64,17 @@ public class ItemDetailForm {
         private String mainImg;
 
         private Long sellerId;
+
         @Override
         public String toString() {
             return "MainForm{" +
-                    "itemId=" + itemId +
-                    ", itemName='" + itemName + '\'' +
-                    ", itemDetailId=" + itemDetailId +
-                    ", categoryId=" + categoryId +
-                    ", price=" + price +
-                    ", mainImg='" + mainImg + '\'' +
-                    '}';
+                "itemId=" + itemId +
+                ", itemName='" + itemName + '\'' +
+                ", itemDetailId=" + itemDetailId +
+                ", categoryId=" + categoryId +
+                ", price=" + price +
+                ", mainImg='" + mainImg + '\'' +
+                '}';
         }
     }
 
@@ -82,7 +83,7 @@ public class ItemDetailForm {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class DetailForm{
+    public static class DetailForm {
 
         private Long itemDetailId;
 
@@ -106,9 +107,9 @@ public class ItemDetailForm {
 
         private String sellerName;
 
-        private Long sellerId;
 
     }
+
     //업데이트
     @Getter
     @Builder
