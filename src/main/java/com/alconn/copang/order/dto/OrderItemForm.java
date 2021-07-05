@@ -28,6 +28,8 @@ public class OrderItemForm {
     @NotNull(message = "수량은 필수입니다")
     private Integer amount;
 
+    private String mainImg;
+
     private String itemName;
 
     private String optionName;
