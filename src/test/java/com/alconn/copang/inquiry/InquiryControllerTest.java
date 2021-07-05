@@ -24,11 +24,14 @@ import com.alconn.copang.client.ClientRepo;
 import com.alconn.copang.exceptions.InvalidTokenException;
 import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import com.alconn.copang.exceptions.ValidationException;
+import com.alconn.copang.inquiry.InquiryForm.Response;
 import com.alconn.copang.utils.TestUtils;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,37 +70,59 @@ class InquiryControllerTest {
         mapper.setSerializationInclusion(Include.NON_NULL);
     }
 
-    @Test
-    void getInquiryByClient() {
 
+
+    @Test
+    void getInquiryBySeller() throws Exception {
+        Response res = getMockResponse();
+
+        List<Response> ress = Collections.singletonList(res);
+        given(this.service.getInquiresBySeller(eq(1L))).willReturn(ress);
+
+        this.mvc.perform(
+            get("/api/inquiry/seller")
+                .header(HttpHeaders.AUTHORIZATION, utils.getSellerAuthHeader())
+        )
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andDo(
+                document(
+                    PATH,
+                    getDocumentRequest(),
+                    getDocumentResponse(),
+                    getAuthHeaderField()
+                )
+            );
+    }
+
+    @Test
+    void getInquiryByClient() throws Exception {
+        Response res = getMockResponse();
+
+        List<Response> ress = Collections.singletonList(res);
+        given(this.service.getInquiresByClient(eq(1L))).willReturn(ress);
+
+        this.mvc.perform(
+            get("/api/inquiry/client")
+            .header(HttpHeaders.AUTHORIZATION, utils.genAuthHeader())
+        )
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andDo(
+                document(
+                    PATH,
+                    getDocumentRequest(),
+                    getDocumentResponse(),
+                    getAuthHeaderField()
+                )
+            );
     }
 
     @Test
     void getInquiryById() throws Exception {
-        InquiryForm.ReplyForm reply =
-            InquiryForm.ReplyForm.builder()
-                .content("문의 하신 사항에대한 답변입니다")
-                .sellerId(3L)
-                .sellerName("나이스샵")
-                .sellerCode(51L)
-                .registerDate(LocalDateTime.now())
-                .replyId(6L)
-                .build();
-        InquiryForm.Response res =
-            InquiryForm.Response.builder()
-                .content("상품 문의 입니다")
-                .inquiryId(5L)
-                .clientId(1L)
-                .clientName("아이디 또는 실명입니다")
-                .itemId(6L)
-                .itemDetailId(3L)
-                .registerDate(LocalDateTime.now())
-                .itemName("감자")
-                .optionName("중량")
-                .optionValue("1KG")
-                .reply(reply)
-                .build();
+        Response res = getMockResponse();
 
+        given(this.service.getInquiresByItem(eq(res.getItemId()))).willReturn(Collections.singletonList(res));
         this.mvc.perform(
             RestDocumentationRequestBuilders.
             get("/api/inquiry/{itemId}/item", res.getItemId())
@@ -114,10 +139,10 @@ class InquiryControllerTest {
                     relaxedResponseFields(
                         fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메세지"),
                         fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과 코드"),
-                        fieldWithPath("data").type(JsonFieldType.OBJECT).description("결과 데이터")
+                        fieldWithPath("data").type(JsonFieldType.ARRAY).description("결과 데이터")
                     ),
                     relaxedResponseFields(
-                        beneathPath("data").withSubsectionId("data"),
+                        beneathPath("data[]").withSubsectionId("data"),
                         fieldWithPath("content").description(JsonFieldType.STRING).description("문의사항"),
                         fieldWithPath("clientName").description(JsonFieldType.STRING).description("등록자 이름"),
                         fieldWithPath("itemName").description(JsonFieldType.STRING).description("문의한 상품 이름"),
@@ -134,6 +159,33 @@ class InquiryControllerTest {
                     )
                 )
             );
+    }
+
+    private Response getMockResponse() {
+        InquiryForm.ReplyForm reply =
+            InquiryForm.ReplyForm.builder()
+                .content("문의 하신 사항에대한 답변입니다")
+                .sellerId(3L)
+                .sellerName("나이스샵")
+                .sellerCode(51L)
+                .registerDate(LocalDateTime.now())
+                .replyId(6L)
+                .build();
+        Response res =
+            Response.builder()
+                .content("상품 문의 입니다")
+                .inquiryId(5L)
+                .clientId(1L)
+                .clientName("아이디 또는 실명입니다")
+                .itemId(6L)
+                .itemDetailId(3L)
+                .registerDate(LocalDateTime.now())
+                .itemName("감자")
+                .optionName("중량")
+                .optionValue("1KG")
+                .reply(reply)
+                .build();
+        return res;
     }
 
     @Test
@@ -170,6 +222,7 @@ class InquiryControllerTest {
 
         ResultActions actions =
             this.mvc.perform(
+                RestDocumentationRequestBuilders.
                 post("/api/inquiry/{inquiryId}/reply", res.getInquiryId())
                 .content(mapper.writeValueAsString(req))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -184,6 +237,9 @@ class InquiryControllerTest {
                     getDocumentRequest(),
                     getDocumentResponse(),
                     getAuthHeaderField(),
+                    pathParameters(
+                        parameterWithName("inquiryId").description("문의글 아이디")
+                    ),
                     relaxedRequestFields(
                         fieldWithPath("content").type(JsonFieldType.STRING).description("답변글")
                     ),

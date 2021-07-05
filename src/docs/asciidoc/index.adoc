@@ -311,3 +311,28 @@ operation::review/post[snippets='response-fields,response-fields-data']
 == 리뷰 가져오기 [상품 기준]
 ==== `GET` /api/review/:itemId
 
+
+= 문의 API
+
+== 문의 등록하기
+==== `POST` /api/inquiry
+
+operation::inquiry/register-inquiry[snippets='http-request,request-headers,request-fields,http-response,response-fields,response-fields-data']
+
+== 답변 등록하기
+==== `POST` /api/:inquiryId/reply
+
+
+operation::inquiry/register-reply[snippets='http-request,request-headers,path-parameters,request-fields,http-response,response-fields,response-fields-data']]
+
+== 문의 조회
+
+=== 유저기준
+==== `GET` /api/inquiry/client
+
+=== 판매자기준
+==== `GET` /api/inquiry/seller
+
+=== 사
+
+
