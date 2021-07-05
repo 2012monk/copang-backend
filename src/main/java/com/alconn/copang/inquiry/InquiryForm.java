@@ -43,6 +43,7 @@ public class InquiryForm {
 
         private String content;
 
+        @JsonFormat(timezone = "Seoul/Asia", pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime registerDate;
 
         private ReplyForm reply;

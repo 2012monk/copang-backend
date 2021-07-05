@@ -26,4 +26,7 @@ public class Reply {
 
     private String content;
 
+    public void updateContent(String content) {
+        this.content = content == null ? this.content : content;
+    }
 }

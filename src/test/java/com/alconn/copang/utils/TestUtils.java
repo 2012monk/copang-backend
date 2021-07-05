@@ -8,13 +8,8 @@ import com.alconn.copang.item.Item;
 import com.alconn.copang.item.ItemDetail;
 import com.alconn.copang.security.provider.JwtTokenProvider;
 import com.alconn.copang.seller.Seller;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
 @Component
 //@Repository
@@ -83,22 +78,22 @@ public class TestUtils {
             .mainImg("no image")
             .item(
                 Item.builder()
-                .itemName("신발1")
-                .build()
+                    .itemName("신발1")
+                    .build()
             ).build();
     }
 
     public String getSellerAuthHeader() {
         return "Bearer " + provider.createAccessToken(
-        Client.builder()
-            .clientId(1L)
-            .username("coppang143")
-            .password("비밀번호123!")
-            .description("안녕하세요!")
-            .phone("010-0030-9090")
-            .realName("길동홍길동")
-            .role(Role.SELLER)
-            .build()
+            Client.builder()
+                .clientId(1L)
+                .username("coppang143")
+                .password("비밀번호123!")
+                .description("안녕하세요!")
+                .phone("010-0030-9090")
+                .realName("길동홍길동")
+                .role(Role.SELLER)
+                .build()
         ).orElseThrow(RuntimeException::new);
     }
 }
