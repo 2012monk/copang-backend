@@ -1,4 +1,4 @@
-package com.alconn.copang.category;
+package com.alconn.copang.category.dto;
 
 import lombok.*;
 
@@ -10,46 +10,39 @@ import javax.validation.constraints.NotNull;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-//조회용
-public class CategoryForm {
+//조회용, 삭제
+public class CategoryRequest {
 
-    private String categoryName;
+    private Long categoryId;
 
-    private Long parentId;
-
-
-
-    //대표카테고리
+    //저장
     @Getter
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class CategorySaveTop{
-
-        @NotBlank
-        private String categoryName;
-
-
-    }
-
-    //일반 카테고리
-    @Getter
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class CategorySaveForm{
+    public static class CategorySave{
 
         @NotBlank
         private String categoryName;
 
         @NotNull
         private Long parentId;
+
     }
 
+   //수정 -> 이름, 위치수정까지 가능
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static  class CategoryUpdate{
 
+        @NotNull
+        private Long categoryId;
 
+        @NotBlank
+        private String categoryName;
 
-    //수정용
-
-
+        private Long parentId;
+   }
 }

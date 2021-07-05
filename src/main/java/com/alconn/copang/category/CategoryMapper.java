@@ -1,20 +1,18 @@
 package com.alconn.copang.category;
 
 
+import com.alconn.copang.category.dto.CategoryRequest;
+import com.alconn.copang.category.dto.CategoryView;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public interface CategoryMapper {
 
-    //자식 카테고리
-    Category childToEntity(CategoryForm.CategorySaveForm categorySaveForm);
-
     CategoryView toDto(Category category);
 
     //부모카테고리
-    Category topToEntity(CategoryForm.CategorySaveTop categorySaveTop);
+    Category topToEntity(CategoryRequest.CategorySave categorySave);
 
 
 

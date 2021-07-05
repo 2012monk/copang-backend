@@ -20,6 +20,10 @@ public class ItemViewForm {
 
     private String itemComment;
 
+    //=====
+    private Long categoryId;
+    //=====
+
     private ItemDetailViewForm itemDetailViewForm;
 
     @Getter
