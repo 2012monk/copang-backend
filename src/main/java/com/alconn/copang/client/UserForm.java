@@ -1,6 +1,8 @@
 package com.alconn.copang.client;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.time.LocalDateTime;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -51,5 +53,8 @@ public class UserForm {
         private String realName;
 
         private Role role;
+
+        @JsonFormat(pattern = "yyyy.MM.dd", locale = "Seoul/Asia", shape = JsonFormat.Shape.STRING)
+        private LocalDateTime signInDate;
     }
 }

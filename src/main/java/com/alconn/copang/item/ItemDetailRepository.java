@@ -1,10 +1,12 @@
 package com.alconn.copang.item;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface ItemDetailRepository extends JpaRepository<ItemDetail, Long> {
@@ -17,12 +19,13 @@ public interface ItemDetailRepository extends JpaRepository<ItemDetail, Long> {
     List<ItemDetail> listItemDetailsMainFind(ItemMainApply itemMainApply);
 
 
+    @Query("select itd from ItemDetail itd join fetch itd.item where itd.item.itemId in (:itemId) and itd.itemMainApply=:itemMainApply")
+    List<ItemDetail> listItemDetailCategoryFind(@Param("itemId") List<Long> itemId,@Param("itemMainApply")ItemMainApply itemMainApply);
+
 
     //테스트
     @Query("select itd from ItemDetail itd join fetch itd.item where itd.item.itemId=?1 ")
     List<ItemDetail> findItemDetailPage(Long id);
-
-
 
 
 }

@@ -11,6 +11,7 @@ import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper
 
 import java.util.HashSet;
 import java.util.Set;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
 public class BeanConfig {
@@ -19,6 +20,11 @@ public class BeanConfig {
     @Bean
     public Set<String> blackList(){
         return new HashSet<>();
+    }
+
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
 //    @Bean
