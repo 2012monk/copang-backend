@@ -26,6 +26,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.oauth2.sdk.token.AccessToken;
 import javax.persistence.EntityManager;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -174,10 +175,11 @@ public class AuthDocumentTest {
             )).andDo(print());
     }
 
+    @Disabled
     @Test
     void singupSeller() throws Exception {
         UserForm form = UserForm.builder()
-            .username("쿠팡맨1")
+            .username("쿠팡맨1412")
             .password("비밀번호123!")
             .description("안녕하세요!")
             .phone("010-0030-9090")
