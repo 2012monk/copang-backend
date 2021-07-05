@@ -39,7 +39,8 @@ public class ItemDetailService {
 //====
 //    카테고리에 맞는 상품중 대표옵션만 출력
     public List<ItemDetailForm.MainForm> findCategpryMainList(Long categoryId){
-        List<Long> ids=categoryService.childCategoryExtract(categoryId);
+        List<Long> idstest=new ArrayList<>();
+        List<Long> ids=categoryService.childCategoryExtract(categoryId,idstest);
         System.out.println("ids.toString() = " + ids.toString());
 
         List<Long> itemList=itemRepository.findCategoryItem(ids);
@@ -49,6 +50,8 @@ public class ItemDetailService {
 
         System.out.println("list.get(0) = " + list.get(0).getItem().getCategory().getCategoryId());
         List<ItemDetailForm.MainForm> listForm=itemMapper.mainPage(list);
+
+
         return listForm;
     }
 //====
