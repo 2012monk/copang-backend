@@ -3,6 +3,12 @@ package com.alconn.copang.item;
 import com.alconn.copang.category.Category;
 import com.alconn.copang.category.CategoryRepository;
 import com.alconn.copang.category.CategoryService;
+import com.alconn.copang.exceptions.NoSuchEntityExceptions;
+import com.alconn.copang.item.dto.ItemDetailForm;
+import com.alconn.copang.item.dto.ItemForm;
+import com.alconn.copang.item.dto.ItemViewForm;
+import com.alconn.copang.item.mapper.ItemMapper;
+import com.alconn.copang.seller.Seller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -49,11 +55,12 @@ public class ItemDetailService {
 
     //다중 저장
     @Transactional
-    public ItemForm itemDetailListSave(ItemForm itemForm){
+    public ItemForm itemDetailListSave(ItemForm itemForm, Long sellerId){
         //매퍼 풀기
         Item item=Item.builder()
                 .itemName(itemForm.getItemName())
                 .itemComment(itemForm.getItemComment())
+                .seller(Seller.builder().clientId(sellerId).build())
                 .build();
         Category category=categoryRepository.findById(itemForm.getCategoryId()).orElseThrow(()->new NoSuchElementException("카테고리 정보를 확인해주세요"));
         //==== 자식 카테고리가 있는 상황에 추가시 에러발생``
@@ -67,7 +74,7 @@ public class ItemDetailService {
         //=====
         itemService.saveItem(item);
 
-        List<ItemDetail> itemDetailList=itemMapper.listDtoToDomainN(itemForm.getItemDetailFormList());
+        List<ItemDetail> itemDetailList = itemMapper.listDtoToDomainN(itemForm.getItemDetailFormList());
 
         //연관관계 매핑
         itemDetailList=itemDetailSaveList(item,itemDetailList);
@@ -153,7 +160,8 @@ public class ItemDetailService {
     //DTO로 받아서 전체 업데이트
     @Transactional
 //    public ItemForm updateItemDetail(ItemForm.ItemFormUpdate itemFormUpdate){
-    public ItemForm.ItemFormUpdate updateItemDetail(ItemForm.ItemFormUpdate itemFormUpdate){
+    public ItemForm.ItemFormUpdate updateItemDetail(ItemForm.ItemFormUpdate itemFormUpdate)
+        throws NoSuchEntityExceptions {
         //풀기
         List<ItemDetailForm.DetailUpdateClass> iDetailUpdateClasses =itemFormUpdate.getItemDetailUpdateClassList();
 
@@ -199,8 +207,8 @@ public class ItemDetailService {
     }
 
     //단일 수정
-    public ItemViewForm itemSingleUpdate(ItemForm.ItemFormUpdateSingle updateSingle){
-
+    public ItemViewForm itemSingleUpdate(ItemForm.ItemFormUpdateSingle updateSingle)
+        throws NoSuchEntityExceptions {
         Item item=itemService.itemFindNum(updateSingle.getItemId());
 //=====
         item.updateMethod(updateSingle.getItemName(), updateSingle.getItemComment());

@@ -1,5 +1,10 @@
-package com.alconn.copang.item;
+package com.alconn.copang.item.mapper;
 
+import com.alconn.copang.item.Item;
+import com.alconn.copang.item.ItemDetail;
+import com.alconn.copang.item.dto.ItemDetailForm;
+import com.alconn.copang.item.dto.ItemForm;
+import com.alconn.copang.item.dto.ItemViewForm;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
@@ -16,6 +21,8 @@ public interface ItemMapper {
     @Mapping(target = ".",source = "item.category")
     ItemDetailForm.MainForm toPage(ItemDetail detail);
 
+    // Seller mapping 추가
+    @Mapping(source = "sellerId", target = "item.seller.clientId")
     @Mapping(target = "item", source = ".")
     ItemDetail toEntity(ItemDetailForm.MainForm mainForm);
 
@@ -27,6 +34,7 @@ public interface ItemMapper {
     @Mapping(source = "item.itemId",target = "itemId")
     ItemDetailForm domainToDto(final ItemDetail itemDetail);
 
+    List<ItemDetail> listDtoToDomain(final List<ItemDetailForm> itemDetailForms);
 
     List<ItemDetailForm> listDomainToDto(final List<ItemDetail> itemDetail);
 
@@ -37,6 +45,8 @@ public interface ItemMapper {
     //=====
     ItemForm itemDetailToDto(Item item, List<ItemDetail> itemDetailList);
 
+    @Mapping(source = "sellerId" , target = "clientId")
+    @Mapping(target = "item", source = ".")
     List<ItemDetail> listDtoToDomainN(List<ItemDetailForm.DetailForm> detailFormList);
 
     //update ItemDetailList + item => to Form 매핑

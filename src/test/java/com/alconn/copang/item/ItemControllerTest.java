@@ -4,28 +4,27 @@ package com.alconn.copang.item;
 import com.alconn.copang.ApiDocumentUtils;
 import com.alconn.copang.category.Category;
 import com.alconn.copang.category.CategoryRepository;
+import com.alconn.copang.client.Client;
+import com.alconn.copang.client.ClientRepo;
+import com.alconn.copang.item.dto.ItemDetailForm;
+import com.alconn.copang.item.dto.ItemForm;
+import com.alconn.copang.item.mapper.ItemMapper;
+import com.alconn.copang.utils.TestUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.annotation.Commit;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -39,7 +38,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
@@ -79,9 +77,23 @@ public class ItemControllerTest {
     @Autowired
     EntityManager em;
 
+    @Autowired
+    TestUtils utils;
+
+    @Autowired
+    ClientRepo repo;
+
+    Client client;
+
     @BeforeEach
     void setUp() {
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        client = repo.save(utils.getSeller());
+    }
+
+    @AfterEach
+    void clean() {
+        repo.deleteAll();
     }
 
     //=================테스트 데이터==========
@@ -160,7 +172,6 @@ public class ItemControllerTest {
                 .optionValue("검은색")
                 .mainImg("양말사진")
                 .build();
-
         itemDetail.itemConnect(item);
 
         itemDetailRepository.save(itemDetail);
@@ -196,6 +207,7 @@ public class ItemControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(itemSingle))
                         .characterEncoding("utf-8")
+            .header(HttpHeaders.AUTHORIZATION, utils.genHeader(client))
 //                        .header(HttpHeaders.AUTHORIZATION)
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())
@@ -242,7 +254,7 @@ public class ItemControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(itemForm))
                         .characterEncoding("utf-8")
-//                        .header(HttpHeaders.AUTHORIZATION)
+                        .header(HttpHeaders.AUTHORIZATION, utils.genHeader(client))
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())
                 .andDo(print())
@@ -287,6 +299,7 @@ public class ItemControllerTest {
         save();
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/item/list")
                 .characterEncoding("utf-8")
+                .header(HttpHeaders.AUTHORIZATION, utils.genHeader(client))
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())
                 .andDo(print())
@@ -313,6 +326,7 @@ public class ItemControllerTest {
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/item/list/itemid={itemId}", itemId)
                 .characterEncoding("utf-8")
+                .header(HttpHeaders.AUTHORIZATION, utils.genHeader(client))
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())
                 .andDo(document("item/get-itemlist",
@@ -350,6 +364,7 @@ public class ItemControllerTest {
 
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/item/delete/{itemId}" , itemId)
                 .characterEncoding("utf-8")
+                .header(HttpHeaders.AUTHORIZATION, utils.genHeader(client))
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())
                 .andDo(document("item/delete-item",
@@ -374,6 +389,7 @@ public class ItemControllerTest {
 
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/item/delete/item-detail/{itemDetailId}" , itemDetailId)
                 .characterEncoding("utf-8")
+                .header(HttpHeaders.AUTHORIZATION, utils.genHeader(client))
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())
                 .andDo(document("item/delete-itemDetail",
@@ -416,6 +432,7 @@ public class ItemControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateSingle))
                 .characterEncoding("utf-8")
+                .header(HttpHeaders.AUTHORIZATION, utils.genHeader(client))
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())
                 .andDo(document("item/put-update",
@@ -496,6 +513,7 @@ public class ItemControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(itemFormUpdate))
                     .characterEncoding("utf-8")
+                    .header(HttpHeaders.AUTHORIZATION, utils.genHeader(client))
             ).andExpect(status().isOk())
                     .andExpect(jsonPath("$.data").exists())
                     .andDo(document("item/put-update-list",

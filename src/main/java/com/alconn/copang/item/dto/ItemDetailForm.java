@@ -1,6 +1,8 @@
-package com.alconn.copang.item;
+package com.alconn.copang.item.dto;
 
 
+import com.alconn.copang.client.UserForm;
+import com.alconn.copang.seller.Seller;
 import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -61,6 +63,7 @@ public class ItemDetailForm {
 
         private String mainImg;
 
+        private Long sellerId;
         @Override
         public String toString() {
             return "MainForm{" +
@@ -100,6 +103,10 @@ public class ItemDetailForm {
 
 
         private String subImg;
+
+        private String sellerName;
+
+        private Long sellerId;
 
     }
     //업데이트
