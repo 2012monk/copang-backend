@@ -6,6 +6,7 @@ import com.alconn.copang.client.UserForm;
 import com.alconn.copang.order.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.*;
@@ -15,6 +16,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.validation.annotation.Validated;
 
 @Getter
 public class OrderForm {
@@ -25,11 +27,12 @@ public class OrderForm {
     @Getter
     public static class Create{
 
-        @NotNull(message = "주소는 필수 입력값입니다")
+        @NotNull(message = "주소 아이디 는 필수 입력값입니다")
         private Long addressId;
 
         private String tid;
 
+        @Valid
         @Size(min = 1, message = "주문 상품은 최소 하나이상 존재해야 합니다")
         private List<OrderItemForm> orderItems;
 
