@@ -1,5 +1,7 @@
 package com.alconn.copang.order;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -26,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-@Disabled
+//@Disabled
 //@ExtendWith(MockitoExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -85,7 +86,7 @@ class OrderServiceTest {
         // setup
         objectMapper.writerWithDefaultPrettyPrinter();
         Client client = Client.builder()
-            .clientId(1L)
+//            .clientId(1L)
             .username("test@testclient.com")
             .password("1234")
             .phone("010-9090-8989")
@@ -94,7 +95,7 @@ class OrderServiceTest {
             .build();
 
         Address address = Address.builder()
-            .addressId(1L)
+//            .addressId(1L)
             .receiverPhone("1")
             .receiverName("3")
             .addressName("41")
@@ -103,8 +104,6 @@ class OrderServiceTest {
             .detail("주소1123")
             .client(client)
             .build();
-//                new Address(1L,
-//                        "좌동 123", "철원 1번지", "010-9090-8989", "문앞요", client, EntityPriority.PRIMARY);
 
         repo.save(client);
         manager.flush();
@@ -136,6 +135,9 @@ class OrderServiceTest {
         manager.clear();
 //        System.out.println("ItemDetail = " + objectMapper.writeValueAsString(details));
 
+        Address rec = addressRepository.getById(address.getAddressId());
+        assertNotNull(rec);
+        assertEquals(rec.getAddress(), address.getAddress());
         List<OrderItemForm> orderItemForms = details
             .stream().map(
                 i -> OrderItemForm.builder()
@@ -148,8 +150,7 @@ class OrderServiceTest {
 
         // Order 요청폼 작성
         OrderForm.Create create = OrderForm.Create.builder()
-            .clientId(1L)
-            .addressId(1L)
+            .addressId(address.getAddressId())
             .orderItems(orderItemForms)
             .totalAmount(12)
             .totalPrice(2034000)
@@ -177,7 +178,7 @@ class OrderServiceTest {
             .andExpect(jsonPath("$..totalPrice").value(create.getTotalPrice()))
             .andDo(print());
 
-        OrderForm.Response o = this.service.createOrder(create);
+        OrderForm.Response o = this.service.placeOrder(create, client.getClientId());
         System.out
             .println("this.service.createOrder(create) = " + objectMapper.writeValueAsString(o));
 

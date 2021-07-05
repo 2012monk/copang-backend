@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SuperBuilder
 @AllArgsConstructor
@@ -68,5 +69,9 @@ public class Client {
 
     public void updateUserName(String username) {
         this.username = username;
+    }
+
+    public void encryptPassword(PasswordEncoder encoder) {
+        this.password = encoder.encode(this.password);
     }
 }

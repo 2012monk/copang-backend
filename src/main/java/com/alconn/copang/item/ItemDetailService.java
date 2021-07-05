@@ -1,5 +1,8 @@
 package com.alconn.copang.item;
 
+import com.alconn.copang.category.Category;
+import com.alconn.copang.category.CategoryRepository;
+import com.alconn.copang.category.CategoryService;
 import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import com.alconn.copang.item.dto.ItemDetailForm;
 import com.alconn.copang.item.dto.ItemForm;
@@ -7,16 +10,21 @@ import com.alconn.copang.item.dto.ItemViewForm;
 import com.alconn.copang.item.mapper.ItemMapper;
 import com.alconn.copang.seller.Seller;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ItemDetailService {
+
+    private final ItemRepository itemRepository;
 
     private final ItemDetailRepository itemDetailRepository;
 
@@ -24,6 +32,26 @@ public class ItemDetailService {
 
     private final ItemService itemService;
 
+    private final CategoryRepository categoryRepository;
+
+    private final CategoryService categoryService;
+
+//====
+//    카테고리에 맞는 상품중 대표옵션만 출력
+    public List<ItemDetailForm.MainForm> findCategpryMainList(Long categoryId){
+        List<Long> ids=categoryService.childCategoryExtract(categoryId);
+        System.out.println("ids.toString() = " + ids.toString());
+
+        List<Long> itemList=itemRepository.findCategoryItem(ids);
+
+        ItemMainApply itemMainApply=ItemMainApply.APPLY;
+        List<ItemDetail> list=itemDetailRepository.listItemDetailCategoryFind(itemList,itemMainApply);
+
+        System.out.println("list.get(0) = " + list.get(0).getItem().getCategory().getCategoryId());
+        List<ItemDetailForm.MainForm> listForm=itemMapper.mainPage(list);
+        return listForm;
+    }
+//====
 
     //다중 저장
     @Transactional
@@ -34,6 +62,16 @@ public class ItemDetailService {
                 .itemComment(itemForm.getItemComment())
                 .seller(Seller.builder().clientId(sellerId).build())
                 .build();
+        Category category=categoryRepository.findById(itemForm.getCategoryId()).orElseThrow(()->new NoSuchElementException("카테고리 정보를 확인해주세요"));
+        //==== 자식 카테고리가 있는 상황에 추가시 에러발생``
+        if(category.getChildCheck().equalsIgnoreCase("y")) {
+            throw new DataIntegrityViolationException("자식 카테고리에 등록해주세요");
+        }
+        //====
+       //=====
+        item.changeCategory(category);
+        categoryRepository.save(category);
+        //=====
         itemService.saveItem(item);
 
         List<ItemDetail> itemDetailList = itemMapper.listDtoToDomainN(itemForm.getItemDetailFormList());
@@ -47,11 +85,8 @@ public class ItemDetailService {
     }
 
     //옵션 추가
-    public ItemViewForm itemSingle(ItemForm.ItemSingle itemSingle) throws NoSuchEntityExceptions {
-        if(itemSingle.getItemId()!=0&&itemSingle.getItemId()==null) {
-            //에러 발생위치
+    public ItemViewForm itemSingle(ItemForm.ItemSingle itemSingle){
 
-        }
         Item item = itemService.itemFindNum(itemSingle.getItemId());
 
         ItemDetail itemDetail = itemMapper.saveOneToEntity(itemSingle.getDetailForm());
@@ -135,15 +170,19 @@ public class ItemDetailService {
 
         boolean perceive=false;
         if(!item.getItemName().equals(itemFormUpdate.getItemName())||!item.getItemComment().equals(itemFormUpdate.getItemComment())){
-            item.nameUpdate(itemFormUpdate.getItemName());
-            item.commentUpdate(itemFormUpdate.getItemComment());
+            //=====
+            item.updateMethod(itemFormUpdate.getItemName(), itemFormUpdate.getItemComment());
+            if(item.getCategory().getCategoryId()!=itemFormUpdate.getCategoryId()&&
+                    itemFormUpdate.getCategoryId()!=null)
+                categoryRepository.findById(itemFormUpdate.getCategoryId())
+                        .orElseThrow(()->new NoSuchElementException("등록된 카테고리가 아닙니다"));
+            //=====
             itemService.saveItem(item);
             perceive=true;
         }
 
         //상품 id에 해당하는 옵션조회
         List<ItemDetail> itemDetailList=itemDetailRepository.findItemDetailPage(itemFormUpdate.getItemId());
-        System.out.println("값 바뀌는지 테스트 = " + itemDetailList.get(0).getMainImg());
 
         //옵션 변경
         if(itemFormUpdate.getItemDetailUpdateClassList().size()==itemDetailList.size()){
@@ -171,14 +210,26 @@ public class ItemDetailService {
     public ItemViewForm itemSingleUpdate(ItemForm.ItemFormUpdateSingle updateSingle)
         throws NoSuchEntityExceptions {
         Item item=itemService.itemFindNum(updateSingle.getItemId());
-        if(!item.getItemName().equals(updateSingle.getItemName())) {
-            item.nameUpdate(updateSingle.getItemName());
-            itemService.saveItem(item);
-        } else if (!item.getItemName().equals(updateSingle.getItemComment())) {
-            item.commentUpdate(updateSingle.getItemComment());
-            itemService.saveItem(item);
+//=====
+        item.updateMethod(updateSingle.getItemName(), updateSingle.getItemComment());
+        if(item.getCategory().getCategoryId()!=updateSingle.getCategoryId()) {
+
+            item.changeCategory(categoryRepository.findById(updateSingle.getCategoryId())
+                    .orElseThrow(() -> new NoSuchElementException("등록된 카테고리가 아닙니다")));
         }
-        ItemDetail itemDetail=itemDetailRepository.findById(updateSingle.getDetailUpdateClass().getItemDetailId()).get();
+        itemService.saveItem(item);
+
+//        updateMethod로 대체
+//        if(!item.getItemName().equals(updateSingle.getItemName())) {
+//            item.nameUpdate(updateSingle.getItemName());
+//            itemService.saveItem(item);
+//        } else if (!item.getItemName().equals(updateSingle.getItemComment())) {
+//            item.commentUpdate(updateSingle.getItemComment());
+//            itemService.saveItem(item);
+//        }
+//=====
+        ItemDetail itemDetail=itemDetailRepository.findById(updateSingle.getDetailUpdateClass().getItemDetailId())
+                .orElseThrow(()->new NoSuchElementException("옵션정보를 찾을 수 없습니다"));
         itemDetail.itemConnect(item);
 
         ItemDetailForm.DetailUpdateClass detailUpdateClass=updateSingle.getDetailUpdateClass();

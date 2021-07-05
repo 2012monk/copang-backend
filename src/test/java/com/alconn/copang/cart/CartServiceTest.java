@@ -22,6 +22,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -83,6 +85,7 @@ class CartServiceTest {
         init = true;
     }
 
+    @DisplayName("장바구니에 상품추가")
     @Transactional
     @Test
     void addCartItem() throws NoSuchUserException, JsonProcessingException {
@@ -95,7 +98,6 @@ class CartServiceTest {
                 .build();
 
         service.addCartItem(client.getClientId(), add);
-//        System.out.println("service = " + mapper.writeValueAsString(response));
 
         m.flush();
         m.clear();
@@ -135,6 +137,7 @@ class CartServiceTest {
             .andExpect(status().isOk());
     }
 
+    @DisplayName("기존에 있던 상품에 가산")
     @Transactional
     @Test
     void addItemAmount() throws NoSuchEntityExceptions, JsonProcessingException {
@@ -162,6 +165,7 @@ class CartServiceTest {
             "mapper.writeValueAsString(response) = " + mapper.writeValueAsString(response));
 
         assertEquals(result.getAmount(), 13);
+        assertEquals(result.getUnitTotal(), 13 * result.getPrice());
     }
 
     @Transactional
@@ -176,6 +180,8 @@ class CartServiceTest {
                 .build();
         service.addCartItem(client.getClientId(), add);
 
+        m.flush();
+        m.clear();
         CartItemForm result = service
             .updateAmountItem(client.getClientId(), detail.getItemDetailId(), 60);
 
@@ -186,7 +192,7 @@ class CartServiceTest {
             service.getCart(client.getClientId());
 
         System.out.println(
-            "mapper.writeValueAsString(response) = " + mapper.writeValueAsString(response));
+            "mapper.writeValueAsString(response) = " + mapper.writeValueAsString(result));
 
         assertEquals(response.getTotalAmount(), 60);
         assertEquals(response.getTotalPrice(), detail.getPrice() * 60);
@@ -207,8 +213,7 @@ class CartServiceTest {
 
         m.flush();
         m.clear();
-
-        ReflectionTestUtils.setField(add, "amount", 6);
+        // when
 
         service.addCartItem(client.getClientId(), add);
 
@@ -220,9 +225,8 @@ class CartServiceTest {
 
         System.out.println(
             "mapper.writeValueAsString(response) = " + mapper.writeValueAsString(response));
-
-        assertEquals(response.getTotalAmount(), 9);
-        assertEquals(response.getTotalPrice(), detail.getPrice() * 9);
+        assertEquals(response.getTotalAmount(), 6);
+        assertEquals(response.getTotalPrice(), detail.getPrice() * 6);
     }
 
     @Transactional
@@ -238,6 +242,27 @@ class CartServiceTest {
 
         service.addCartItem(client.getClientId(), add);
 
+        Item item = Item.builder().itemName("고구마").build();
+
+        ItemDetail detail = ItemDetail.builder()
+            .optionName("박스")
+            .optionValue("5KG")
+            .item(item)
+            .mainImg("no image")
+            .price(56900)
+            .build();
+        detailService.itemDetailSave(detail);
+
+        add =
+            CartForm.Add.builder()
+                .itemDetailId(detail.getItemDetailId())
+                .itemId(detail.getItem().getItemId())
+                .amount(3)
+                .build();
+
+        service.addCartItem(client.getClientId(), add);
+
+
         m.flush();
         m.clear();
 
@@ -250,5 +275,38 @@ class CartServiceTest {
             service.getCart(client.getClientId());
 
         assertEquals(response.getCartItems().size(), 0);
+    }
+
+    @Transactional
+    @Test
+    void deleteOneItem() throws NoSuchEntityExceptions {
+
+        Item item = Item.builder().itemName("고구마").build();
+
+        ItemDetail detail = ItemDetail.builder()
+            .optionName("박스")
+            .optionValue("5KG")
+            .item(item)
+            .mainImg("no image")
+            .price(56900)
+            .build();
+        detailService.itemDetailSave(detail);
+        repo.save(client);
+        CartForm.Add add =
+            CartForm.Add.builder()
+                .itemDetailId(detail.getItemDetailId())
+                .itemId(detail.getItem().getItemId())
+                .amount(3)
+                .build();
+
+        service.addCartItem(client.getClientId(), add);
+
+        m.flush();
+        m.clear();
+
+        service.deleteItem(client.getClientId(), detail.getItemDetailId());
+
+        m.flush();
+        m.clear();
     }
 }

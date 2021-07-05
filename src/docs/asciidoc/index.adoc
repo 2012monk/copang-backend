@@ -11,6 +11,7 @@ monk;
 :operation-http-response-title: 에제 응답
 :operation-request-fields-title: 요청 data
 :operation-response-fields-title: 응답 data
+:operation-response-fields-data-title: 응답 데이터 필드
 
 
 [[Introduction]]
@@ -151,12 +152,12 @@ operation::orders/start-order[snippets='http-request,request-fields,request-head
 operation::orders/proceed-order[snippets='request-headers,path-parameters,http-request,http-response,response-fields']
 
 == 주문 단건 조회
-==== `GET` /api/order/:orderId
+==== `GET` /api/orders/:orderId
 
 operation::orders/get-one-order[snippets='request-headers,path-parameters,http-request,http-response,response-fields']
 
 == 유저 주문 조회하기
-==== `GET` /api/order/client/:clientId
+==== `GET` /api/orders/client
 
 operation::orders/get-client-order-list[snippets='request-headers,http-request,http-response,response-fields']
 
@@ -171,7 +172,7 @@ operation::cart/get-client-cart[snippets='http-request,request-headers,http-resp
 == 장바구니 아이템추가
 ==== `POST` /api/cart/item
 
-기존에 존재하는 아이템 업데이트시 수량이 추가됩니다
+기존에 존재하는 아이템에 추가시 수량이 추가됩니다
 
 
 operation::cart/add-cart-item[snippets='http-request,request-headers,request-fields,http-response,response-fields']
@@ -210,6 +211,10 @@ operation::item/get-mainlist[snippets='http-request,http-response']
 ==== `GET` /api/item/itemid=:itemId
 operation::item/get-itemlist[snippets='http-request,path-parameters,http-response']
 
+== 카테고리 상품 목록
+==== `GET` /api/item/list/categoryid=:categoryId
+operation::item/get-categorymainlist[snippets='http-request,path-parameters,http-response,response-fields']
+
 
 == 상품 등록
 ==== `POST` /api/item/add
@@ -242,43 +247,64 @@ operation::item/put-update[snippets='http-request,request-fields,http-response,r
 ==== `PUT` /api/item/update/list
 operation::item/put-update-list[snippets='http-request,request-fields,http-response,response-fields']
 
-= 주소 API
 
-== 주소등록
-==== `POST` /api/address
+[[review]]
+= Review API
 
-처음 등록한 주소가 기본주소가 됩니다
+== 리뷰등록
+==== `POST` /api/review/register
 
-operation::address/create[snippets='http-request,request-headers,request-fields,http-response,response-fields']
-
-== 주소 조회 [유저 기준]
-==== `GET` /api/address
-
-operation::address/get-all-address[snippets='http-request,request-headers,http-response,response-fields']
-
-== 주소 삭제
-==== `DELETE` /api/address/:addressid
-
-operation::address/delete-address[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
-
-== 기본주소지 설정
-==== `PATCH` /api/address/:addressid
-
-operation::address/set-default[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
-
-== 기본주소지로 저장하기
-==== `POST` /api/address/default
-
-operation::address/save-default[snippets='http-request,request-headers,request-fields,http-response,response-fields']
-
-== 주소지 수정하기
-==== `PUT` /api/address/:addressid
-
-수정하실 필드만 채워서 보내시면 됩니다
-
-operation::address/update-address[snippets='http-request,request-headers,request-fields,http-response,response-fields']
+operation::review/post[snippets='http-request,request-headers,request-fields,http-response,response-fields,response-fields-data']
 
 
+== 리뷰 가져오기 [유저기준]
+==== `GET` /api/review/user
+
+operation::review/user[snippets='http-request,request-headers,http-response']
+operation::review/post[snippets='response-fields,response-fields-data']
+
+== 리뷰 수정하기
+==== `POST` /api/review/:reviewId
+
+수정하실 필드만 보내시면 됩니다
+
+operation::review/update-review[snippets='http-request,request-headers,request-fields,http-response']
+operation::review/post[snippets='response-fields,response-fields-data']
+
+== 리뷰 가져오기 [상품 기준]
+==== `GET` /api/review/:itemId
+
+= 카테고리 API
+== 카테고리 등록
+
+최상위 카테고리는 parentId 0으로 채워주세요
+
+==== `Post` /api/category/add
+operation::category/post-save[snippets='http-request,request-fields,http-response,response-fields']
+
+
+== 카테고리 수정
+==== `PUT` /api/category/update
+
+해당 카테고리에 자식 카테고리가 없다면 다른 카테고리로 등록이 가능합니다
+
+카테고리 이름 변경이 가능합니다
+
+operation::category/update[snippets='http-request,request-fields,http-response,response-fields']
+
+== 카테고리 대소분류
+==== `GET` /api/category/main
+operation::category/get-list-main[snippets='http-request,http-response,response-fields']
+
+
+== 카테고리 목록
+==== `GET` /api/category/list
+operation::category/get-list[snippets='http-request,http-response,response-fields']
+
+
+== 카테고리 삭제
+==== `DELETE` /api/category/delete/:categoryId
+operation::category/delete[snippets='http-request,path-parameters,http-response,response-fields']
 
 [[resources_tag]]
 아직 문서화 되지 않았습니정

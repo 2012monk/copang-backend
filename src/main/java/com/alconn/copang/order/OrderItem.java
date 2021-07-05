@@ -1,6 +1,5 @@
 package com.alconn.copang.order;
 
-import com.alconn.copang.item.Item;
 import com.alconn.copang.item.ItemDetail;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,5 +33,9 @@ public class OrderItem {
     public void setOrders(Orders orders) {
         this.orders = orders;
 //        orders.addOrderItem(this);
+    }
+
+    public void calculateTotal() {
+        this.amount = this.unitTotal * this.itemDetail.getPrice();
     }
 }

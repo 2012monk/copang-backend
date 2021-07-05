@@ -1,5 +1,7 @@
 package com.alconn.copang.item;
 
+import com.alconn.copang.category.Category;
+import com.alconn.copang.category.CategoryRepository;
 import com.alconn.copang.client.Client;
 import com.alconn.copang.client.ClientRepo;
 import com.alconn.copang.exceptions.NoSuchEntityExceptions;
@@ -63,12 +65,28 @@ public class ItemDetailServiceTest {
     void clean() {
         repository.deleteAll();
     }
+    //=====
+    @Autowired
+    CategoryRepository categoryRepository;
+//=====
 
     private Item itemTest(){
+//=====
+        Category category=Category.builder()
+                .layer(1)
+                .categoryName("의류")
+                .categoryId(0l)
+                .build();
+        categoryRepository.save(category);
+//=====
+
         Item item=Item.builder()
                 .itemName("테스트상품")
                 .itemComment("상품설명")
                 .seller(seller)
+                //=====
+                .category(categoryRepository.findAll().get(0))
+                //=====
                 .build();
         return item;
     }
@@ -183,6 +201,7 @@ public class ItemDetailServiceTest {
                 .itemId(list.get(0).getItem().getItemId())
                 .itemName("신발")
                 .itemComment("신발설명")
+                .categoryId(categoryRepository.findAll().get(0).getCategoryId())
                 .detailUpdateClass(ItemDetailForm.DetailUpdateClass.builder()
                         .itemDetailId(list.get(0).getItemDetailId())
                         .price(10000)

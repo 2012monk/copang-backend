@@ -6,17 +6,19 @@ import com.alconn.copang.address.Address;
 import com.alconn.copang.address.AddressRepository;
 import com.alconn.copang.client.Client;
 import com.alconn.copang.client.ClientRepo;
-import com.alconn.copang.item.Item;
+import com.alconn.copang.exceptions.NoSuchEntityExceptions;
+import com.alconn.copang.exceptions.UnauthorizedException;
 import com.alconn.copang.item.ItemDetail;
-import com.alconn.copang.item.ItemDetailRepository;
-import com.alconn.copang.item.ItemRepository;
+import com.alconn.copang.item.ItemDetailService;
 import com.alconn.copang.order.OrderItem;
 import com.alconn.copang.order.OrderRepository;
+import com.alconn.copang.order.OrderService;
 import com.alconn.copang.order.Orders;
 import com.alconn.copang.utils.TestUtils;
-import java.util.Collections;
+import java.util.List;
 import javax.persistence.EntityManager;
-import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,120 +26,201 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-@Disabled
-@Slf4j
 @SpringBootTest
 class ReviewServiceTest {
+
+    @Autowired
+    ReviewRepository reviewRepository;
 
     @Autowired
     ReviewService service;
 
     @Autowired
-    ReviewRepository repository;
-
-    @Autowired
     ClientRepo repo;
 
     @Autowired
-    ItemDetailRepository detailRepository;
+    OrderService orderService;
 
     @Autowired
-    ItemRepository itemRepository;
+    ReviewRepository repository;
+
+    @Autowired
+    ItemDetailService itemDetailService;
 
     @Autowired
     OrderRepository orderRepository;
 
     @Autowired
-    AddressRepository addressRepository;
-
-    @Autowired
     TestUtils utils;
 
     @Autowired
+    AddressRepository addressRepository;
+
+    Orders orders;
+
+    Client client;
+
+    ItemDetail detail;
+
+    Address address;
+    @Autowired
     EntityManager m;
 
-    private Item getItem(String itemName) {
-        return Item.builder()
-            .itemName(itemName)
+    @Transactional
+    @BeforeEach
+    void setUp() {
+        client = utils.generateRealClient();
+        repo.save(client);
+        detail = utils.getItemDetail();
+        itemDetailService.itemDetailSave(detail);
+        address =
+            Address.builder()
+            .address("123")
+            .client(client)
             .build();
+        addressRepository.save(address);
+
+        orders =
+            Orders.builder()
+                .client(client)
+                .address(address)
+                .build();
+
+        orders.addOrderItem(OrderItem.builder()
+            .amount(1)
+            .shippingPrice(14111)
+            .itemDetail(detail)
+            .build());
+
+        orders = orderRepository.save(orders);
+    }
+
+    @AfterEach
+    void clean() {
+//        repo.deleteAll();
+    }
+
+
+    @Transactional
+    @DisplayName("유저 기준으로 리뷰를 가져온다")
+    @Test
+    void getByUser() {
+        saveReview();
+        List<ReviewForm.Response> response =
+            service.getUserReview(client.getClientId());
+
+        assertEquals(response.size(), 1);
+
+    }
+
+
+    @DisplayName("아이템 기준으로 리뷰를 가져온다")
+    @Test
+    void reviewRegister() {
+        Review review =
+            Review.builder()
+            .orderItem(orders.getOrderItemList().get(0))
+            .writer(client)
+            .satisfied(true)
+            .rating(3)
+            .content("no")
+            .build();
+        reviewRepository.save(review);
+
+        assertNotNull(review.getReviewId());
+        List<ReviewForm.Response> responses = service.getReviewByItem(detail.getItem().getItemId());
+
+        assertNotNull(responses);
+        assertEquals(responses.size(), 1);
+    }
+
+    @Disabled
+    @Transactional
+    @DisplayName("리뷰가 등록이 된다")
+    @Test
+    void reviewServiceRegister() {
+
+
+        Orders o = orderRepository.getById(orders.getOrderId());
+
+        assertNotNull(o.getOrderItemList().get(0));
+        assertEquals(o.getOrderItemList().size(), 1);
+        ReviewForm.Request request =
+            ReviewForm.Request.builder()
+                .content("없음")
+                .orderItemId(orders.getOrderItemList().get(0).getOrderItemId())
+//                .itemDetailId(detail.getItemDetailId())
+//                .itemId(detail.getItem().getItemId())
+                .title("title")
+                .rating(4)
+                .satisfied(true)
+                .build();
+
+        ReviewForm.Response res = service.postReview(request, client.getClientId());
+
+        assertNotNull(res);
+
+        List<ReviewForm.Response> responses = service.getReviewByItem(detail.getItem().getItemId());
+
+        List<ReviewForm.Response> r = service.getUserReview(client.getClientId());
+        assertEquals(r.size(), 1);
+        assertEquals(responses.size(), 1);
+        System.out.println("responses.get(0).getContent() = " + responses.get(0).getContent());
     }
 
     @Transactional
-    @DisplayName("리뷰를 쓴다!")
+    @DisplayName("주문 아이템 없이 리뷰저장")
     @Test
-    void writeReview() {
-        Item item = getItem("빨강양말");
-        ItemDetail detail =
-            buildDetail(item);
+    void saveReview() {
 
-        Client client = utils.generateMockClient();
+        ReviewForm.Request request =
+            ReviewForm.Request.builder()
+                .content("없음")
+                .orderItemId(orders.getOrderItemList().get(0).getOrderItemId())
+                .title("title")
+                .rating(4)
+                .satisfied(true)
+                .build();
 
-        Address address =
-            Address.builder()
-            .address("124444")
-            .detail("1451")
-            .receiverName("dnknk")
-            .receiverPhone("141--14010402")
-            .client(client)
-            .build();
-        repo.save(client);
+        service.postReview(request, client.getClientId());
 
-        addressRepository.save(address);
-        itemRepository.save(item);
+        List<ReviewForm.Response> response =
+            service.getUserReview(client.getClientId());
 
-        detailRepository.save(detail);
-
-        Orders orders =
-            Orders.builder()
-            .client(client)
-            .address(address)
-            .build();
-
-        orders.addOrderItem(
-            OrderItem.builder()
-                .amount(14)
-                .itemDetail(detail)
-                .shippingPrice(4000000)
-                .build()
-        );
-        orderRepository.save(orders);
-
-        log.info("itemId {}, detailId {}",detail.getItem().getItemId(), detail.getItemDetailId());
-        m.flush();
-        m.clear();
-
-        OrderItem item1 = orderRepository.getById(orders.getOrderId()).getOrderItemList().get(0);
-
-        Review review =
-            Review.builder()
-            .content("fdnfkndfkndkfnkans")
-            .rating(5)
-            .image("no")
-            .writer(client)
-            .satisfied(true)
-            .orderItem(item1)
-            .build();
-
-        repository.save(review);
-
-        m.flush();
-        m.clear();
-        Review review1 = repository.getById(review.getReviewId());
-
-        log.info("review :{} {}", review1.getReviewId(), review1.getContent());
+        assertEquals(response.size(), 1);
 
 
 
     }
 
-    private ItemDetail buildDetail(Item item) {
-        return ItemDetail.builder()
-            .price(4000)
-            .mainImg("123")
-            .stockQuantity(414)
-            .optionName("색상")
-            .optionValue("빨깡")
-            .item(item)
+
+    @Transactional
+    @DisplayName("리뷰가 수정된다")
+    @Test
+    void updateReview() throws NoSuchEntityExceptions, UnauthorizedException {
+        ReviewForm.Request request =
+            ReviewForm.Request.builder()
+                .content("없음")
+                .orderItemId(orders.getOrderItemList().get(0).getOrderItemId())
+                .title("title")
+                .rating(4)
+                .satisfied(true)
+                .build();
+
+        ReviewForm.Response response =service.postReview(request, client.getClientId());
+
+        ReviewForm.Update update =
+            ReviewForm.Update.builder()
+            .rating(0)
             .build();
+
+        service.updateReview(update, client.getClientId(), response.getReviewId());
+
+        ReviewForm.Response result = service.getUserReview(client.getClientId()).get(0);
+
+        assertEquals(result.getRating(), 0);
+        assertNotNull(response.getContent());
+        assert response.isSatisfied();
+
     }
 }

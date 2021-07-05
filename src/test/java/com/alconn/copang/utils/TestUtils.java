@@ -4,8 +4,9 @@ import com.alconn.copang.client.Client;
 import com.alconn.copang.client.ClientRepo;
 import com.alconn.copang.client.Role;
 import com.alconn.copang.exceptions.InvalidTokenException;
+import com.alconn.copang.item.Item;
+import com.alconn.copang.item.ItemDetail;
 import com.alconn.copang.security.provider.JwtTokenProvider;
-import com.alconn.copang.seller.Seller;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,10 +48,6 @@ public class TestUtils {
             .build();
     }
 
-    public String genHeader(Client client) throws InvalidTokenException {
-        return "Bearer " + genToken(client);
-    }
-
     public String genToken(Client client) throws InvalidTokenException {
         return provider.createAccessToken(client).orElseThrow(InvalidTokenException::new);
     }
@@ -59,47 +56,21 @@ public class TestUtils {
         return genToken(generateMockClient());
     }
 
-    public String genSellerHeader() throws InvalidTokenException {
-        Client cl = getSeller();
-        return "Bearer " + provider.createAccessToken(cl).orElseThrow(InvalidTokenException::new);
-    }
-
-    public Seller getSellerC() {
-        return Seller.builder()
-            .username("coppang143")
-            .password("비밀번호123!")
-            .description("안녕하세요!")
-            .phone("010-0030-9090")
-            .realName("길동홍길동")
-            .role(Role.SELLER)
-            .build();
-    }
-
-    public Client getSeller() {
-        return Client.builder()
-            .clientId(1L)
-            .username("coppang143")
-            .password("비밀번호123!")
-            .description("안녕하세요!")
-            .phone("010-0030-9090")
-            .realName("길동홍길동")
-            .role(Role.SELLER)
-            .build();
-    }
-
-    public Client getRealSeller() {
-        return Client.builder()
-            .username("coppang143")
-            .password("비밀번호123!")
-            .description("안녕하세요!")
-            .phone("010-0030-9090")
-            .realName("길동홍길동")
-            .role(Role.SELLER)
-            .build();
-    }
-
     public String genAuthHeader() throws InvalidTokenException {
         return "Bearer " + genToken();
     }
 
+    public ItemDetail getItemDetail() {
+        return ItemDetail.builder()
+            .optionName("테스트용")
+            .optionValue("빨간색")
+            .price(5000)
+            .stockQuantity(10)
+            .mainImg("no image")
+            .item(
+                Item.builder()
+                .itemName("신발1")
+                .build()
+            ).build();
+    }
 }

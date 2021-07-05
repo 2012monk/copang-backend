@@ -1,6 +1,5 @@
 package com.alconn.copang.item;
 
-import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +32,9 @@ public class ItemService {
         return itemRepository.findAll();
     }
 
-    public Item itemFindNum(Long id) throws NoSuchEntityExceptions {
+    public Item itemFindNum(Long id) {
         // NosuchElementException
-        return itemRepository.findById(id).orElseThrow(NoSuchEntityExceptions::new);
+        return itemRepository.findById(id).orElseThrow(()->new NoSuchElementException("등록된 상품 아닙니다"));
     }
 
     //삭제

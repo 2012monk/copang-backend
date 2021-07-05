@@ -32,14 +32,14 @@ public class AuthController {
                 .build();
     }
 
-    @PostMapping("/signup/seller")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseMessage<UserForm.Response> registerSeller(@RequestBody @Validated UserForm form)
-        throws SQLIntegrityConstraintViolationException {
-        return ResponseMessage.success(
-            service.registerSeller(form)
-        );
-    }
+//    @PostMapping("/signup/seller")
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public ResponseMessage<UserForm.Response> registerSeller(@RequestBody @Validated UserForm form)
+//        throws SQLIntegrityConstraintViolationException {
+//        return ResponseMessage.success(
+//            service.registerSeller(form)
+//        );
+//    }
 
 
     @PostMapping("/signup")

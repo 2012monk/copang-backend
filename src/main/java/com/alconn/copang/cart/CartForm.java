@@ -48,6 +48,6 @@ public class CartForm {
         private CartItemForm cartItem;
 //        private Set<CartItem> cartItems;
 
-        private Set<CartItemForm> cartItems;
+        private List<CartItemForm> cartItems;
     }
 }

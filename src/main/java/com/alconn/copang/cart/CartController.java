@@ -4,12 +4,9 @@ import com.alconn.copang.annotations.InjectId;
 import com.alconn.copang.common.ResponseMessage;
 import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import com.alconn.copang.exceptions.NoSuchUserException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/cart")
@@ -26,13 +24,13 @@ public class CartController {
     private final CartService service;
 
     @GetMapping("/test")
-    public Long testInject(@InjectId Long id){
+    public Long testInject(@InjectId Long id) {
         return id;
     }
 
-//    @Secured("ROLE_CLIENT")
+    @Secured("ROLE_CLIENT")
     @PostMapping("/item")
-    public ResponseMessage<?> addItem(@Validated @RequestBody CartForm.Add addForm,@InjectId Long clientId)
+    public ResponseMessage<?> addItem(@RequestBody CartForm.Add addForm, @InjectId Long clientId)
         throws NoSuchUserException {
 
         return ResponseMessage.builder()
@@ -42,18 +40,20 @@ public class CartController {
     }
 
     @PostMapping("/item/amount")
-    public ResponseMessage<CartItemForm> updateAmount(@RequestBody CartForm.Add addForm,@InjectId Long clientId)
-        throws NoSuchEntityExceptions, JsonProcessingException {
-        System.out.println("addForm.getAmount() + clientId = " + addForm.getAmount() + clientId);
-        System.out.println("new ObjectMapper().writeValueAsString(service.updateAmountItem(clientId, addForm.getItemDetailId(), addForm.getAmount())) = " + new ObjectMapper().writeValueAsString(service.updateAmountItem(clientId, addForm.getItemDetailId(), addForm.getAmount())));
+    public ResponseMessage<CartItemForm> updateAmount(@RequestBody CartForm.Add addForm,
+        @InjectId Long clientId)
+        throws NoSuchEntityExceptions {
+        log.info("cart add {} client ={}", addForm.getItemDetailId(), clientId);
         return ResponseMessage.<CartItemForm>builder()
-            .data(service.updateAmountItem(clientId, addForm.getItemDetailId(), addForm.getAmount()))
+            .data(
+                service.updateAmountItem(clientId, addForm.getItemDetailId(), addForm.getAmount()))
             .message("success")
             .build();
     }
 
     @DeleteMapping("/item/{itemDetailId}")
-    public ResponseMessage<?> deleteItem(@PathVariable(name = "itemDetailId") Long itemDetailId,@InjectId Long clientId)
+    public ResponseMessage<?> deleteItem(@PathVariable(name = "itemDetailId") Long itemDetailId,
+        @InjectId Long clientId)
         throws NoSuchEntityExceptions {
 
         return ResponseMessage.builder()
@@ -71,7 +71,8 @@ public class CartController {
     }
 
     @DeleteMapping
-    public ResponseMessage<String> clearCart(@InjectId Long clientId) throws NoSuchEntityExceptions {
+    public ResponseMessage<String> clearCart(@InjectId Long clientId)
+        throws NoSuchEntityExceptions {
         service.clearCart(clientId);
         return ResponseMessage.<String>builder()
             .message("success")

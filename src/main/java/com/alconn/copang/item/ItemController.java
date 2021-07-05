@@ -31,6 +31,19 @@ public class ItemController {
 
     private final GlobalExceptionHandler globalExceptionHandler;
 
+    //카테고리 클릭 시 자식 카테고리 조회하여 상품출력
+    @GetMapping("/list/categoryid={categoryId}")
+        public ResponseMessage<List<ItemDetailForm.MainForm>> categoryItemlist(@PathVariable(name = "categoryId")Long id){
+            List<ItemDetailForm.MainForm> itemDetailFormList=itemDetailService.findCategpryMainList(id);
+            return ResponseMessage.<List<ItemDetailForm.MainForm>>builder()
+                    .message("카테고리상품리스트")
+                    .data(itemDetailFormList)
+                    .code(200)
+                    .build();
+        }
+
+
+
     //저장
     @PostMapping("/add")
     public ResponseMessage<ItemForm> add(@Valid @RequestBody ItemForm itemForm,
@@ -115,7 +128,7 @@ public class ItemController {
             .build();
     }
 
-    //상품 전체 수정
+    //상품 전체 수정 + 카테고리 수정 포함
     @PutMapping("/update/list")
     public ResponseMessage<ItemForm.ItemFormUpdate> itemUpdate(
         @Valid @RequestBody ItemForm.ItemFormUpdate itemForm) throws NoSuchEntityExceptions {
@@ -127,16 +140,5 @@ public class ItemController {
             .code(200)
             .build();
     }
-
-    //옵션하나 수정
-//    @PutMapping("/update/itemDetailId/update")
-//    public ResponseMessage<ItemForm> itemDetailUpdate(@RequestBody ItemForm.ItemFormUpdate itemForm,
-//                                                      @PathVariable(name = "itemDetailId")Long id){
-//
-//        return ResponseMessage.<ItemDetailForm>builder()
-//                .message("상품삭제된목록")
-//                .data(itemDetailForm)
-//                .build();
-//    }
 
 }
