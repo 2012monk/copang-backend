@@ -39,8 +39,10 @@ public interface OrderMapper extends EntityMapper<OrderForm, Orders> {
 
 
     @Mapping(source = "itemDetailId", target = "itemDetail.itemDetailId")
-    @Mapping(source = ".", target = "itemDetail.item")
+//    @Mapping(source = ".", target = "itemDetail.item")
     @Mapping(source = ".", target = "itemDetail.")
+    @Mapping(target = "orderItemId", ignore = true)
+    @Mapping(target = "itemDetail.item", ignore = true) // item 아이디 무시 deatil id 만으로 빌드
 //    @Mapping(source = "orderItemId", target = "orderItemId", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
     OrderItem toItem(OrderItemForm dto);
 
