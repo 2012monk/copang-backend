@@ -2,28 +2,29 @@ package com.alconn.copang.item;
 
 
 import com.alconn.copang.ApiDocumentUtils;
+import com.alconn.copang.category.Category;
+import com.alconn.copang.category.CategoryRepository;
+import com.alconn.copang.client.Client;
+import com.alconn.copang.client.ClientRepo;
+import com.alconn.copang.item.dto.ItemDetailForm;
+import com.alconn.copang.item.dto.ItemForm;
+import com.alconn.copang.item.mapper.ItemMapper;
+import com.alconn.copang.utils.TestUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.annotation.Commit;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -37,7 +38,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
@@ -70,19 +70,48 @@ public class ItemControllerTest {
 
     @Autowired
     ItemDetailService itemDetailService;
-
+    //=====
+    @Autowired
+    CategoryRepository categoryRepository;
+    //=====
     @Autowired
     EntityManager em;
+
+    @Autowired
+    TestUtils utils;
+
+    @Autowired
+    ClientRepo repo;
+
+    Client client;
 
     @BeforeEach
     void setUp() {
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        client = repo.save(utils.getSeller());
+    }
+
+    @AfterEach
+    void clean() {
+        repo.deleteAll();
     }
 
     //=================테스트 데이터==========
-
+    //=====
+    private Category categorySave() {
+        Category category = Category.builder()
+                .parentId(0l)
+                .categoryName("테스트")
+                .layer(1)
+                .build();
+        return category;
+    }
+//=====
 
     private ItemForm itemFormTest() {
+//=====
+        categoryRepository.save(categorySave());
+//=====
         List<ItemDetailForm.DetailForm> list = new ArrayList<>();
 
         ItemDetailForm.DetailForm detailForm = ItemDetailForm.DetailForm.builder()
@@ -101,26 +130,42 @@ public class ItemControllerTest {
                 .stockQuantity(200)
                 .subImg("옵션사진")
                 .build();
+
         list.add(detailForm2);
         list.add(detailForm);
 
         ItemForm itemForm = ItemForm.builder()
                 .itemName("상품명")
                 .itemComment("상품설명")
+                //=====
+                .categoryId(categoryRepository.findAll().get(0).getCategoryId())
+                //=====
                 .itemDetailFormList(list)
                 .build();
-
+        System.out.println("itemForm.getCategoryId() = " + itemForm.getCategoryId());
         return itemForm;
     }
 
-    private void testData(){
-        Item item=Item.builder()
+    private void testData() {
+        //=====
+        Category category = Category.builder()
+                .parentId(0l)
+                .categoryName("테스트")
+                .layer(1)
+                .build();
+
+        categoryRepository.save(category);
+        //=====
+
+        Item item = Item.builder()
                 .itemComment("반팔티설명")
                 .itemName("반팔티")
+                .category(categoryRepository.findAll().get(0))
                 .build();
+        item.changeCategory(category);
         itemRepository.save(item);
 
-        ItemDetail itemDetail= ItemDetail.builder()
+        ItemDetail itemDetail = ItemDetail.builder()
                 .price(100)
                 .stockQuantity(20)
                 .optionName("색상")
@@ -135,8 +180,10 @@ public class ItemControllerTest {
     }
 
 
-
     //=======================================
+
+
+
     @DisplayName("상품 옵션 추가")
     @Test
     public void optionOneAdd() throws Exception{
@@ -160,6 +207,7 @@ public class ItemControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(itemSingle))
                         .characterEncoding("utf-8")
+            .header(HttpHeaders.AUTHORIZATION, utils.genHeader(client))
 //                        .header(HttpHeaders.AUTHORIZATION)
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())
@@ -200,11 +248,13 @@ public class ItemControllerTest {
     public void save() throws Exception {
         ItemForm itemForm = itemFormTest();
 
+
+
         mockMvc.perform(post("/api/item/add")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(itemForm))
                         .characterEncoding("utf-8")
-//                        .header(HttpHeaders.AUTHORIZATION)
+                        .header(HttpHeaders.AUTHORIZATION, utils.genHeader(client))
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())
                 .andDo(print())
@@ -214,6 +264,7 @@ public class ItemControllerTest {
                         relaxedRequestFields(
                               fieldWithPath("itemName").type(JsonFieldType.STRING).description("상품명"),
                                 fieldWithPath("itemComment").type(JsonFieldType.STRING).description("상품설명"),
+                                fieldWithPath("categoryId").type(JsonFieldType.NUMBER).description("카테고리번호"),
 
                                 fieldWithPath("itemDetailFormList.[].price").type(JsonFieldType.NUMBER).description("단가"),
                                 fieldWithPath("itemDetailFormList.[].stockQuantity").type(JsonFieldType.NUMBER).description("재고"),
@@ -226,8 +277,8 @@ public class ItemControllerTest {
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
                                 fieldWithPath("data.itemName").type(JsonFieldType.STRING).description("상품명"),
                                 fieldWithPath("data.itemComment").type(JsonFieldType.STRING).description("상품설명"),
-
                                 fieldWithPath("data.itemId").type(JsonFieldType.NUMBER).description("상품등록코드"),
+                                fieldWithPath("data.categoryId").type(JsonFieldType.NUMBER).description("카테고리번호"),
 
                                 fieldWithPath("data.itemDetailFormList").type(JsonFieldType.ARRAY).description("상품옵션리스트"),
 
@@ -248,6 +299,7 @@ public class ItemControllerTest {
         save();
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/item/list")
                 .characterEncoding("utf-8")
+                .header(HttpHeaders.AUTHORIZATION, utils.genHeader(client))
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())
                 .andDo(print())
@@ -274,6 +326,7 @@ public class ItemControllerTest {
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/item/list/itemid={itemId}", itemId)
                 .characterEncoding("utf-8")
+                .header(HttpHeaders.AUTHORIZATION, utils.genHeader(client))
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())
                 .andDo(document("item/get-itemlist",
@@ -311,6 +364,7 @@ public class ItemControllerTest {
 
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/item/delete/{itemId}" , itemId)
                 .characterEncoding("utf-8")
+                .header(HttpHeaders.AUTHORIZATION, utils.genHeader(client))
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())
                 .andDo(document("item/delete-item",
@@ -335,6 +389,7 @@ public class ItemControllerTest {
 
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/item/delete/item-detail/{itemDetailId}" , itemDetailId)
                 .characterEncoding("utf-8")
+                .header(HttpHeaders.AUTHORIZATION, utils.genHeader(client))
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())
                 .andDo(document("item/delete-itemDetail",
@@ -359,6 +414,9 @@ public class ItemControllerTest {
                 .itemId(itemDetail.getItem().getItemId())
                 .itemName("신발")
                 .itemComment("신발설명")
+                //=====
+                .categoryId(categoryRepository.findAll().get(0).getCategoryId())
+                //=====
                 .detailUpdateClass(ItemDetailForm.DetailUpdateClass.builder()
                         .itemDetailId(itemDetail.getItemDetailId())
                         .price(10000)
@@ -374,6 +432,7 @@ public class ItemControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateSingle))
                 .characterEncoding("utf-8")
+                .header(HttpHeaders.AUTHORIZATION, utils.genHeader(client))
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())
                 .andDo(document("item/put-update",
@@ -383,6 +442,7 @@ public class ItemControllerTest {
                                 fieldWithPath("itemId").type(JsonFieldType.NUMBER).description("상품등록코드"),
                                 fieldWithPath("itemName").type(JsonFieldType.STRING).description("상품명"),
                                 fieldWithPath("itemComment").type(JsonFieldType.STRING).description("상품설명"),
+                                fieldWithPath("categoryId").type(JsonFieldType.NUMBER).description("카테고리번호"),
 
                                 fieldWithPath("detailUpdateClass.itemDetailId").type(JsonFieldType.NUMBER).description("상품옵션등록코드"),
                                 fieldWithPath("detailUpdateClass.price").type(JsonFieldType.NUMBER).description("단가"),
@@ -397,6 +457,7 @@ public class ItemControllerTest {
                                 fieldWithPath("data.itemId").type(JsonFieldType.NUMBER).description("상품등록코드"),
                                 fieldWithPath("data.itemName").type(JsonFieldType.STRING).description("상품명"),
                                 fieldWithPath("data.itemComment").type(JsonFieldType.STRING).description("상품설명"),
+                                fieldWithPath("data.categoryId").type(JsonFieldType.NUMBER).description("카테고리번호"),
 
                                 fieldWithPath("data.itemDetailViewForm").type(JsonFieldType.OBJECT).description("상품옵션리스트"),
                                 fieldWithPath("data.itemDetailViewForm.itemDetailId").type(JsonFieldType.NUMBER).description("상품옵션등록코드"),
@@ -441,12 +502,18 @@ public class ItemControllerTest {
                         .itemId(testList.get(0).getItem().getItemId())
                         .itemName(testList.get(0).getItem().getItemName())
                         .itemComment(testList.get(0).getItem().getItemComment())
+
+                        //====
+                        .categoryId(categoryRepository.findAll().get(0).getCategoryId())
+                        //====
+
                         .itemDetailUpdateClassList(testUpdateList)
                         .build();
             mockMvc.perform(RestDocumentationRequestBuilders.put("/api/item/update/list")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(itemFormUpdate))
                     .characterEncoding("utf-8")
+                    .header(HttpHeaders.AUTHORIZATION, utils.genHeader(client))
             ).andExpect(status().isOk())
                     .andExpect(jsonPath("$.data").exists())
                     .andDo(document("item/put-update-list",
@@ -456,6 +523,10 @@ public class ItemControllerTest {
                                     fieldWithPath("itemId").type(JsonFieldType.NUMBER).description("상품등록코드"),
                                     fieldWithPath("itemName").type(JsonFieldType.STRING).description("상품명"),
                                     fieldWithPath("itemComment").type(JsonFieldType.STRING).description("상품설명"),
+
+                                    //====
+                                    fieldWithPath("categoryId").type(JsonFieldType.NUMBER).description("카테고리번호"),
+                                    //====
 
                                     fieldWithPath("itemDetailUpdateClassList.[].itemDetailId").type(JsonFieldType.NUMBER).description("상품옵션등록코드"),
                                     fieldWithPath("itemDetailUpdateClassList.[].price").type(JsonFieldType.NUMBER).description("단가"),
@@ -470,6 +541,10 @@ public class ItemControllerTest {
                                     fieldWithPath("data.itemId").type(JsonFieldType.NUMBER).description("상품등록코드"),
                                     fieldWithPath("data.itemName").type(JsonFieldType.STRING).description("상품명"),
                                     fieldWithPath("data.itemComment").type(JsonFieldType.STRING).description("상품설명"),
+
+                                    //====
+                                    fieldWithPath("data.categoryId").type(JsonFieldType.NUMBER).description("카테고리번호"),
+                                    //====
 
                                     fieldWithPath("data.itemDetailUpdateClassList").type(JsonFieldType.ARRAY).description("상품옵션리스트"),
                                     fieldWithPath("data.itemDetailUpdateClassList.[].itemDetailId").type(JsonFieldType.NUMBER).description("상품옵션등록코드"),

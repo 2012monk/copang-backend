@@ -6,6 +6,8 @@ import com.alconn.copang.client.UserForm;
 import com.alconn.copang.order.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -23,23 +25,18 @@ public class OrderForm {
     @Getter
     public static class Create{
 
-        @NotBlank @Positive
-        private Long clientId;
-
-        @NotEmpty
-        private String username;
-
-        @NotBlank @Positive
+        @NotNull(message = "주소는 필수 입력값입니다")
         private Long addressId;
 
         private String tid;
 
+        @Size(min = 1, message = "주문 상품은 최소 하나이상 존재해야 합니다")
         private List<OrderItemForm> orderItems;
 
-        @NotBlank @Positive
+//        @NotBlank @Positive
         private Integer totalAmount;
 
-        @NotBlank @Positive
+//        @NotBlank @Positive
         private Integer totalPrice;
     }
 
@@ -50,14 +47,12 @@ public class OrderForm {
 
         private Long orderId;
 
-        private Long clientId;
+//        private Long clientId;
 
         @JsonFormat(timezone = "Seoul/Asia", pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime orderDate;
 
         private OrderStatus orderStatus;
-
-//        private Address address;
 
         private AddressForm address;
 

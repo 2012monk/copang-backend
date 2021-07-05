@@ -1,4 +1,4 @@
-package com.alconn.copang.item;
+package com.alconn.copang.item.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,17 +25,13 @@ public class ItemForm {
     @NotEmpty
     private String itemComment;
 
+    //=====
+    private Long categoryId;
+    //=====
+
     @Builder.Default
     private List<ItemDetailForm.DetailForm> itemDetailFormList=new ArrayList<>();
 
-    @Override
-    public String toString() {
-        return "ItemForm{" +
-                "itemId=" + itemId +
-                ", itemName='" + itemName + '\'' +
-                ", itemDetailFormList=" + itemDetailFormList +
-                '}';
-    }
 
 
     //전체 수정
@@ -53,18 +49,13 @@ public class ItemForm {
         @NotEmpty
         private String itemComment;
 
+        //=====
+        private Long categoryId;
+        //=====
 
         @Builder.Default
         private List<ItemDetailForm.DetailUpdateClass> itemDetailUpdateClassList =new ArrayList<>();
 
-        @Override
-        public String toString() {
-            return "ItemFormUpdate{" +
-                    "itemId=" + itemId +
-                    ", itemName='" + itemName + '\'' +
-                    ", itemDetailUpdateClassList=" + itemDetailUpdateClassList +
-                    '}';
-        }
     }
 
     //옵션 수정
@@ -82,6 +73,11 @@ public class ItemForm {
 
         @NotEmpty
         private String itemComment;
+
+
+        //=====
+        private Long categoryId;
+        //=====
 
         private ItemDetailForm.DetailUpdateClass detailUpdateClass;
     }
@@ -102,7 +98,11 @@ public class ItemForm {
        @NotEmpty
        private String itemComment;
 
-       private ItemDetailForm.DetailForm detailForm;
+        //=====
+        private Long categoryId;
+        //=====
+
+        private ItemDetailForm.DetailForm detailForm;
     }
 
 }

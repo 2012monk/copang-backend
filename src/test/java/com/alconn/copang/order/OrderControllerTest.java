@@ -8,9 +8,6 @@ import com.alconn.copang.utils.TestUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -36,6 +33,7 @@ import java.util.stream.Collectors;
 
 import static com.alconn.copang.ApiDocumentUtils.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -98,18 +96,17 @@ class OrderControllerTest {
                 .orderItems(orderItems)
                 .build();
 
-        given(service.createOrder(any(OrderForm.Create.class))).willReturn(response);
+        given(service.placeOrder(any(OrderForm.Create.class), eq(client.getClientId()))).willReturn(response);
 
         // when
         OrderForm.Create create = OrderForm.Create.builder()
-                .clientId(1L)
                 .addressId(1L)
                 .orderItems(orderItems)
                 .totalAmount(4)
                 .totalPrice(80000)
                 .build();
 
-        System.out.println("service = " + mapper.writeValueAsString(service.createOrder(create)));
+        System.out.println("service = " + mapper.writeValueAsString(service.placeOrder(create, client.getClientId())));
 
         String token = utils.genToken();
 
@@ -181,55 +178,21 @@ class OrderControllerTest {
 
     private RequestFieldsSnippet getRequestFieldsSnippet() {
         return relaxedRequestFields(
-                fieldWithPath("clientId").type(JsonFieldType.NUMBER).description("유저 식별 코드"),
                 fieldWithPath("addressId").type(JsonFieldType.NUMBER).description("주소 식별 코드"),
-                fieldWithPath("totalPrice").type(JsonFieldType.NUMBER).description("총금액"),
-                fieldWithPath("totalAmount").description(JsonFieldType.NUMBER).description("상품 총 갯수"),
                 fieldWithPath("orderItems").type(JsonFieldType.ARRAY).description("주문 아이템 리스트"),
-                fieldWithPath("orderItems.[].itemName").type(JsonFieldType.STRING).description("상품명"),
-                fieldWithPath("orderItems.[].itemId").type(JsonFieldType.NUMBER).description("아이템 식별자"),
+                fieldWithPath("orderItems.[].itemId").type(JsonFieldType.NUMBER).description("아이템 식별자").optional(),
                 fieldWithPath("orderItems.[].itemDetailId").type(JsonFieldType.NUMBER).description("옵션 식별자"),
-                fieldWithPath("orderItems.[].optionName").type(JsonFieldType.STRING).description("옵션명").optional(),
-                fieldWithPath("orderItems.[].optionValue").type(JsonFieldType.STRING).description("옵션값").optional(),
-                fieldWithPath("orderItems.[].price").type(JsonFieldType.NUMBER).description("가격").optional(),
-                fieldWithPath("orderItems.[].amount").type(JsonFieldType.NUMBER).description("개별 상품수량"),
-                fieldWithPath("orderItems.[].unitTotal").type(JsonFieldType.NUMBER).description("개별상품 합산 금액")
+                fieldWithPath("orderItems.[].amount").type(JsonFieldType.NUMBER).description("개별 상품수량")
+//                fieldWithPath("totalPrice").type(JsonFieldType.NUMBER).description("총금액"),
+//                fieldWithPath("totalAmount").description(JsonFieldType.NUMBER).description("상품 총 갯수"),
+//                fieldWithPath("orderItems.[].itemName").type(JsonFieldType.STRING).description("상품명"),
+//                fieldWithPath("orderItems.[].optionName").type(JsonFieldType.STRING).description("옵션명").optional(),
+//                fieldWithPath("orderItems.[].optionValue").type(JsonFieldType.STRING).description("옵션값").optional(),
+//                fieldWithPath("orderItems.[].price").type(JsonFieldType.NUMBER).description("가격").optional(),
+//                fieldWithPath("orderItems.[].unitTotal").type(JsonFieldType.NUMBER).description("개별상품 합산 금액")
         );
     }
 
-    private ResponseFieldsSnippet getResponseFieldsSnippet() {
-        return relaxedResponseFields(
-                fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메세지"),
-                fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과 코드"),
-                fieldWithPath("data").type(JsonFieldType.OBJECT).description("주문 데이터"),
-                fieldWithPath("data.orderId").type(JsonFieldType.NUMBER).description("주문번호"),
-                fieldWithPath("data.orderDate").type(JsonFieldType.STRING).description("주문날짜"),
-                fieldWithPath("data.orderStatus").type(JsonFieldType.STRING).description("주문상태"),
-                fieldWithPath("data.totalPrice").type(JsonFieldType.NUMBER).description("총금액"),
-                fieldWithPath("data.totalAmount").description(JsonFieldType.NUMBER).description("상품 총 갯수"),
-                fieldWithPath("data.address").type(JsonFieldType.OBJECT).description("주소정보"),
-                fieldWithPath("data.address.addressId").type(JsonFieldType.NUMBER).description("주소 식별자"),
-                fieldWithPath("data.address.address").type(JsonFieldType.STRING).description("도시"),
-                fieldWithPath("data.address.detail").type(JsonFieldType.STRING).description("상세주소"),
-                fieldWithPath("data.address.receiverPhone").type(JsonFieldType.STRING).description("받는사람 전화번호"),
-                fieldWithPath("data.address.receiverName").type(JsonFieldType.STRING).description("받는사람 이름"),
-                fieldWithPath("data.address.preRequest").type(JsonFieldType.STRING).description("요청사항"),
-                fieldWithPath("data.client").type(JsonFieldType.OBJECT).description("주문자 정보"),
-                fieldWithPath("data.client.clientId").type(JsonFieldType.NUMBER).description("주문자 식별자"),
-                fieldWithPath("data.client.username").type(JsonFieldType.STRING).description("주문자 아이디"),
-                fieldWithPath("data.client.phone").type(JsonFieldType.STRING).description("주문자 전화번호"),
-                fieldWithPath("data.client.realName").type(JsonFieldType.STRING).description("주문자 이름"),
-                fieldWithPath("data.orderItems").type(JsonFieldType.ARRAY).description("주문 아이템 리스트"),
-                fieldWithPath("data.orderItems.[].itemName").type(JsonFieldType.STRING).description("상품명"),
-                fieldWithPath("data.orderItems.[].itemId").type(JsonFieldType.NUMBER).description("아이템 식별자"),
-                fieldWithPath("data.orderItems.[].itemDetailId").type(JsonFieldType.NUMBER).description("옵션 식별자"),
-                fieldWithPath("data.orderItems.[].optionName").type(JsonFieldType.STRING).description("옵션명"),
-                fieldWithPath("data.orderItems.[].optionValue").type(JsonFieldType.STRING).description("옵션값"),
-                fieldWithPath("data.orderItems.[].price").type(JsonFieldType.NUMBER).description("가격"),
-                fieldWithPath("data.orderItems.[].amount").type(JsonFieldType.NUMBER).description("개별 상품수량"),
-                fieldWithPath("data.orderItems.[].unitTotal").type(JsonFieldType.NUMBER).description("개별상품 합산 금액")
-        );
-    }
     private ResponseFieldsSnippet getResponseFieldsSnippetList() {
         return relaxedResponseFields(
                 fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메세지"),
@@ -261,6 +224,39 @@ class OrderControllerTest {
                 fieldWithPath("data[].orderItems.[].price").type(JsonFieldType.NUMBER).description("가격"),
                 fieldWithPath("data[].orderItems.[].amount").type(JsonFieldType.NUMBER).description("개별 상품수량"),
                 fieldWithPath("data[].orderItems.[].unitTotal").type(JsonFieldType.NUMBER).description("개별상품 합산 금액")
+        );
+    }
+    private ResponseFieldsSnippet getResponseFieldsSnippet() {
+        return relaxedResponseFields(
+            fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메세지"),
+            fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과 코드"),
+            fieldWithPath("data").type(JsonFieldType.OBJECT).description("주문 데이터"),
+            fieldWithPath("data.orderId").type(JsonFieldType.NUMBER).description("주문번호"),
+            fieldWithPath("data.orderDate").type(JsonFieldType.STRING).description("주문날짜"),
+            fieldWithPath("data.orderStatus").type(JsonFieldType.STRING).description("주문상태"),
+            fieldWithPath("data.totalPrice").type(JsonFieldType.NUMBER).description("총금액"),
+            fieldWithPath("data.totalAmount").description(JsonFieldType.NUMBER).description("상품 총 갯수"),
+            fieldWithPath("data.address").type(JsonFieldType.OBJECT).description("주소정보"),
+            fieldWithPath("data.address.addressId").type(JsonFieldType.NUMBER).description("주소 식별자"),
+            fieldWithPath("data.address.address").type(JsonFieldType.STRING).description("도시"),
+            fieldWithPath("data.address.detail").type(JsonFieldType.STRING).description("상세주소"),
+            fieldWithPath("data.address.receiverPhone").type(JsonFieldType.STRING).description("받는사람 전화번호"),
+            fieldWithPath("data.address.receiverName").type(JsonFieldType.STRING).description("받는사람 이름"),
+            fieldWithPath("data.address.preRequest").type(JsonFieldType.STRING).description("요청사항"),
+            fieldWithPath("data.client").type(JsonFieldType.OBJECT).description("주문자 정보"),
+            fieldWithPath("data.client.clientId").type(JsonFieldType.NUMBER).description("주문자 식별자"),
+            fieldWithPath("data.client.username").type(JsonFieldType.STRING).description("주문자 아이디"),
+            fieldWithPath("data.client.phone").type(JsonFieldType.STRING).description("주문자 전화번호"),
+            fieldWithPath("data.client.realName").type(JsonFieldType.STRING).description("주문자 이름"),
+            fieldWithPath("data.orderItems").type(JsonFieldType.ARRAY).description("주문 아이템 리스트"),
+            fieldWithPath("data.orderItems.[].itemName").type(JsonFieldType.STRING).description("상품명"),
+            fieldWithPath("data.orderItems.[].itemId").type(JsonFieldType.NUMBER).description("아이템 식별자"),
+            fieldWithPath("data.orderItems.[].itemDetailId").type(JsonFieldType.NUMBER).description("옵션 식별자"),
+            fieldWithPath("data.orderItems.[].optionName").type(JsonFieldType.STRING).description("옵션명"),
+            fieldWithPath("data.orderItems.[].optionValue").type(JsonFieldType.STRING).description("옵션값"),
+            fieldWithPath("data.orderItems.[].price").type(JsonFieldType.NUMBER).description("가격"),
+            fieldWithPath("data.orderItems.[].amount").type(JsonFieldType.NUMBER).description("개별 상품수량"),
+            fieldWithPath("data.orderItems.[].unitTotal").type(JsonFieldType.NUMBER).description("개별상품 합산 금액")
         );
     }
 
