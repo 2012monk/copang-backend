@@ -349,3 +349,51 @@ operation::category/delete[snippets='http-request,path-parameters,http-response,
 
 [[resources_tag]]
 아직 문서화 되지 않았습니정
+
+= 문의 API
+
+== 문의 등록하기
+==== `POST` /api/inquiry
+
+operation::inquiry/register-inquiry[snippets='http-request,request-headers,request-fields,http-response,response-fields,response-fields-data']
+
+== 답변 등록하기
+==== `POST` /api/:inquiryId/reply
+
+
+operation::inquiry/register-reply[snippets='http-request,request-headers,path-parameters,request-fields,http-response,response-fields,response-fields-data']]
+
+== 문의 조회
+
+== 문의 응답 공통필드
+operation::inquiry/get-inquiry-by-id[snippets='response-fields,response-fields-data']
+
+=== 유저기준
+==== `GET` /api/inquiry/client
+
+operation::inquiry/get-inquiry-by-client[snippets='http-request,request-headers,http-response']
+
+=== 판매자기준
+==== `GET` /api/inquiry/seller
+
+operation::inquiry/get-inquiry-by-seller[snippets='http-request,request-headers,http-response']
+
+=== 상품 기준
+==== `GET` /api/inquiry/:itemId/item
+
+operation::inquiry/get-inquiry-by-id[snippets='http-request,path-parameters,http-response,response-fields,response-fields-data']
+
+
+== 문의및 답변 수정
+
+== 문의사항 수정
+==== `PUT` /api/inquiry/:inquiryId
+
+operation::inquiry/update-inquiry[snippets='http-request,path-parameters,request-headers,http-response,response-fields,response-fields-data']
+
+== 답변수정
+==== `PUT` /api/inquiry/:inquiryId/reply
+
+operation::inquiry/update-reply[snippets='http-request,path-parameters,request-headers,http-response,response-fields,response-fields-data']
+
+

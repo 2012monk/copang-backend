@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
+//@Repository
 public class TestUtils {
 
     public static Client client;
@@ -30,6 +31,17 @@ public class TestUtils {
             .phone("010-0030-9090")
             .realName("길동홍길동")
             .role(Role.CLIENT)
+            .build();
+    }
+
+    public Seller getSeller() {
+        return Seller.builder()
+            .username("coppang-seller")
+            .password("비밀번호123!")
+            .description("안녕하세요!")
+            .phone("010-0030-9090")
+            .realName("길동홍길동")
+            .role(Role.SELLER)
             .build();
     }
 
@@ -73,18 +85,6 @@ public class TestUtils {
             .build();
     }
 
-    public Client getSeller() {
-        return Client.builder()
-            .clientId(1L)
-            .username("coppang143")
-            .password("비밀번호123!")
-            .description("안녕하세요!")
-            .phone("010-0030-9090")
-            .realName("길동홍길동")
-            .role(Role.SELLER)
-            .build();
-    }
-
     public Client getRealSeller() {
         return Client.builder()
             .username("coppang143")
@@ -112,5 +112,19 @@ public class TestUtils {
                     .itemName("신발1")
                     .build()
             ).build();
+    }
+
+    public String getSellerAuthHeader() {
+        return "Bearer " + provider.createAccessToken(
+            Client.builder()
+                .clientId(1L)
+                .username("coppang143")
+                .password("비밀번호123!")
+                .description("안녕하세요!")
+                .phone("010-0030-9090")
+                .realName("길동홍길동")
+                .role(Role.SELLER)
+                .build()
+        ).orElseThrow(RuntimeException::new);
     }
 }
