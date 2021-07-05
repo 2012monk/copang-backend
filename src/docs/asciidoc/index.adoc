@@ -110,6 +110,10 @@ operation::auth/login[snippets='http-request,http-response,request-fields,respon
 
 operation::auth/signup-client[snippets='http-request,http-response,request-fields,response-fields']
 
+== Seller signup
+==== `POST` /api/auth/signup/seller
+
+operation::auth/signup-seller[snippets='http-request,http-response,request-fields,response-fields']
 
 == 회원 탈퇴
 ==== `DELETE` /api/user

@@ -176,9 +176,8 @@ public class AuthDocumentTest {
 
     @Test
     void singupSeller() throws Exception {
-        Client client = getClient();
         UserForm form = UserForm.builder()
-            .username("쿠팡맨")
+            .username("쿠팡맨1")
             .password("비밀번호123!")
             .description("안녕하세요!")
             .phone("010-0030-9090")
