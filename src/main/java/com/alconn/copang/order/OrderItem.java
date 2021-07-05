@@ -36,6 +36,6 @@ public class OrderItem {
     }
 
     public void calculateTotal() {
-        this.amount = this.unitTotal * this.itemDetail.getPrice();
+        this.unitTotal = this.amount * this.itemDetail.getPrice();
     }
 }

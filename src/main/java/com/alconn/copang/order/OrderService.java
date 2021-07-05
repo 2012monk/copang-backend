@@ -8,9 +8,11 @@ import com.alconn.copang.order.mapper.OrderMapper;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
@@ -32,6 +34,7 @@ public class OrderService {
         Orders orders = orderMapper.placeOrder(form, clientId);
         orders.connectOrderItems();
 
+        orders.calculateTotal();
         repo.save(orders);
 
         return orderMapper.toResponse(orders);
@@ -108,11 +111,7 @@ public class OrderService {
 
     public List<OrderForm.Response> listOrderClient(Long clientId) {
         List<Orders> ordersList = repo.findOrdersByClient_ClientId(clientId);
-
-        List<OrderForm.Response> res =
-            ordersList.stream().map(
-                orderMapper::toResponse
-            ).collect(Collectors.toList());
+        ordersList.forEach(Orders::calculateTotal);
 
 //        List<OrderForm.Response> responses = ordersList.stream().map(o ->
 //            OrderForm.Response.builder()
@@ -122,7 +121,9 @@ public class OrderService {
 //                        .collect(Collectors.toList())).build()
 //        ).collect(Collectors.toList());
 
-        return res;
+        return ordersList.stream().map(
+            orderMapper::toResponse
+        ).collect(Collectors.toList());
 
     }
 
@@ -130,8 +131,7 @@ public class OrderService {
         Orders orders = repo.getById(orderId);
 //        orders.getOrderItemList().forEach(OrderItem::calculateTotal);
         orders.calculateTotal();
-        OrderForm.Response response = orderMapper.toResponse(orders);
-//        AddressForm address = AddressForm.builder()
+        //        AddressForm address = AddressForm.builder()
 //                .receiverName(orders.getAddress().getReceiverName())
 //                .address(orders.getAddress().getAddress())
 //                .receiverPhone(orders.getAddress().getReceiverPhone())
@@ -166,7 +166,7 @@ public class OrderService {
 //                .client(clientMapper.toResponse(orders.getClient()))
 //                .build();
 
-        return response;
+        return orderMapper.toResponse(orders);
 
     }
 }
