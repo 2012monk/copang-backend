@@ -78,6 +78,11 @@ class OrderServiceTest {
     @Autowired
     private ItemDetailRepository itemDetailRepository;
 
+    @Test
+    void listClient() {
+
+    }
+
     @DisplayName("주문 요청이 저장된다")
     @Transactional
     @Test
@@ -195,6 +200,8 @@ class OrderServiceTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.data").exists())
             .andDo(print());
+
+
     }
 
 }
