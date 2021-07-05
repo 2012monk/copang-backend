@@ -2,12 +2,15 @@ package com.alconn.copang.order;
 
 import com.alconn.copang.address.AddressForm;
 import com.alconn.copang.client.UserForm;
+import com.alconn.copang.exceptions.InvalidTokenException;
 import com.alconn.copang.order.dto.OrderForm;
 import com.alconn.copang.order.dto.OrderItemForm;
 import com.alconn.copang.utils.TestUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -67,6 +70,9 @@ class OrderControllerTest {
 
     @Autowired
     TestUtils utils;
+
+    @Autowired
+    ObjectMapper mapper;
 
 
     @WithMockUser(roles = "USER", password = "password")
@@ -417,5 +423,27 @@ class OrderControllerTest {
                         getResponseFieldsSnippetList()
                 ));
 
+    }
+
+    @Test
+    void exception() throws Exception {
+        OrderItemForm form = OrderItemForm.builder()
+            .itemName("name")
+            .amount(1)
+            .price(20000)
+            .build();
+
+        OrderForm.Create create=
+            OrderForm.Create.builder()
+            .orderItems(Collections.singletonList(form))
+            .addressId(1L)
+            .build();
+        this.mvc.perform(
+            post("/api/orders")
+            .header(HttpHeaders.AUTHORIZATION, utils.genAuthHeader())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(mapper.writeValueAsString(create))
+        ).andDo(print())
+            .andExpect(status().isBadRequest());
     }
 }
