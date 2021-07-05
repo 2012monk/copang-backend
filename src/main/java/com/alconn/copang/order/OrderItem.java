@@ -1,6 +1,7 @@
 package com.alconn.copang.order;
 
 import com.alconn.copang.item.ItemDetail;
+import com.alconn.copang.shipment.Shipment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +24,10 @@ public class OrderItem {
     @ManyToOne(optional = false)
     @JoinColumn(name = "orders_id")
     private Orders orders;
+
+    @ManyToOne
+    @JoinColumn(name = "shipment_id")
+    private Shipment shipment;
 
     private int amount;
 

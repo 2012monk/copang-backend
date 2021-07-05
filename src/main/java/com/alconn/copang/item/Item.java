@@ -3,6 +3,7 @@ package com.alconn.copang.item;
 import com.alconn.copang.category.Category;
 import com.alconn.copang.client.Client;
 import com.alconn.copang.seller.Seller;
+import com.alconn.copang.shipment.ShipmentInfo;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -44,6 +45,13 @@ public class Item {
     @JoinColumn(name = "categoryId")
     private Category category;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shipping_info_id")
+    private ShipmentInfo shippingInfo;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "return_shipping_info")
+    private ShipmentInfo returnShippingInfo;
     //=====
     public void changeCategory(Category category){
         this.category=category;

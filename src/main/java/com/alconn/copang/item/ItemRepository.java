@@ -12,4 +12,6 @@ public interface ItemRepository extends JpaRepository <Item,Long> {
     @Query("select i.itemId from Item i where  i.category.categoryId in (:ids)")
     List<Long> findCategoryItem(@Param("ids")List<Long> ids);
 
+    List<Item> findItemsByCategory_CategoryId(@Param(value = "categoryId") Long categoryId);
+
 }

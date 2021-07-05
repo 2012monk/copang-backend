@@ -332,17 +332,40 @@ public class ItemDetailServiceTest {
             .itemDetailFormList(Collections.singletonList(d))
             .build();
 
-
-
-
-        itemDetailService.itemDetailListSave(form, seller.getClientId());
+        ItemForm form1 = itemDetailService.itemDetailListSave(form, seller.getClientId());
 
         em.flush();
         em.clear();
 
         List<MainForm> mainList = itemDetailService.findMainList();
-
         assertNotNull(mainList);
         assertEquals(1, mainList.size());
+
+//        List<ItemDetail> list = itemDetailRepository
+//            .findItemDetailsByItem_Category_CategoryIdAndItemMainApply(category.getCategoryId(),
+//                ItemMainApply.APPLY);
+
+        List<ItemDetail> details = itemDetailRepository.findItemDetailsByItem_ItemId(form1.getItemId());
+
+        details.forEach(dt -> System.out.println("d.getItem().getCategory().getCategoryId() = " + dt.getItem().getCategory().getCategoryId()));
+        assert details.size() > 0;
+
+        List<Item> li = itemRepository.findItemsByCategory_CategoryId(form1.getCategoryId());
+        assert  li.size() > 0;
+        List<ItemDetail> l = itemDetailRepository
+            .findItemDetailsByItem_Category_CategoryId(form1.getCategoryId());
+
+        assert l.size() > 0;
+        List<ItemDetail> list = itemDetailRepository
+            .findItemDetailsByItem_Category_CategoryIdAndItemMainApply(form1.getCategoryId(),
+                ItemMainApply.APPLY);
+
+        assertNotNull(list);
+        System.out.println(
+            "list.get(0).getItem().getItemName() = " + list.get(0).getItem().getItemName());
+
+        assert  list.size() > 0;
+
+        assert list.get(0).getItem().getItemName().equals(form.getItemName());
     }
 }

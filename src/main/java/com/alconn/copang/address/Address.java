@@ -27,6 +27,8 @@ public class Address {
 
     private String detail;
 
+    private String postalCode;
+
     private String receiverPhone;
 
     @Builder.Default
