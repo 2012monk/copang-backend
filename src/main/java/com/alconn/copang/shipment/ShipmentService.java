@@ -1,5 +1,6 @@
 package com.alconn.copang.shipment;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ShipmentService {
 
-    private final ShipmentRepository shipmentReposiotry;
+    private final ShipmentRepository shipmentRepository;
+
+    public ShipmentForm.Response placeShipment(List<Long> orderItemIds){
+        return null;
+    }
 
 }

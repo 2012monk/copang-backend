@@ -1,5 +1,6 @@
 package com.alconn.copang.shipment;
 
+import com.alconn.copang.address.Address;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -25,7 +26,7 @@ public class ShipmentInfo {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "release_place_id")
-    private ShipmentAddress shippingPlace;
+    private Address shippingPlace;
 
     @Enumerated(EnumType.STRING)
     private LogisticCode logisticCompany;

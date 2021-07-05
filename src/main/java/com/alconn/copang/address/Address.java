@@ -34,13 +34,8 @@ public class Address {
     @Builder.Default
     private String preRequest = "";
 
-    // TODO 연관관계 강요 Address 완성시 체크
-//    @ManyToOne(optional = false)
-
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "client_id", updatable = false)
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "client_id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_id", updatable = false)
     private Client client;
 
     @Enumerated(EnumType.STRING)
