@@ -95,7 +95,7 @@ public class OrderService {
         orders.proceedOrder();
         return OrderForm.Response.builder()
             .orderId(orderId)
-            .orderStatus(orders.getOrderState())
+            .orderStatus(orders.getOrderStatus())
             .build();
     }
 
@@ -105,7 +105,7 @@ public class OrderService {
         orders.cancelOrder();
         return OrderForm.Response.builder()
             .orderId(orderId)
-            .orderStatus(orders.getOrderState())
+            .orderStatus(orders.getOrderStatus())
             .build();
     }
 
