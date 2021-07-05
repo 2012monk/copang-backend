@@ -85,18 +85,6 @@ public class TestUtils {
             .build();
     }
 
-    public Client getSeller() {
-        return Client.builder()
-            .clientId(1L)
-            .username("coppang143")
-            .password("비밀번호123!")
-            .description("안녕하세요!")
-            .phone("010-0030-9090")
-            .realName("길동홍길동")
-            .role(Role.SELLER)
-            .build();
-    }
-
     public Client getRealSeller() {
         return Client.builder()
             .username("coppang143")
