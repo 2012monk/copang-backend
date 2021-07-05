@@ -6,7 +6,7 @@ import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import com.alconn.copang.order.dto.OrderForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.parameters.P;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
-    // TODO INJECT ID
+
     private final OrderService service;
 
     @GetMapping
@@ -25,12 +25,13 @@ public class OrderController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseMessage<OrderForm.Response> startOrder(@RequestBody OrderForm.Create form){
+    public ResponseMessage<OrderForm.Response> startOrder(@Validated @RequestBody OrderForm.Create form,
+        @InjectId Long clientId){
 
         return ResponseMessage.<OrderForm.Response>builder()
                 .message("order_ready")
                 .code(200)
-                .data(service.createOrder(form))
+                .data(service.placeOrder(form, clientId))
                 .build();
     }
 
