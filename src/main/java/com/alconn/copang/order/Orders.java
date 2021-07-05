@@ -54,7 +54,7 @@ public class Orders {
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
-    private OrderStatus orderState = OrderStatus.READY;
+    private OrderStatus orderStatus = OrderStatus.READY;
 
     public void setClient(Client client) {
         this.client = client;
@@ -71,15 +71,15 @@ public class Orders {
     }
 
     public void proceedOrder() {
-        this.orderState = OrderStatus.PROCEED;
+        this.orderStatus = OrderStatus.PROCEED;
     }
 
     public void cancelOrder() {
-        this.orderState = OrderStatus.CANCELED;
+        this.orderStatus = OrderStatus.CANCELED;
     }
 
     public void doneOrder() {
-        this.orderState = OrderStatus.DONE;
+        this.orderStatus = OrderStatus.DONE;
     }
 
     public void connectOrderItems() {
