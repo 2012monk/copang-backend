@@ -24,6 +24,6 @@ public class Reply {
     @JoinColumn(name = "seller_id")
     private Seller seller;
 
-    private String answer;
+    private String content;
 
 }

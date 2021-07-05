@@ -1,7 +1,6 @@
 package com.alconn.copang.inquiry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.alconn.copang.client.Client;
 import com.alconn.copang.client.ClientRepo;
@@ -84,9 +83,9 @@ class QuestionRepositoryTest {
 
         Reply reply1 =
             Reply.builder()
-            .answer("answer")
-            .seller(seller)
-            .build();
+                .content("answer")
+                .seller(seller)
+                .build();
 
         Inquiry origin =
             repository.getById(inquiry.getInquiryId());
@@ -105,8 +104,7 @@ class QuestionRepositoryTest {
         assertEquals(res.size(), 1);
 
         System.out.println("res.get(0).getContent() = " + res.get(0).getContent());
-        System.out.println("res = " + res.get(0).getReply().getAnswer());
-
+        System.out.println("res = " + res.get(0).getReply().getContent());
 
 
     }

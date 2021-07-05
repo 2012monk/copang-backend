@@ -4,18 +4,28 @@ package com.alconn.copang.inquiry;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 public class InquiryForm {
 
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
     public static class Request {
+
+        private String content;
+
+        private Long itemDetailId;
 
 
     }
 
     @Builder
-    @NoArgsConstructor @AllArgsConstructor
-    
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
     public static class Response {
 
         private Long inquiryId;
@@ -24,12 +34,28 @@ public class InquiryForm {
 
         private String clientName;
 
+        private Long itemDetailId;
+
+        private String content;
+
         private LocalDateTime registerDate;
 
-        private InquiryForm.Reply reply;
+        private ReplyForm reply;
+
+        private String itemName;
+
+        private String optionName;
+
+        private String optionValue;
     }
 
-    public static class Reply {
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class ReplyForm {
+
+        private Long replyId;
 
         private String sellerName;
 
@@ -38,6 +64,8 @@ public class InquiryForm {
         private Long sellerId;
 
         private LocalDateTime registerDate;
+
+        private Long sellerCode;
 
     }
 
