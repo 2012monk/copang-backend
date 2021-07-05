@@ -2,8 +2,10 @@ package com.alconn.copang.aop;
 
 import com.alconn.copang.common.ResponseMessage;
 import com.alconn.copang.exceptions.LoginFailedException;
+import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import com.alconn.copang.exceptions.UnauthorizedException;
 import com.alconn.copang.exceptions.ValidationException;
+import java.util.NoSuchElementException;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
 import org.hibernate.TransientPropertyValueException;
@@ -85,15 +87,46 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
-    @ExceptionHandler({SQLIntegrityConstraintViolationException.class, DataIntegrityViolationException.class, ConstraintViolationException.class})
+    @ExceptionHandler(NoSuchEntityExceptions.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    protected ResponseMessage<String > selectFailed(NoSuchEntityExceptions e){
+        return ResponseMessage.<String>builder()
+            .message("요청하신 정보가 올바르지 않습니다")
+            .data(e.getMessage())
+            .code(-111)
+            .build();
+    }
+
+
+    @ExceptionHandler(NoSuchElementException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    protected ResponseMessage<String > selectFailedElement(NoSuchElementException e){
+        return ResponseMessage.<String>builder()
+            .message("요청하신 정보가 올바르지 않습니다")
+            .data(e.getMessage())
+            .code(-111)
+            .build();
+    }
+
+    @ExceptionHandler({SQLIntegrityConstraintViolationException.class,ConstraintViolationException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected ResponseMessage<String> jpaException(SQLIntegrityConstraintViolationException e) {
+        return ResponseMessage.<String>builder()
+            .message("요청하신 정보가 올바르지 않습니다")
+            .data(e.getMessage())
+            .code(-111)
+            .build();
+    }
+    @ExceptionHandler({ DataIntegrityViolationException.class, })
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected ResponseMessage<String> dataIntegrateException(DataIntegrityViolationException e) {
         return ResponseMessage.<String>builder()
                 .message("요청하신 정보가 올바르지 않습니다")
                 .data(e.getMessage())
                 .code(-111)
                 .build();
     }
+
 
 //    @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
