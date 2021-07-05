@@ -93,6 +93,29 @@ public class ItemCategoryTest {
     itemDetail.itemConnect(item);
     itemDetailRepository.save(itemDetail);
 
+    Item item33=Item.builder()
+            .itemName("반팔티")
+            .category(category2)
+            .itemComment("설명입니다")
+            .build();
+    item33.changeCategory(category2);
+    itemRepository.save(item33);
+
+    ItemDetail itemDetai33=ItemDetail.builder()
+            .optionName("색상")
+            .optionValue("하얀색")
+            .price(300000)
+            .itemMainApply(ItemMainApply.APPLY)
+            .stockQuantity(20)
+            .mainImg("메인사진")
+            .subImg("옵션사진")
+            .build();
+    itemDetai33.itemConnect(item33);
+    itemDetailRepository.save(itemDetai33);
+
+        System.out.println("category2 = " + category2.getCategoryId());
+        System.out.println("category2.getParentId() = " + category2.getParentId());
+
     ItemDetail itemDetail2=ItemDetail.builder()
             .optionName("색상")
             .optionValue("검은색")
@@ -143,7 +166,7 @@ public class ItemCategoryTest {
     public void categoryItem() throws Exception{
         testData();
         Long categoryId=categoryRepository.findAll().get(0).getCategoryId();
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/item/list/categoryid={categoryId}", categoryId)
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/item/list/categoryid={categoryId}", 0l)
                 .characterEncoding("utf-8")
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())

@@ -132,8 +132,8 @@ public class CategoryServiceTest {
                 .build();
         categoryRepository.save(category7);
 
-        List<Long> id=categoryService.childCategoryExtract(3l);
-        System.out.println("id.toString() = " + id.toString());
+//        List<Long> id=categoryService.childCategoryExtract(3l);
+//        System.out.println("id.toString() = " + id.toString());
 
     }
 

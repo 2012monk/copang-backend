@@ -93,18 +93,20 @@ public class CategoryService {
     }
 
     //아이템 조회용 카테고리 id 추출
-    public List<Long> childCategoryExtract(Long id){
+    public List<Long> childCategoryExtract(Long id,List<Long> idtest){
         //부모 카테고리 조회 자식여부 확인 -> 없으면 저장
         List<Category> td= categoryRepository.findByParentId(id);
-        List<Long> idtest=new ArrayList<>();
         if(td.size()>0){
             for(int i=0; i<td.size();i++){
-                if(td.get(i).getChildCheck().equalsIgnoreCase("y")){
-                   idtest.addAll(childCategoryExtract(td.get(i).getCategoryId()));
-                }
-                else {
-                    idtest.add(td.get(i).getCategoryId());
-                }
+//                if(td.get(i).getChildCheck().equalsIgnoreCase("y")){
+//                   idtest.addAll(childCategoryExtract(td.get(i).getCategoryId()));
+//                }
+//                else {
+//                    idtest.add(td.get(i).getCategoryId());
+//                }
+                idtest.add(td.get(i).getCategoryId());
+                childCategoryExtract(td.get(i).getCategoryId(),idtest);
+//                idtest.addAll(childCategoryExtract(td.get(i).getCategoryId(),idtest));
             }
         }
         else
