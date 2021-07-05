@@ -1,6 +1,7 @@
 package com.alconn.copang.inquiry;
 
 import com.alconn.copang.annotations.InjectId;
+import com.alconn.copang.client.Role;
 import com.alconn.copang.common.ResponseMessage;
 import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import com.alconn.copang.exceptions.UnauthorizedException;
@@ -39,7 +40,7 @@ public class InquiryController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseMessage<InquiryForm.Response> registerReply(
         @RequestBody InquiryForm.Request request,
-        @InjectId Long sellerId, @PathVariable(name = "inquiryId") Long inquiryId)
+        @InjectId(role = Role.SELLER) Long sellerId, @PathVariable(name = "inquiryId") Long inquiryId)
         throws NoSuchEntityExceptions, ValidationException {
         return ResponseMessage.success(
             service.registerReply(request, sellerId, inquiryId)
@@ -47,7 +48,7 @@ public class InquiryController {
     }
 
     @GetMapping("/seller")
-    public ResponseMessage<List<Response>> getInquiresBySeller(@InjectId Long sellerId) {
+    public ResponseMessage<List<Response>> getInquiresBySeller(@InjectId(role = Role.SELLER) Long sellerId) {
         return ResponseMessage.success(
             service.getInquiresBySeller(sellerId)
         );
@@ -79,7 +80,7 @@ public class InquiryController {
 
     @PutMapping("/{replyId}/reply")
     public ResponseMessage<Response> updateReply(@RequestBody InquiryForm.Request request,
-        @InjectId Long sellerId, @PathVariable Long replyId)
+        @InjectId(role = Role.SELLER) Long sellerId, @PathVariable Long replyId)
         throws NoSuchEntityExceptions, UnauthorizedException {
         return ResponseMessage.success(
             service.updateInquiry(request, replyId, sellerId)
