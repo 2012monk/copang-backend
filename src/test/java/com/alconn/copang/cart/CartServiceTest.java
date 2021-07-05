@@ -1,9 +1,17 @@
 package com.alconn.copang.cart;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.alconn.copang.auth.AccessTokenContainer;
+import com.alconn.copang.auth.LoginToken;
 import com.alconn.copang.client.Client;
 import com.alconn.copang.client.ClientRepo;
+import com.alconn.copang.client.ClientService;
+import com.alconn.copang.exceptions.InvalidTokenException;
+import com.alconn.copang.exceptions.LoginFailedException;
 import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import com.alconn.copang.exceptions.NoSuchUserException;
 import com.alconn.copang.item.Item;
@@ -18,20 +26,28 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+@AutoConfigureMockMvc
 @SpringBootTest
 class CartServiceTest {
 
     static boolean init = false;
     @Autowired
     CartService service;
+
     @Autowired
     TestUtils utils;
+
     @Autowired
     ObjectMapper mapper;
+
     @Autowired
     ItemDetailService detailService;
     @Autowired
@@ -41,6 +57,13 @@ class CartServiceTest {
     Client client;
     Item item;
     ItemDetail detail;
+
+    @Autowired
+    MockMvc mvc;
+
+    @Autowired
+    ClientService clientService;
+
 
     @Transactional
     @BeforeEach
@@ -85,6 +108,34 @@ class CartServiceTest {
 
     }
 
+    @Transactional
+    @Test
+    void name() throws Exception {
+        repo.save(client);
+        CartForm.Add add =
+            CartForm.Add.builder()
+                .itemDetailId(detail.getItemDetailId())
+                .itemId(detail.getItem().getItemId())
+                .amount(3)
+                .build();
+
+        LoginToken token = new LoginToken();
+
+        ReflectionTestUtils.setField(token, "username", client.getUsername());
+        ReflectionTestUtils.setField(token, "password", client.getPassword());
+
+        AccessTokenContainer container = clientService.login(token);
+
+
+        this.mvc.perform(
+            post("/api/cart/item")
+            .content(mapper.writeValueAsString(add))
+                .contentType(MediaType.APPLICATION_JSON)
+            .header("authorization", "Bearer " + container.getAccess_token())
+        )
+            .andDo(print())
+            .andExpect(status().isOk());
+    }
 
     @DisplayName("기존에 있던 상품에 가산")
     @Transactional
@@ -224,5 +275,38 @@ class CartServiceTest {
             service.getCart(client.getClientId());
 
         assertEquals(response.getCartItems().size(), 0);
+    }
+
+    @Transactional
+    @Test
+    void deleteOneItem() throws NoSuchEntityExceptions {
+
+        Item item = Item.builder().itemName("고구마").build();
+
+        ItemDetail detail = ItemDetail.builder()
+            .optionName("박스")
+            .optionValue("5KG")
+            .item(item)
+            .mainImg("no image")
+            .price(56900)
+            .build();
+        detailService.itemDetailSave(detail);
+        repo.save(client);
+        CartForm.Add add =
+            CartForm.Add.builder()
+                .itemDetailId(detail.getItemDetailId())
+                .itemId(detail.getItem().getItemId())
+                .amount(3)
+                .build();
+
+        service.addCartItem(client.getClientId(), add);
+
+        m.flush();
+        m.clear();
+
+        service.deleteItem(client.getClientId(), detail.getItemDetailId());
+
+        m.flush();
+        m.clear();
     }
 }

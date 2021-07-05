@@ -22,8 +22,11 @@ import com.alconn.copang.auth.AccessTokenContainer;
 import com.alconn.copang.exceptions.InvalidTokenException;
 import com.alconn.copang.exceptions.LoginFailedException;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.oauth2.sdk.token.AccessToken;
 import javax.persistence.EntityManager;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -163,11 +166,61 @@ public class AuthDocumentTest {
                     fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
                     fieldWithPath("data.clientId").type(JsonFieldType.NUMBER).description("유저 식별자"),
                     fieldWithPath("data.username").type(JsonFieldType.STRING).description("아이디"),
-                    fieldWithPath("data.description").type(JsonFieldType.STRING).description("소개"),
                     fieldWithPath("data.phone").type(JsonFieldType.STRING).description("휴대전화번호"),
                     fieldWithPath("data.realName").type(JsonFieldType.STRING).description("이름"),
                     fieldWithPath("data.role").type(JsonFieldType.STRING).description("유저타입"),
                     fieldWithPath("data.signInDate").type(JsonFieldType.STRING).description("가입날짜")
+
+                )
+            )).andDo(print());
+    }
+
+
+    @Disabled
+    @Test
+    void singupSeller() throws Exception {
+        UserForm form = UserForm.builder()
+            .username("쿠팡맨1412")
+
+            .password("비밀번호123!")
+            .description("안녕하세요!")
+            .phone("010-0030-9090")
+            .realName("충성")
+            .build();
+
+//        given(service.signupClient(any(UserForm.class))).willReturn(client);
+
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        ResultActions result = this.mvc.perform(
+            post("/api/auth/signup/seller")
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("utf-8")
+                .content(mapper.writeValueAsString(form))
+        );
+
+        result.andExpect(status().isCreated())
+            .andExpect(jsonPath("$.data").exists())
+            .andDo(document("auth/signup-seller",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                relaxedRequestFields(
+                    fieldWithPath("username").type(JsonFieldType.STRING).description("아이디"),
+                    fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
+                    fieldWithPath("realName").type(JsonFieldType.STRING).description("이름"),
+                    fieldWithPath("description").type(JsonFieldType.STRING).description("소개")
+                        .optional(),
+                    fieldWithPath("phone").type(JsonFieldType.STRING).description("휴대전화번호")
+                        .optional()
+                ),
+                relaxedResponseFields(
+                    fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메세지"),
+                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
+                    fieldWithPath("data.clientId").type(JsonFieldType.NUMBER).description("유저 식별자"),
+                    fieldWithPath("data.username").type(JsonFieldType.STRING).description("아이디"),
+                    fieldWithPath("data.phone").type(JsonFieldType.STRING).description("휴대전화번호"),
+                    fieldWithPath("data.realName").type(JsonFieldType.STRING).description("이름"),
+                    fieldWithPath("data.role").type(JsonFieldType.STRING).description("유저타입")
+//                    fieldWithPath("data.signInDate").type(JsonFieldType.STRING).description("가입날짜")
 
                 )
             )).andDo(print());

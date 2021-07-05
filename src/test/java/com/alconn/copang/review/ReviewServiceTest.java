@@ -2,6 +2,8 @@ package com.alconn.copang.review;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.alconn.copang.address.Address;
+import com.alconn.copang.address.AddressRepository;
 import com.alconn.copang.client.Client;
 import com.alconn.copang.client.ClientRepo;
 import com.alconn.copang.exceptions.NoSuchEntityExceptions;
@@ -12,19 +14,16 @@ import com.alconn.copang.order.OrderItem;
 import com.alconn.copang.order.OrderRepository;
 import com.alconn.copang.order.OrderService;
 import com.alconn.copang.order.Orders;
-import com.alconn.copang.order.dto.OrderForm;
-import com.alconn.copang.seller.Seller;
 import com.alconn.copang.utils.TestUtils;
-import java.util.Collections;
 import java.util.List;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -54,12 +53,16 @@ class ReviewServiceTest {
     @Autowired
     TestUtils utils;
 
+    @Autowired
+    AddressRepository addressRepository;
+
     Orders orders;
 
     Client client;
 
     ItemDetail detail;
 
+    Address address;
     @Autowired
     EntityManager m;
 
@@ -70,10 +73,17 @@ class ReviewServiceTest {
         repo.save(client);
         detail = utils.getItemDetail();
         itemDetailService.itemDetailSave(detail);
+        address =
+            Address.builder()
+            .address("123")
+            .client(client)
+            .build();
+        addressRepository.save(address);
 
         orders =
             Orders.builder()
                 .client(client)
+                .address(address)
                 .build();
 
         orders.addOrderItem(OrderItem.builder()
@@ -95,7 +105,7 @@ class ReviewServiceTest {
     @DisplayName("유저 기준으로 리뷰를 가져온다")
     @Test
     void getByUser() {
-        reviewServiceRegister();
+        saveReview();
         List<ReviewForm.Response> response =
             service.getUserReview(client.getClientId());
 
@@ -124,6 +134,7 @@ class ReviewServiceTest {
         assertEquals(responses.size(), 1);
     }
 
+    @Disabled
     @Transactional
     @DisplayName("리뷰가 등록이 된다")
     @Test
@@ -132,11 +143,12 @@ class ReviewServiceTest {
 
         Orders o = orderRepository.getById(orders.getOrderId());
 
+        assertNotNull(o.getOrderItemList().get(0));
         assertEquals(o.getOrderItemList().size(), 1);
         ReviewForm.Request request =
             ReviewForm.Request.builder()
                 .content("없음")
-                .orderItemId(orders.getOrderItemList().get(0).getId())
+                .orderItemId(orders.getOrderItemList().get(0).getOrderItemId())
 //                .itemDetailId(detail.getItemDetailId())
 //                .itemId(detail.getItem().getItemId())
                 .title("title")
@@ -144,14 +156,15 @@ class ReviewServiceTest {
                 .satisfied(true)
                 .build();
 
-
-
         ReviewForm.Response res = service.postReview(request, client.getClientId());
 
         assertNotNull(res);
 
         List<ReviewForm.Response> responses = service.getReviewByItem(detail.getItem().getItemId());
 
+        List<ReviewForm.Response> r = service.getUserReview(client.getClientId());
+        assertEquals(r.size(), 1);
+        assertEquals(responses.size(), 1);
         System.out.println("responses.get(0).getContent() = " + responses.get(0).getContent());
     }
 
@@ -163,7 +176,7 @@ class ReviewServiceTest {
         ReviewForm.Request request =
             ReviewForm.Request.builder()
                 .content("없음")
-                .orderItemId(orders.getOrderItemList().get(0).getId())
+                .orderItemId(orders.getOrderItemList().get(0).getOrderItemId())
                 .title("title")
                 .rating(4)
                 .satisfied(true)
@@ -182,13 +195,13 @@ class ReviewServiceTest {
 
 
     @Transactional
-    @DisplayName("주문이 수정된다")
+    @DisplayName("리뷰가 수정된다")
     @Test
     void updateReview() throws NoSuchEntityExceptions, UnauthorizedException {
         ReviewForm.Request request =
             ReviewForm.Request.builder()
                 .content("없음")
-                .orderItemId(orders.getOrderItemList().get(0).getId())
+                .orderItemId(orders.getOrderItemList().get(0).getOrderItemId())
                 .title("title")
                 .rating(4)
                 .satisfied(true)

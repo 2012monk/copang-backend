@@ -37,7 +37,7 @@ public class Address {
 
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "client_id", updatable = false)
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "client_id")
     private Client client;
 

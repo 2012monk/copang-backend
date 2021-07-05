@@ -1,4 +1,4 @@
-package com.alconn.copang.item;
+package com.alconn.copang.item.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +19,10 @@ public class ItemViewForm {
     private String itemName;
 
     private String itemComment;
+
+    //=====
+    private Long categoryId;
+    //=====
 
     private ItemDetailViewForm itemDetailViewForm;
 

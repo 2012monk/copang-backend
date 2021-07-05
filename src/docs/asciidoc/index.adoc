@@ -110,6 +110,10 @@ operation::auth/login[snippets='http-request,http-response,request-fields,respon
 
 operation::auth/signup-client[snippets='http-request,http-response,request-fields,response-fields']
 
+== Seller signup
+==== `POST` /api/auth/signup/seller
+
+operation::auth/signup-seller[snippets='http-request,http-response,request-fields,response-fields']
 
 == 회원 탈퇴
 ==== `DELETE` /api/user
@@ -122,7 +126,6 @@ operation::c
 [[]]
 == 유저 정보 가져오기
 ==== `GET` /api/user
-
 
 operation::client/get-one-user[snippets='http-request,http-response,request-headers']
 
@@ -153,12 +156,12 @@ operation::orders/start-order[snippets='http-request,request-fields,request-head
 operation::orders/proceed-order[snippets='request-headers,path-parameters,http-request,http-response,response-fields']
 
 == 주문 단건 조회
-==== `GET` /api/order/:orderId
+==== `GET` /api/orders/:orderId
 
 operation::orders/get-one-order[snippets='request-headers,path-parameters,http-request,http-response,response-fields']
 
 == 유저 주문 조회하기
-==== `GET` /api/order/client
+==== `GET` /api/orders/client
 
 operation::orders/get-client-order-list[snippets='request-headers,http-request,http-response,response-fields']
 
@@ -197,43 +200,6 @@ operation::cart/clear-cart[snippets='http-request,request-headers,http-response,
 
 
 
-= 주소 API
-
-== 주소등록
-==== `POST` /api/address
-
-처음 등록한 주소가 기본주소가 됩니다
-
-operation::address/create[snippets='http-request,request-headers,request-fields,http-response,response-fields']
-
-== 주소 조회 [유저 기준]
-==== `GET` /api/address
-
-operation::address/get-all-address[snippets='http-request,request-headers,http-response,response-fields']
-
-== 주소 삭제
-==== `DELETE` /api/address/:addressid
-
-operation::address/delete-address[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
-
-== 기본주소지 설정
-==== `PATCH` /api/address/:addressid
-
-operation::address/set-default[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
-
-== 기본주소지로 저장하기
-==== `POST` /api/address/default
-
-operation::address/save-default[snippets='http-request,request-headers,request-fields,http-response,response-fields']
-
-== 주소지 수정하기
-==== `PUT` /api/address/:addressid
-
-수정하실 필드만 채워서 보내시면 됩니다
-
-operation::address/update-address[snippets='http-request,request-headers,request-fields,http-response,response-fields']
-
-
 
 [[resources_tag]]
 = 상품 정보 APIs
@@ -243,14 +209,18 @@ operation::address/update-address[snippets='http-request,request-headers,request
 
 상품중에 대표로 선택된 옵션들만 출력됩니다, 현재는 첫번째가 대표로 선택됩니다
 
-operation::item/get-mainlist[snippets='http-request,http-response,response-fields']
+operation::item/get-mainlist[snippets='http-request,http-response']
 
 == 상품 상세 목록
-==== `GET` /api/item/list/itemid=:itemId
-operation::item/get-itemlist[snippets='http-request,path-parameters,http-response,response-fields']
+==== `GET` /api/item/itemid=:itemId
+operation::item/get-itemlist[snippets='http-request,path-parameters,http-response']
+
+== 카테고리 상품 목록
+==== `GET` /api/item/list/categoryid=:categoryId
+operation::item/get-categorymainlist[snippets='http-request,path-parameters,http-response,response-fields']
 
 
-== 상품 리스트 등록
+== 상품 등록
 ==== `POST` /api/item/add
 
 상품 새로 등록
@@ -271,13 +241,10 @@ operation::item/delete-item[snippets='http-request,path-parameters,http-response
 
 == 상품 옵션 삭제
 ==== `GET` /api/item/delete/item-detail=:itemDetailId
-operation::item/delete-itemDetail[snippets='http-request,path-parameters,http-response,response-fields']
+operation::item/delete-item[snippets='http-response,path-parameters,http-response,response-fields']
 
 == 상품 옵션 단일 수정
 ==== `PUST` /api/item/update
-
-상품 이름과 설명도 수정 가능합니다
-
 operation::item/put-update[snippets='http-request,request-fields,http-response,response-fields']
 
 == 상품 다중 수정
@@ -311,6 +278,40 @@ operation::review/post[snippets='response-fields,response-fields-data']
 == 리뷰 가져오기 [상품 기준]
 ==== `GET` /api/review/:itemId
 
+= 카테고리 API
+== 카테고리 등록
+
+최상위 카테고리는 parentId 0으로 채워주세요
+
+==== `Post` /api/category/add
+operation::category/post-save[snippets='http-request,request-fields,http-response,response-fields']
+
+
+== 카테고리 수정
+==== `PUT` /api/category/update
+
+해당 카테고리에 자식 카테고리가 없다면 다른 카테고리로 등록이 가능합니다
+
+카테고리 이름 변경이 가능합니다
+
+operation::category/update[snippets='http-request,request-fields,http-response,response-fields']
+
+== 카테고리 대소분류
+==== `GET` /api/category/main
+operation::category/get-list-main[snippets='http-request,http-response,response-fields']
+
+
+== 카테고리 목록
+==== `GET` /api/category/list
+operation::category/get-list[snippets='http-request,http-response,response-fields']
+
+
+== 카테고리 삭제
+==== `DELETE` /api/category/delete/:categoryId
+operation::category/delete[snippets='http-request,path-parameters,http-response,response-fields']
+
+[[resources_tag]]
+아직 문서화 되지 않았습니정
 
 = 문의 API
 

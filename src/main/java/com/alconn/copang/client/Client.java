@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -15,6 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SuperBuilder
 @AllArgsConstructor
@@ -54,6 +57,7 @@ public class Client {
     @Column(updatable = false)
     private LocalDateTime signInDate;
 
+    @Enumerated(EnumType.STRING)
     private Role role;
 
 
@@ -68,5 +72,9 @@ public class Client {
 
     public void updateUserName(String username) {
         this.username = username;
+    }
+
+    public void encryptPassword(PasswordEncoder encoder) {
+        this.password = encoder.encode(this.password);
     }
 }

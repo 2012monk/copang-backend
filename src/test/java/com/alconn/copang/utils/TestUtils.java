@@ -57,12 +57,55 @@ public class TestUtils {
             .build();
     }
 
+    public String genHeader(Client client) throws InvalidTokenException {
+        return "Bearer " + genToken(client);
+    }
+
     public String genToken(Client client) throws InvalidTokenException {
         return provider.createAccessToken(client).orElseThrow(InvalidTokenException::new);
     }
 
     public String genToken() throws InvalidTokenException {
         return genToken(generateMockClient());
+    }
+
+    public String genSellerHeader() throws InvalidTokenException {
+        Client cl = getSeller();
+        return "Bearer " + provider.createAccessToken(cl).orElseThrow(InvalidTokenException::new);
+    }
+
+    public Seller getSellerC() {
+        return Seller.builder()
+            .username("coppang143-se11")
+            .password("비밀번호123!")
+            .description("안녕하세요!")
+            .phone("010-0030-9090")
+            .realName("길동홍길동")
+            .role(Role.SELLER)
+            .build();
+    }
+
+    public Client getSeller() {
+        return Client.builder()
+            .clientId(1L)
+            .username("coppang143")
+            .password("비밀번호123!")
+            .description("안녕하세요!")
+            .phone("010-0030-9090")
+            .realName("길동홍길동")
+            .role(Role.SELLER)
+            .build();
+    }
+
+    public Client getRealSeller() {
+        return Client.builder()
+            .username("coppang143")
+            .password("비밀번호123!")
+            .description("안녕하세요!")
+            .phone("010-0030-9090")
+            .realName("길동홍길동")
+            .role(Role.SELLER)
+            .build();
     }
 
     public String genAuthHeader() throws InvalidTokenException {
