@@ -64,7 +64,7 @@ public class TestUtils {
 
     public Seller getSellerC() {
         return Seller.builder()
-            .username("coppang143")
+            .username("coppang143-se11")
             .password("비밀번호123!")
             .description("안녕하세요!")
             .phone("010-0030-9090")

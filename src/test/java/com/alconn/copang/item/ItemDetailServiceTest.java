@@ -1,10 +1,15 @@
 package com.alconn.copang.item;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import com.alconn.copang.category.Category;
 import com.alconn.copang.category.CategoryRepository;
+import com.alconn.copang.client.Client;
 import com.alconn.copang.client.ClientRepo;
 import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import com.alconn.copang.item.dto.ItemDetailForm;
+import com.alconn.copang.item.dto.ItemDetailForm.MainForm;
 import com.alconn.copang.item.dto.ItemForm;
 import com.alconn.copang.item.dto.ItemViewForm;
 import com.alconn.copang.item.mapper.ItemMapper;
@@ -12,6 +17,7 @@ import com.alconn.copang.seller.Seller;
 import com.alconn.copang.seller.SellerRepository;
 import com.alconn.copang.utils.TestUtils;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
@@ -20,6 +26,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,6 +60,9 @@ public class ItemDetailServiceTest {
 
     @Autowired
     SellerRepository repository;
+
+    @Autowired
+    ClientRepo clientRepo;
     //=====
     @Autowired
     CategoryRepository categoryRepository;
@@ -275,5 +285,64 @@ public class ItemDetailServiceTest {
         System.out.println("itemViewForm.tp = " + itemViewForm.toString());
     }
 
+    @Transactional
+    @Test
+    void saveTEst() {
+        Category category = Category.builder()
+            .layer(1)
+            .categoryName("의류")
+            .categoryId(0l)
+            .build();
+        categoryRepository.save(category);
+        //=====
+        Client client = utils.generateRealClient();
+        clientRepo.save(client);
 
+        Item item = Item.builder()
+            .itemName("테스트상품")
+            .itemComment("상품설명")
+            .seller(Seller.builder().clientId(client.getClientId()).build())
+            //=====
+            .category(categoryRepository.findAll().get(0))
+            //=====
+            .build();
+
+        ItemDetail detail =
+            ItemDetail.builder()
+            .item(item)
+            .price(123)
+            .mainImg("123")
+            .optionValue("123")
+            .optionName("123")
+            .stockQuantity(123)
+            .build();
+
+        ItemDetailForm.DetailForm d =
+            ItemDetailForm.DetailForm.builder()
+            .price(123)
+                .mainImg("123")
+                .optionValue("123")
+                .optionName("123")
+                .stockQuantity(123)
+            .build();
+        ItemForm form=
+            ItemForm.builder()
+            .itemName("123")
+            .categoryId(item.getCategory().getCategoryId())
+            .itemDetailFormList(Collections.singletonList(d))
+            .build();
+
+
+
+
+        itemDetailService.itemDetailListSave(form, seller.getClientId());
+
+        em.flush();
+        em.clear();
+
+        List<MainForm> mainList = itemDetailService.findMainList();
+
+        assertNotNull(mainList);
+        assertEquals(1, mainList.size());
+    }
 }

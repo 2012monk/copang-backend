@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -55,6 +57,7 @@ public class Client {
     @Column(updatable = false)
     private LocalDateTime signInDate;
 
+    @Enumerated(EnumType.STRING)
     private Role role;
 
 

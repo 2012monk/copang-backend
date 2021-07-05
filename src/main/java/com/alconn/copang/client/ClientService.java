@@ -7,6 +7,8 @@ import com.alconn.copang.exceptions.LoginFailedException;
 import com.alconn.copang.exceptions.NoSuchUserException;
 import com.alconn.copang.exceptions.ValidationException;
 import com.alconn.copang.security.provider.JwtTokenProvider;
+import com.alconn.copang.seller.Seller;
+import com.alconn.copang.seller.SellerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,6 +31,8 @@ public class ClientService {
     private final JwtTokenProvider provider;
 
     private final BCryptPasswordEncoder passwordEncoder;
+
+    private final SellerRepository sellerRepository;
 
     public AccessTokenContainer login(LoginToken token) throws LoginFailedException, InvalidTokenException {
         Client client = repo.findClientByUsername(token.getUsername()).orElseThrow(LoginFailedException::new);
@@ -143,9 +147,9 @@ public class ClientService {
     public UserForm.Response registerSeller(UserForm form) throws SQLIntegrityConstraintViolationException {
         checkOverlapUser(form);
         form.setRole(Role.SELLER);
-        Client client = mapper.toEntity(form);
+        Seller client = mapper.toSeller(form);
 
-        repo.save(client);
+        sellerRepository.save(client);
 
         return mapper.toResponse(client);
 
