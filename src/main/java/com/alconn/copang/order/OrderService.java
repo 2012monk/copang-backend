@@ -34,7 +34,7 @@ public class OrderService {
         Orders orders = orderMapper.placeOrder(form, clientId);
         orders.connectOrderItems();
 
-        orders.calculateTotal();
+//        orders.calculateTotal();
         repo.save(orders);
 
         return orderMapper.toResponse(orders);
@@ -131,6 +131,7 @@ public class OrderService {
         Orders orders = repo.getById(orderId);
 //        orders.getOrderItemList().forEach(OrderItem::calculateTotal);
         orders.calculateTotal();
+        return orderMapper.toResponse(orders);
         //        AddressForm address = AddressForm.builder()
 //                .receiverName(orders.getAddress().getReceiverName())
 //                .address(orders.getAddress().getAddress())
@@ -166,7 +167,6 @@ public class OrderService {
 //                .client(clientMapper.toResponse(orders.getClient()))
 //                .build();
 
-        return orderMapper.toResponse(orders);
 
     }
 }
