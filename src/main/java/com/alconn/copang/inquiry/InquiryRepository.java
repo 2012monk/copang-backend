@@ -12,4 +12,5 @@ public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
 
     List<Inquiry> findInquiriesByClient_ClientId(@Param(value = "clientID") Long clientId);
 
+//    List<Inquiry> findInquiriesByItemDetail_Item_Seller_ClientId(@Param(value = "clientId") Long clientId);
 }

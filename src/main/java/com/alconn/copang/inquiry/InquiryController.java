@@ -69,7 +69,7 @@ public class InquiryController {
         );
     }
 
-    @PutMapping("/{inquiryId}/inquiry")
+    @PutMapping("/{inquiryId}")
     public ResponseMessage<Response> updateInquiry(@RequestBody InquiryForm.Request request,
         @InjectId Long clientId, @PathVariable Long inquiryId)
         throws NoSuchEntityExceptions, UnauthorizedException {
@@ -78,12 +78,12 @@ public class InquiryController {
         );
     }
 
-    @PutMapping("/{replyId}/reply")
+    @PutMapping("/{inquiryId}/reply")
     public ResponseMessage<Response> updateReply(@RequestBody InquiryForm.Request request,
-        @InjectId(role = Role.SELLER) Long sellerId, @PathVariable Long replyId)
+        @InjectId(role = Role.SELLER) Long sellerId, @PathVariable Long inquiryId)
         throws NoSuchEntityExceptions, UnauthorizedException {
         return ResponseMessage.success(
-            service.updateInquiry(request, replyId, sellerId)
+            service.updateReply(request, inquiryId, sellerId)
         );
 
     }

@@ -69,6 +69,17 @@ public class InquiryService {
         return mapper.toDto(inquiry);
     }
 
+    public InquiryForm.Response updateReply(Request request, Long inquiryId, Long sellerId)
+        throws NoSuchEntityExceptions, UnauthorizedException {
+        Inquiry inquiry = repository.findById(inquiryId).orElseThrow(NoSuchEntityExceptions::new);
+        if (!inquiry.getReply().getSeller().getClientId().equals(sellerId)) {
+            throw new UnauthorizedException("본인인증에 실패했습니다");
+        }
+
+        inquiry.getReply().updateContent(request.getContent());
+        return mapper.toDto(inquiry);
+    }
+
 
     public List<Response> getInquiresByClient(Long clientId) {
         return repository.findInquiriesByClient_ClientId(clientId)
