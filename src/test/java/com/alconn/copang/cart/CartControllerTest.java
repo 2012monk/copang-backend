@@ -138,7 +138,7 @@ class CartControllerTest {
             CartForm.Add.builder()
                 .itemDetailId(res.getItemDetailId())
                 .itemId(res.getItemId())
-//                .amount(3)
+                .amount(3)
                 .build();
 
         given(cartService.addCartItem(eq(client.getClientId()), any(CartForm.Add.class)))
@@ -208,8 +208,6 @@ class CartControllerTest {
         given(this.cartService.updateAmountItem(eq(client.getClientId()), eq(2L), eq(50)))
             .willReturn(res);
 
-//        System.out.println("service = " + mapper.writeValueAsString(cartService.updateAmountItem(client.getClientId(), 2L, 50)));
-//        System.out.println("client.getClientId() = " + client.getClientId());
 
         this.mvc.perform(
             RestDocumentationRequestBuilders.

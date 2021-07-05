@@ -39,15 +39,6 @@ public class ItemDetail {
     @Builder.Default
     private ItemMainApply itemMainApply=ItemMainApply.NON;
 
-    public void updateAllData(int price,int stockQuantity, String optionName, String optionValue, String mainImg, String subImg){
-        this.price=price;
-        this.stockQuantity=stockQuantity;
-        this.optionName=optionName;
-        this.optionValue=optionValue;
-        this.mainImg=mainImg;
-        this.subImg=subImg;
-    }
-
 
     //ItemDetail 빌드시 후 아이템 추가하여 순환참조 끊는다
     public void itemConnect(Item item){
@@ -59,26 +50,14 @@ public class ItemDetail {
         this.itemMainApply = itemMainApply;
     }
 
-
-    //
-//    public void updateItemDetail(int price, int stockQuantity, String option, String detailImg){
-//        this.price=price;
-//        this.stockQuantity=stockQuantity;
-//        this.optionName =option;
-//        this.detailImg=detailImg;
-//    }
-//
-//    public void removeStockQuantity(int quantity){
-//        int result=this.stockQuantity-quantity;
-//        if(result<0){
-//            result=0;
-//        }
-//        this.stockQuantity=result;
-//    }
-//
-//    public void addStockQuantity(int quantity){
-//        this.stockQuantity+=quantity;
-//    }
+    public void updateAllData(int price,int stockQuantity, String optionName, String optionValue, String mainImg, String subImg){
+        this.price=price;
+        this.stockQuantity=stockQuantity;
+        this.optionName=optionName;
+        this.optionValue=optionValue;
+        this.mainImg=mainImg;
+        this.subImg=subImg;
+    }
 
 
 }

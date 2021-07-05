@@ -1,5 +1,10 @@
-package com.alconn.copang.item;
+package com.alconn.copang.item.mapper;
 
+import com.alconn.copang.item.Item;
+import com.alconn.copang.item.ItemDetail;
+import com.alconn.copang.item.dto.ItemDetailForm;
+import com.alconn.copang.item.dto.ItemForm;
+import com.alconn.copang.item.dto.ItemViewForm;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
@@ -13,8 +18,11 @@ public interface ItemMapper {
     List<ItemDetailForm.MainForm> mainPage(List<ItemDetail> itemDetailList);
 
     @Mapping(target = ".", source = "item")
+    @Mapping(target = ".",source = "item.category")
     ItemDetailForm.MainForm toPage(ItemDetail detail);
 
+    // Seller mapping 추가
+    @Mapping(source = "sellerId", target = "item.seller.clientId")
     @Mapping(target = "item", source = ".")
     ItemDetail toEntity(ItemDetailForm.MainForm mainForm);
 
@@ -32,32 +40,44 @@ public interface ItemMapper {
 
     //상품상세 조회
     @Mapping(source = "itemDetailList",target = "itemDetailFormList")
+    //=====
+    @Mapping(source = "item.category.categoryId",target = "categoryId")
+    //=====
     ItemForm itemDetailToDto(Item item, List<ItemDetail> itemDetailList);
 
+    @Mapping(source = "sellerId" , target = "clientId")
+    @Mapping(target = "item", source = ".")
     List<ItemDetail> listDtoToDomainN(List<ItemDetailForm.DetailForm> detailFormList);
-
-    List<ItemDetail> updateItemDetaillistToDomain(List<ItemDetailForm.DetailUpdateClass> detailUpdateClassList);
 
     //update ItemDetailList + item => to Form 매핑
     //update 받고 보내는 form
     @Mapping(source = "itemDetailList", target = "itemDetailUpdateClassList")
+    //====
+    @Mapping(source = "item.category.categoryId", target = "categoryId")
+    //====
     ItemForm.ItemFormUpdate  updateItemForm(Item item,List<ItemDetail> itemDetailList);
 
 
     //단일 저장
     ItemDetail saveOneToEntity(ItemDetailForm.DetailForm detailForm);
 
-    @Mapping(source = "item", target = ".")
-    @Mapping(source = ".", target = "detailForm")
-    ItemForm.ItemSingle saveOneToForm(ItemDetail itemDetail);
-
-    //단일 수정-
-    @Mapping(source = "item", target = ".")
-    @Mapping(source = ".", target = "detailUpdateClass")
-    ItemForm.ItemFormUpdateSingle updateOneToForm(ItemDetail itemDetail);
 
     //단일저장, 수정
     @Mapping(source = "item", target = ".")
+    //====
+    @Mapping(source = "item.category",target = ".")
+    //====
     @Mapping(source = ".", target = "itemDetailViewForm")
     ItemViewForm detailViewForm(ItemDetail itemDetail);
 }
+
+//    @Mapping(source = "item", target = ".")
+//    @Mapping(source = ".", target = "detailForm")
+//    ItemForm.ItemSingle saveOneToForm(ItemDetail itemDetail);
+//
+//    //단일 수정-
+//    @Mapping(source = "item", target = ".")
+//    @Mapping(source = ".", target = "detailUpdateClass")
+//    ItemForm.ItemFormUpdateSingle updateOneToForm(ItemDetail itemDetail);
+//    List<ItemDetail> updateItemDetaillistToDomain(List<ItemDetailForm.DetailUpdateClass> detailUpdateClassList);
+//    List<ItemDetail> listDtoToDomain(final List<ItemDetailForm> itemDetailForms);

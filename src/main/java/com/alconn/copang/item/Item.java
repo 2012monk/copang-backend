@@ -1,6 +1,8 @@
 package com.alconn.copang.item;
 
 import com.alconn.copang.category.Category;
+import com.alconn.copang.client.Client;
+import com.alconn.copang.seller.Seller;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -22,6 +24,10 @@ public class Item {
     @Column(nullable = false)
     private String itemName;
 
+    @ManyToOne
+    @JoinColumn(name = "seller_id")
+    private Seller seller;
+
     private String itemComment;
 
     @CreationTimestamp
@@ -35,19 +41,23 @@ public class Item {
 
     //카테고리
     @ManyToOne
+    @JoinColumn(name = "categoryId")
     private Category category;
 
+    //=====
     public void changeCategory(Category category){
         this.category=category;
+        category.getItemList().add(this);
     }
+    //=====
 
+    //=====
     //수정
-    public void nameUpdate(String itemName){
-         this.itemName=itemName;
-     }
-
-    //코멘트 수정
-    public void commentUpdate(String itemComment){this.itemComment=itemComment;}
+    public void updateMethod(String itemName, String itemComment){
+        this.itemName=(itemName==null? this.itemName:itemName);
+        this.itemComment=(itemComment==null? this.itemComment:itemComment);
+    }
+    //=====
 
 
 }

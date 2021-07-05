@@ -1,6 +1,8 @@
-package com.alconn.copang.item;
+package com.alconn.copang.item.dto;
 
 
+import com.alconn.copang.client.UserForm;
+import com.alconn.copang.seller.Seller;
 import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -55,10 +57,24 @@ public class ItemDetailForm {
 
         private Long itemDetailId;
 
+        private Long categoryId;
+
         private int price;
 
         private String mainImg;
 
+        private Long sellerId;
+        @Override
+        public String toString() {
+            return "MainForm{" +
+                    "itemId=" + itemId +
+                    ", itemName='" + itemName + '\'' +
+                    ", itemDetailId=" + itemDetailId +
+                    ", categoryId=" + categoryId +
+                    ", price=" + price +
+                    ", mainImg='" + mainImg + '\'' +
+                    '}';
+        }
     }
 
     //상세페이지, 저장
@@ -88,25 +104,16 @@ public class ItemDetailForm {
 
         private String subImg;
 
-        @Override
-        public String toString() {
-            return "DetailForm{" +
-                    "itemDetailId=" + itemDetailId +
-                    ", price=" + price +
-                    ", stockQuantity=" + stockQuantity +
-                    ", optionName='" + optionName + '\'' +
-                    ", optionValue='" + optionValue + '\'' +
-                    ", mainImg='" + mainImg + '\'' +
-                    ", subImg='" + subImg + '\'' +
-                    '}';
-        }
+        private String sellerName;
+
+        private Long sellerId;
 
     }
     //업데이트
     @Getter
     @Builder
-    @NoArgsConstructor
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class DetailUpdateClass {
 
         @NotNull
@@ -129,17 +136,5 @@ public class ItemDetailForm {
 
         private String subImg;
 
-        @Override
-        public String toString() {
-            return "DetailUpdateClass{" +
-                    "itemDetailId=" + itemDetailId +
-                    ", price=" + price +
-                    ", stockQuantity=" + stockQuantity +
-                    ", optionName='" + optionName + '\'' +
-                    ", optionValue='" + optionValue + '\'' +
-                    ", mainImg='" + mainImg + '\'' +
-                    ", subImg='" + subImg + '\'' +
-                    '}';
-        }
     }
 }
