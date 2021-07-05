@@ -55,10 +55,23 @@ public class ItemDetailForm {
 
         private Long itemDetailId;
 
+        private Long categoryId;
+
         private int price;
 
         private String mainImg;
 
+        @Override
+        public String toString() {
+            return "MainForm{" +
+                    "itemId=" + itemId +
+                    ", itemName='" + itemName + '\'' +
+                    ", itemDetailId=" + itemDetailId +
+                    ", categoryId=" + categoryId +
+                    ", price=" + price +
+                    ", mainImg='" + mainImg + '\'' +
+                    '}';
+        }
     }
 
     //상세페이지, 저장
@@ -88,25 +101,12 @@ public class ItemDetailForm {
 
         private String subImg;
 
-        @Override
-        public String toString() {
-            return "DetailForm{" +
-                    "itemDetailId=" + itemDetailId +
-                    ", price=" + price +
-                    ", stockQuantity=" + stockQuantity +
-                    ", optionName='" + optionName + '\'' +
-                    ", optionValue='" + optionValue + '\'' +
-                    ", mainImg='" + mainImg + '\'' +
-                    ", subImg='" + subImg + '\'' +
-                    '}';
-        }
-
     }
     //업데이트
     @Getter
     @Builder
-    @NoArgsConstructor
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class DetailUpdateClass {
 
         @NotNull
@@ -129,17 +129,5 @@ public class ItemDetailForm {
 
         private String subImg;
 
-        @Override
-        public String toString() {
-            return "DetailUpdateClass{" +
-                    "itemDetailId=" + itemDetailId +
-                    ", price=" + price +
-                    ", stockQuantity=" + stockQuantity +
-                    ", optionName='" + optionName + '\'' +
-                    ", optionValue='" + optionValue + '\'' +
-                    ", mainImg='" + mainImg + '\'' +
-                    ", subImg='" + subImg + '\'' +
-                    '}';
-        }
     }
 }

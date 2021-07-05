@@ -174,7 +174,6 @@ class CartServiceTest {
 
         System.out.println(
             "mapper.writeValueAsString(response) = " + mapper.writeValueAsString(response));
-
         assertEquals(response.getTotalAmount(), 6);
         assertEquals(response.getTotalPrice(), detail.getPrice() * 6);
     }
