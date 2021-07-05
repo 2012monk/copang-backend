@@ -1,18 +1,18 @@
 package com.alconn.copang.cart;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.List;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
-
 public class CartForm {
 
     @Builder
-    @NoArgsConstructor @AllArgsConstructor
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Getter
     public static class Add {
 
@@ -28,7 +28,9 @@ public class CartForm {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @Builder
-    @Getter @NoArgsConstructor @AllArgsConstructor
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Response {
 
         private Long cartId;
