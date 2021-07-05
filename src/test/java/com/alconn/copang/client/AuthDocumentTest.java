@@ -175,11 +175,13 @@ public class AuthDocumentTest {
             )).andDo(print());
     }
 
+
     @Disabled
     @Test
     void singupSeller() throws Exception {
         UserForm form = UserForm.builder()
             .username("쿠팡맨1412")
+
             .password("비밀번호123!")
             .description("안녕하세요!")
             .phone("010-0030-9090")
