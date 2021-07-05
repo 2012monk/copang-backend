@@ -3,6 +3,7 @@ package com.alconn.copang.seller;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.alconn.copang.client.ClientRepo;
+import com.alconn.copang.client.Role;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,9 @@ class SellerTest {
     ClientRepo repo;
 
     @Autowired
+    SellerRepository repository;
+
+    @Autowired
     EntityManager m;
 
     @Transactional
@@ -28,6 +32,7 @@ class SellerTest {
             Seller.builder()
             .username("seller")
             .password("123444")
+                .role(Role.SELLER)
             .build();
 
         repo.save(seller);
@@ -35,6 +40,7 @@ class SellerTest {
         m.flush();
         m.clear();
 
-        System.out.println("repo = " + ((Seller) repo.getById(seller.getClientId())).getUsername());
+        System.out.println("repo = " + (repo.getById(seller.getClientId())).getUsername());
+
     }
 }

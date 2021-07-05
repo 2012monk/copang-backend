@@ -22,7 +22,7 @@ public interface ItemMapper {
     ItemDetailForm.MainForm toPage(ItemDetail detail);
 
     // Seller mapping 추가
-    @Mapping(source = "sellerId", target = "item.seller.clientId")
+//    @Mapping(source = "sellerId", target = "item.seller.clientId")
     @Mapping(target = "item", source = ".")
     ItemDetail toEntity(ItemDetailForm.MainForm mainForm);
 
@@ -45,7 +45,7 @@ public interface ItemMapper {
     //=====
     ItemForm itemDetailToDto(Item item, List<ItemDetail> itemDetailList);
 
-    @Mapping(source = "sellerId" , target = "clientId")
+
     @Mapping(target = "item", source = ".")
     List<ItemDetail> listDtoToDomainN(List<ItemDetailForm.DetailForm> detailFormList);
 
