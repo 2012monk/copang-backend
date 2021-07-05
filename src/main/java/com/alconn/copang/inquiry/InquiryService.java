@@ -35,7 +35,7 @@ public class InquiryService {
         Inquiry inquiry = repository.findById(inquiryId).orElseThrow(() -> new NoSuchEntityExceptions("요청하신 문의가 없습니다"));
 
         if (inquiry.getReply() != null) {
-            throw new ValidationException("이미 문의가 등록되어 있습니다");
+            throw new ValidationException("이미 답변이 등록되어 있습니다");
         }
 
         Reply reply = mapper.toReply(requestForm, sellerId);
@@ -46,12 +46,12 @@ public class InquiryService {
         return mapper.toDto(inquiry);
     }
 
-    public List<InquiryForm.Response> getInquiresSeller(Long sellerId) {
+    public List<InquiryForm.Response> getInquiresBySeller(Long sellerId) {
         /* implement me*/
         return null;
     }
 
-    public List<InquiryForm.Response> getInquiresItem(Long itemId) {
+    public List<InquiryForm.Response> getInquiresByItem(Long itemId) {
 
         return repository.findInquiriesByItemDetail_Item_ItemId(itemId)
         .stream().map(mapper::toDto).collect(Collectors.toList());
@@ -71,7 +71,6 @@ public class InquiryService {
 
 
     public List<Response> getInquiresByClient(Long clientId) {
-
         return repository.findInquiriesByClient_ClientId(clientId)
             .stream().map(mapper::toDto).collect(Collectors.toList());
     }

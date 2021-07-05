@@ -15,7 +15,6 @@ import com.alconn.copang.seller.Seller;
 import com.alconn.copang.seller.SellerRepository;
 import com.alconn.copang.utils.TestUtils;
 import java.util.List;
-import org.aspectj.lang.annotation.After;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -137,7 +136,7 @@ class InquiryServiceTest {
     void getInquiryByItem() {
         Response response = saveAndReturnInquiry();
 
-        List<Response> inquiresItem = service.getInquiresItem(detail.getItem().getItemId());
+        List<Response> inquiresItem = service.getInquiresByItem(detail.getItem().getItemId());
 
         assertEquals(1, inquiresItem.size());
         assertNotNull(inquiresItem.get(0).getContent());
