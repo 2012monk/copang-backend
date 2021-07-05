@@ -1,23 +1,15 @@
 package com.alconn.copang.order;
 
-import com.alconn.copang.address.Address;
-import com.alconn.copang.address.AddressForm;
-import com.alconn.copang.client.Client;
 import com.alconn.copang.client.ClientMapper;
 import com.alconn.copang.exceptions.NoSuchEntityExceptions;
-import com.alconn.copang.item.Item;
-import com.alconn.copang.item.ItemDetail;
 import com.alconn.copang.order.dto.OrderForm;
-import com.alconn.copang.order.dto.OrderItemForm;
 import com.alconn.copang.order.mapper.OrderItemMapper;
 import com.alconn.copang.order.mapper.OrderMapper;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -99,9 +91,9 @@ public class OrderService {
 
         orders.proceedOrder();
         return OrderForm.Response.builder()
-                .orderId(orderId)
-                .orderStatus(orders.getOrderState())
-                .build();
+            .orderId(orderId)
+            .orderStatus(orders.getOrderState())
+            .build();
     }
 
     @Transactional
@@ -109,22 +101,28 @@ public class OrderService {
         Orders orders = repo.findById(orderId).orElseThrow(NoSuchEntityExceptions::new);
         orders.cancelOrder();
         return OrderForm.Response.builder()
-                .orderId(orderId)
-                .orderStatus(orders.getOrderState())
-                .build();
+            .orderId(orderId)
+            .orderStatus(orders.getOrderState())
+            .build();
     }
 
     public List<OrderForm.Response> listOrderClient(Long clientId) {
         List<Orders> ordersList = repo.findOrdersByClient_ClientId(clientId);
 
-        List<OrderForm.Response> responses = ordersList.stream().map(o ->
-                OrderForm.Response.builder()
-                        .orderId(o.getOrderId())
-                        .orderItems(
-                                o.getOrderItemList().stream().map(orderItemMapper::toDto).collect(Collectors.toList())).build()
-        ).collect(Collectors.toList());
+        List<OrderForm.Response> res =
+            ordersList.stream().map(
+                orderMapper::toResponse
+            ).collect(Collectors.toList());
 
-        return responses;
+//        List<OrderForm.Response> responses = ordersList.stream().map(o ->
+//            OrderForm.Response.builder()
+//                .orderId(o.getOrderId())
+//                .orderItems(
+//                    o.getOrderItemList().stream().map(orderItemMapper::toDto)
+//                        .collect(Collectors.toList())).build()
+//        ).collect(Collectors.toList());
+
+        return res;
 
     }
 
