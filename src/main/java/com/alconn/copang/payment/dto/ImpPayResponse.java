@@ -1,6 +1,5 @@
-package com.alconn.copang.payment;
+package com.alconn.copang.payment.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
