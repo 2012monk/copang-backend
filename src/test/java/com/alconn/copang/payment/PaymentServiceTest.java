@@ -1,12 +1,10 @@
 package com.alconn.copang.payment;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import javafx.scene.effect.Reflection;
+import com.alconn.copang.exceptions.NoSuchEntityExceptions;
+import com.alconn.copang.exceptions.ValidationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
 @SpringBootTest
@@ -26,8 +24,13 @@ class PaymentServiceTest {
     }
 
     @Test
-    void validateTest() {
+    void validateTest() throws ValidationException, NoSuchEntityExceptions {
 
         service.validatePayment("imp_828634498901", 1L);
+    }
+
+    @Test
+    void orderPay() {
+
     }
 }

@@ -16,15 +16,25 @@ import com.alconn.copang.client.Client;
 import com.alconn.copang.client.ClientRepo;
 import com.alconn.copang.client.ClientService;
 import com.alconn.copang.client.Role;
+import com.alconn.copang.exceptions.InvalidTokenException;
+import com.alconn.copang.exceptions.LoginFailedException;
+import com.alconn.copang.exceptions.NoSuchEntityExceptions;
+import com.alconn.copang.exceptions.UnauthorizedException;
+import com.alconn.copang.exceptions.ValidationException;
 import com.alconn.copang.item.Item;
 import com.alconn.copang.item.ItemDetail;
 import com.alconn.copang.item.ItemDetailRepository;
 import com.alconn.copang.item.ItemDetailService;
 import com.alconn.copang.item.ItemRepository;
 import com.alconn.copang.order.dto.OrderForm;
+import com.alconn.copang.order.dto.OrderForm.Response;
 import com.alconn.copang.order.dto.OrderItemForm;
+import com.alconn.copang.payment.ImpPaymentInfo;
+import com.alconn.copang.payment.PaymentService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
@@ -74,6 +84,9 @@ class OrderServiceTest {
 
     @Autowired
     private MockMvc mvc;
+
+    @Autowired
+    private PaymentService paymentService;
 
     @Autowired
     private ItemDetailRepository itemDetailRepository;
@@ -203,5 +216,103 @@ class OrderServiceTest {
 
 
     }
+
+    @Transactional
+    @Test
+    void paymentTest()
+        throws JsonProcessingException, InvalidTokenException, LoginFailedException, ValidationException, NoSuchEntityExceptions, UnauthorizedException {
+        objectMapper.writerWithDefaultPrettyPrinter();
+        Client client = Client.builder()
+//            .clientId(1L)
+            .username("test@testclient.com")
+            .password("1234")
+            .phone("010-9090-8989")
+            .role(Role.CLIENT)
+            .description("쿠팡노예")
+            .build();
+
+        Address address = Address.builder()
+//            .addressId(1L)
+            .receiverPhone("1")
+            .receiverName("3")
+            .addressName("41")
+            .preRequest("4124")
+            .address("서울")
+            .detail("주소1123")
+            .client(client)
+            .build();
+
+        repo.save(client);
+        manager.flush();
+        manager.clear();
+        //  Client, Address 생성
+        addressRepository.save(address);
+
+        // ItemDetail, Item 생성
+        Item item = Item.builder()
+            .itemName("name123")
+            .build();
+        itemRepository.save(item);
+
+        ItemDetail detail = ItemDetail.builder()
+            .stockQuantity(400)
+            .mainImg("noimage")
+            .optionName("수량")
+            .optionValue("1KG")
+            .price(1000)
+            .build();
+        detail.itemConnect(item);
+        itemDetailRepository.save(detail);
+        manager.flush();
+        manager.clear();
+
+        Address rec = addressRepository.getById(address.getAddressId());
+        assertNotNull(rec);
+        assertEquals(rec.getAddress(), address.getAddress());
+        List<OrderItemForm> orderItemForms =
+            Collections.singletonList(
+                OrderItemForm.builder()
+                    .itemDetailId(detail.getItemDetailId())
+//                    .itemId(detail.getItem().getItemId())
+//                    .itemName(detail.getItem().getItemName())
+                    .amount(1)
+                    .build());
+
+        // Order 요청폼 작성
+        OrderForm.Create create = OrderForm.Create.builder()
+            .addressId(address.getAddressId())
+            .orderItems(orderItemForms)
+//            .totalAmount(orderItemForms.stream().mapToInt(OrderItemForm::getAmount).sum())
+//            .totalPrice(orderItemForms.stream().mapToInt(o -> o.getAmount() * details.get(0).getPrice()).sum())
+            .build();
+
+        System.out.println("objectMapper = Create form" + objectMapper.writeValueAsString(create));
+
+        LoginToken loginToken = new LoginToken();
+
+        ReflectionTestUtils.setField(loginToken, "username", client.getUsername());
+        ReflectionTestUtils.setField(loginToken, "password", client.getPassword());
+
+        AccessTokenContainer container = clientService.login(loginToken);
+
+        OrderForm.Response response = service.readyOrder(create, client.getClientId());
+
+        OrderForm.Response res = service.getOneOrder(response.getOrderId());
+        System.out.println("res.getTotalPrice() = " + res.getTotalPrice());
+        Long id = response.getOrderId();
+
+        String impId = "imp_828634498901";
+
+//        ImpPaymentInfo impPaymentInfo = paymentService.validatePayment(impId, id);
+
+        manager.flush();
+        manager.clear();
+
+        Response response1 = service.orderPayment(impId, client.getClientId(), id);
+
+        assertNotNull(response1);
+        assertEquals(client.getClientId(), response1.getClient().getClientId());
+    }
+
 
 }

@@ -54,7 +54,8 @@ public class Orders {
     private Address address;
 
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_id")
     private ImpPaymentInfo impPaymentInfo;
 
     @Builder.Default

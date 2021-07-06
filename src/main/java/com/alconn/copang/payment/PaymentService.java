@@ -1,5 +1,7 @@
 package com.alconn.copang.payment;
 
+import com.alconn.copang.exceptions.NoSuchEntityExceptions;
+import com.alconn.copang.exceptions.ValidationException;
 import com.alconn.copang.payment.dto.PaymentForm;
 import com.alconn.copang.payment.dto.PaymentForm.Request;
 import com.alconn.copang.payment.dto.ImpPayResponse;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -43,6 +46,8 @@ public class PaymentService {
 
     private final RestTemplate restTemplate;
 
+    private final PaymentMapper mapper;
+
     @PostConstruct
     private void init(){
         if (accessToken == null) {
@@ -62,7 +67,8 @@ public class PaymentService {
      * @param impUid Iamport 결제번호
      * @return 검증여부
      */
-    public ImpPaymentInfo validatePayment(String impUid, Long orderId) {
+    public ImpPaymentInfo validatePayment(String impUid, Long orderId)
+        throws ValidationException, NoSuchEntityExceptions {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", this.accessToken);
         headers.setAcceptCharset(Collections.singletonList(StandardCharsets.UTF_8));
@@ -76,17 +82,30 @@ public class PaymentService {
             ImpPayResponse.class
         );
 
+        ResponseEntity<String> st = restTemplate.exchange(
+            requestUri,
+            HttpMethod.GET,
+            req,
+            String.class
+        );
+        if (res.getStatusCode() == HttpStatus.NOT_FOUND) {
+            throw new NoSuchEntityExceptions("주문번호가 잘못되었습니다");
+        }
+
+        if (res.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+            init();
+            validatePayment(impUid, orderId);
+        }
+
         PaymentInfoFrom paymentInfoFrom = Objects.requireNonNull(res.getBody()).getResponse();
-        
-//        Map<String, Objects> map = (Map<String, Objects>) Objects.requireNonNull(res.getBody()).getResponse();
 
-//        System.out.println("map.get(\"buyer_addr\") = " + map.get("buyer_addr"));
+        if (!paymentInfoFrom.getStatus().equals("paid")) {
+            throw new ValidationException("결제가 완료되지 않았습니다!");
+        }
 
-        System.out.println("res.getBody() = " + res.getBody());
-
-        System.out.println("paymentInfoFrom = " + paymentInfoFrom.getPg_id());
-
-        return null;
+        ImpPaymentInfo impPaymentInfo = mapper.toEntity(paymentInfoFrom);
+        impPaymentInfo.setPaidAt(paymentInfoFrom.getPaid_at());
+        return impPaymentInfo;
     }
 
     public String getImpToken() {

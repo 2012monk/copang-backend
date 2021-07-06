@@ -39,7 +39,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderForm.Response proceedOrder(String uid, Long clientId, Long orderId)
+    public OrderForm.Response orderPayment(String uid, Long clientId, Long orderId)
         throws NoSuchEntityExceptions, ValidationException, UnauthorizedException {
 
 //        String uid = form.getUid();
@@ -49,12 +49,8 @@ public class OrderService {
             .orElseThrow(() -> new NoSuchEntityExceptions("주문번호가 존재하지 않습니다"));
 
         orders.calculateTotal();
-        if (orders.getTotalAmount() != (int) impPaymentInfo.getAmount()) {
-            throw new ValidationException("요청하신 주문정보의 데이터와 일치하지 않습니다");
-        }
-
-        if (!impPaymentInfo.getSuccess()) {
-            throw new ValidationException("결제가 완료되지 않았습니다!");
+        if (orders.getTotalPrice() != (int) impPaymentInfo.getAmount()) {
+            throw new ValidationException("요청하신 주문정보의 가격과 일치하지 않습니다");
         }
 
         if (orders.getClient().getClientId() != clientId) {
@@ -90,7 +86,7 @@ public class OrderService {
 
 
     @Transactional
-    public OrderForm.Response proceedOrder(Long orderId) throws NoSuchEntityExceptions {
+    public OrderForm.Response orderPayment(Long orderId) throws NoSuchEntityExceptions {
 
         Orders orders = repo.findById(orderId).orElseThrow(NoSuchEntityExceptions::new);
 
