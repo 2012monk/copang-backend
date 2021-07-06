@@ -1,5 +1,7 @@
 package com.alconn.copang.payment.dto;
 
+import com.alconn.copang.payment.ImpCancelInfo;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,8 +12,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 public class PaymentInfoFrom {
-
-    private Boolean success;
 
     private String imp_uid;
 
@@ -28,5 +28,15 @@ public class PaymentInfoFrom {
     private String pg_id;
 
     private Boolean escrow;
+
+    private String status;
+
+    private List<ImpCancelInfo> cancel_history;
+
+    private Integer paid_at;
+
+    private Integer cancelled_at;
+
+    private Integer failed_at;
 
 }

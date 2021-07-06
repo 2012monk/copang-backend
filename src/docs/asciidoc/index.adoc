@@ -165,6 +165,15 @@ operation::orders/get-one-order[snippets='request-headers,path-parameters,http-r
 
 operation::orders/get-client-order-list[snippets='request-headers,http-request,http-response,response-fields']
 
+== 주문 시작하기
+==== `POST` /api/orders/ready
+
+operation::orders/order-ready-test[snippets='request-headers,http-request,http-response']
+
+== 결제 검증및 주문 완료하기
+==== `POST` /api/orders/:orderId/pay/:imp_uid
+
+operation::orders/order-payment[snippets='request-headers,http-request,path-parameters,http-response']
 
 = 장바구니 API
 

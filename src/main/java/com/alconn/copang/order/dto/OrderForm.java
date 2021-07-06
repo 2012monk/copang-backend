@@ -31,7 +31,7 @@ public class OrderForm {
         @NotNull(message = "주소 아이디 는 필수 입력값입니다")
         private Long addressId;
 
-        @NotEmpty(message = "결제번호는 존재해야합니다")
+//        @NotEmpty(message = "결제번호는 존재해야합니다")
         private String uid;
 
         private PaymentType paymentType;
