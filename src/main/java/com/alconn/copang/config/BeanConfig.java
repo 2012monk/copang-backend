@@ -1,5 +1,6 @@
 package com.alconn.copang.config;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.http.client.HttpClient;
@@ -7,6 +8,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.client.RestTemplate;
 
@@ -35,7 +37,9 @@ public class BeanConfig {
             .setMaxConnPerRoute(5)
             .build();
         f.setHttpClient(client);
-        return new RestTemplate(f);
+        RestTemplate t = new RestTemplate(f);
+        t.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
+        return t;
     }
 
 //    @Bean

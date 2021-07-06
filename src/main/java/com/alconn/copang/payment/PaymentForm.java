@@ -11,14 +11,14 @@ public class PaymentForm {
     @Builder
     @Getter
     public static class Request {
-
+        String id;
     }
 
     @NoArgsConstructor @AllArgsConstructor
     @Builder
     @Getter
     public static class Response {
-
+        String id;
     }
 
 
