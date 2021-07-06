@@ -21,16 +21,16 @@ public class ReviewForm {
     @Getter
     public static class Request {
 
-        @NotNull
+//        @NotNull
         private Long orderId;
 
-        @NotNull
+//        @NotNull
         private Long itemId;
 
-        @NotNull
+//        @NotNull
         private Long itemDetailId;
 
-        @NotNull
+        @NotNull(message = "주문 상품 아이디는 존재해야합니다")
         private Long orderItemId;
 
         private String title;
@@ -39,8 +39,10 @@ public class ReviewForm {
 
         private String image;
 
+        @NotNull(message = "별점은 존재해야 합니다")
         private Integer rating;
 
+        @NotNull(message = "만족도는 존재해야합니다")
         private Boolean satisfied;
 
     }
