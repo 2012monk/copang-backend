@@ -32,6 +32,8 @@ public class UserForm {
 
     private String description;
 
+    private String sellerName;
+
     @Setter
     private Role role;
 
