@@ -3,6 +3,7 @@ package com.alconn.copang.wishlist;
 import com.alconn.copang.client.Client;
 import com.alconn.copang.client.ClientRepo;
 import com.alconn.copang.exceptions.NoSuchEntityExceptions;
+import com.alconn.copang.exceptions.NoSuchUserException;
 import com.alconn.copang.item.ItemDetail;
 import com.alconn.copang.item.ItemDetailRepository;
 import com.alconn.copang.wishlist.dto.WishRequest;
@@ -32,11 +33,12 @@ public class WishService {
 //    public WithResponse add(WithRequest withRequest) throws NoSuchEntityExceptions {
     //조회하여 있으면 이미 등록된 상품
     @Transactional
-    public WishResponse add(WishRequest withRequest) throws NoSuchEntityExceptions {
+    public WishResponse add(WishRequest withRequest,Long clientId) throws NoSuchEntityExceptions {
 
-        //client Id랑 상품옵션 id 조회 해서 없으면 에러발생
-        Client client=clientRepo.findById(withRequest.getClientId()).orElseThrow(() -> new NoSuchEntityExceptions("등록된 회원이 아닙니다"));
-        ItemDetail itemDetail=itemDetailRepository.findById(withRequest.getItemDetailId()).orElseThrow(() -> new NoSuchEntityExceptions("등록된 회원이 아닙니다"));
+//        Client client=clientRepo.findById(withRequest.getClientId()).orElseThrow(() -> new NoSuchEntityExceptions("등록된 회원이 아닙니다"));
+        System.out.println("clientId = " + clientId);
+        Client client=clientRepo.findById(clientId).orElseThrow(NoSuchUserException::new);
+        ItemDetail itemDetail=itemDetailRepository.findById(withRequest.getItemDetailId()).orElseThrow(() -> new NoSuchEntityExceptions("등록된 상품이 아닙니다"));
 
         Wish wish=Wish.builder()
                 .itemDetail(itemDetail)
@@ -48,10 +50,11 @@ public class WishService {
         return wishResponse;
     }
 
-    public List<WishResponse> list(WishRequest.WishRequestlist withRequest) throws NoSuchEntityExceptions {
+    public List<WishResponse> list(Long clientId) throws NoSuchEntityExceptions {
         //회원인지 체크 후 등록된 정보 출력
 
-        Client client=clientRepo.findById(withRequest.getClientId()).orElseThrow(()->new NoSuchElementException("등록된 회원이 아닙니다"));
+//        Client client=clientRepo.findById(wishRequest.getClientId()).orElseThrow(()->new NoSuchElementException("등록된 회원이 아닙니다"));
+        Client client=clientRepo.findById(clientId).orElseThrow(NoSuchUserException::new);
         List<Wish> list=wishRepository.findByClient_ClientId(client.getClientId());
         if(list==null) return null;
 
@@ -60,11 +63,12 @@ public class WishService {
     }
 
     //null로 리턴되면 번호입력해달라고 리턴 -> 컨트롤러 단에서 처리
-    public WishResponse del(WishRequest wishRequest) throws NoSuchEntityExceptions{
+    @Transactional
+    public WishResponse del(WishRequest wishRequest, Long clientId) throws NoSuchEntityExceptions{
         if(wishRequest.getWishId()==null) return null;
         try{
             Wish wish=wishRepository.findByClient_ClientIdAndWishId(
-                    wishRequest.getClientId(),
+                    clientId,
                     wishRequest.getWishId());
             WishResponse wishResponse=wishMapper.toRes(wish);
             wishRepository.deleteById(wish.getWishId());
@@ -74,9 +78,10 @@ public class WishService {
         }
     }
 
-    public List<WishResponse> delList(WishRequest.WishRequestdel wishRequestdel) throws NoSuchEntityExceptions{
+    @Transactional
+    public List<WishResponse> delList(WishRequest.WishRequestdel wishRequestdel, Long clientId) throws NoSuchEntityExceptions{
         try{
-        List<Wish> wishList=wishRepository.findByClient_ClientIdAndWishIdIn(wishRequestdel.getClientId(),
+        List<Wish> wishList=wishRepository.findByClient_ClientIdAndWishIdIn(clientId,
                 wishRequestdel.getWishId());
         List<WishResponse> wishResponseList=wishMapper.toResList(wishList);
 

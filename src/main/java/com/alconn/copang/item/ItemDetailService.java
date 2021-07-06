@@ -88,6 +88,7 @@ public class ItemDetailService {
     }
 
     //옵션 추가
+    @Transactional
     public ItemViewForm itemSingle(ItemForm.ItemSingle itemSingle){
 
         Item item = itemService.itemFindNum(itemSingle.getItemId());
@@ -150,7 +151,7 @@ public class ItemDetailService {
     //옵션 개별 제거
     @Transactional
     public ItemForm delItemDetail(Long id){
-        ItemDetail itemDetail=itemDetailRepository.findById(id).get();
+        ItemDetail itemDetail=itemDetailRepository.findById(id).orElseThrow(()->new NoSuchElementException("없는 상품입니다"));
         List<ItemDetail> itemDetailList=new ArrayList<>();
         itemDetailList.add(itemDetail);
 
@@ -210,6 +211,7 @@ public class ItemDetailService {
     }
 
     //단일 수정
+    @Transactional
     public ItemViewForm itemSingleUpdate(ItemForm.ItemFormUpdateSingle updateSingle)
         throws NoSuchEntityExceptions {
         Item item=itemService.itemFindNum(updateSingle.getItemId());

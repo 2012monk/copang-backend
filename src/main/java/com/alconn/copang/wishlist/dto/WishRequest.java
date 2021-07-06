@@ -20,21 +20,8 @@ public class WishRequest {
     private Long wishId;
 
     @NotNull
-    private Long clientId;
-
-    @NotNull
     private Long itemDetailId;
 
-    //출력용
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class WishRequestlist {
-
-        @NotNull
-        private Long clientId;
-    }
 
     //다중삭제
     @Getter
@@ -42,9 +29,6 @@ public class WishRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class WishRequestdel {
-
-        @NotNull
-        private Long clientId;
 
         @NotNull
         private List<Long> wishId;
