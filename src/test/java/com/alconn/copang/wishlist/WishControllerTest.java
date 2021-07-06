@@ -92,7 +92,7 @@ public class WishControllerTest {
 
 
     //=================
-    public ItemDetail testItem(){
+    private ItemDetail testItem(){
         Item item = Item.builder()
                     .itemName("티셔츠")
                 .build();
@@ -238,7 +238,6 @@ public class WishControllerTest {
                 .username("아아아아아아앙앙ㄱ")
                 .build();
         clientRepo.save(client1);
-
         return client1;
     }
 
