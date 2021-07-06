@@ -2,7 +2,11 @@ package com.alconn.copang.inquiry;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.time.LocalDateTime;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,15 +20,17 @@ public class InquiryForm {
     @Getter
     public static class Request {
 
+        @NotEmpty(message = "내용은 비어있으면 안됩니다")
         private String content;
 
+        @NotNull(message = "문의하실 상품 옵션 아이디는 존재해야합니다")
         private Long itemDetailId;
 
         private Long itemId;
 
-
     }
 
+    @JsonInclude(Include.NON_NULL)
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
@@ -55,6 +61,7 @@ public class InquiryForm {
         private String optionValue;
     }
 
+    @JsonInclude(Include.NON_NULL)
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor

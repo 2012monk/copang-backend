@@ -4,7 +4,7 @@ import com.alconn.copang.client.Client;
 import com.alconn.copang.item.ItemDetail;
 import java.time.LocalDateTime;
 import javax.persistence.CascadeType;
-import javax.persistence.Embedded;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -16,15 +16,16 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 @Getter
-@NoArgsConstructor @AllArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Entity
 public class Inquiry {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long inquiryId;
 
     private String content;
@@ -40,6 +41,10 @@ public class Inquiry {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "reply_id")
     private Reply reply;
+
+    @Column(updatable = false)
+    @CreationTimestamp
+    private LocalDateTime registerDate;
 
 //    @Embedded
 //    private TimeEntity time;
