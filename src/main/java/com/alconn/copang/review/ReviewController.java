@@ -8,6 +8,7 @@ import com.alconn.copang.exceptions.UnauthorizedException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,7 +37,7 @@ public class ReviewController {
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseMessage<ReviewForm.Response> postReview(
-        @RequestBody ReviewForm.Request requestForm,
+        @Validated @RequestBody ReviewForm.Request requestForm,
         @InjectId Long clientId) {
         return ResponseMessage.success(
             service.postReview(requestForm, clientId)
