@@ -396,6 +396,25 @@ operation::inquiry/update-inquiry[snippets='http-request,path-parameters,request
 
 operation::inquiry/update-reply[snippets='http-request,path-parameters,request-headers,http-response,response-fields,response-fields-data']
 
+
+= 찜 API
+
+== 찜 등록
+==== `POST` /api/wishlist/add
+
+operation::wishlist/post-save[snippets='http-request,request-headers,request-fields,http-response,response-fields']
+
+== 찜 목록
+==== `GET` /api/wishlist/list
+
+operation::wishlist/get-list[snippets='http-request,request-headers,http-response,response-fields']
+
+== 찜 삭제
+==== `DELETE` /api/whislist/del
+
+operation::wishlist/delete[snippets='http-request,request-headers,request-fields,http-response,response-fields']
+
+
 = 판매자 API
 
 == 판매자 등록

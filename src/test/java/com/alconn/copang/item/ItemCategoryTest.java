@@ -180,10 +180,10 @@ public class ItemCategoryTest {
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
                                 fieldWithPath("data.[].itemId").type(JsonFieldType.NUMBER).description("상품등록코드"),
                                 fieldWithPath("data.[].itemName").type(JsonFieldType.STRING).description("상품명"),
-                                fieldWithPath("data.[].itemDetailId").type(JsonFieldType.NUMBER).description("카테고리번호"),
+                                fieldWithPath("data.[].itemDetailId").type(JsonFieldType.NUMBER).description("상품옵션등록코드"),
                                 fieldWithPath("data.[].categoryId").type(JsonFieldType.NUMBER).description("카테고리번호"),
-                                fieldWithPath("data.[].price").type(JsonFieldType.NUMBER).description("카테고리번호"),
-                                fieldWithPath("data.[].mainImg").type(JsonFieldType.STRING).description("카테고리번호")
+                                fieldWithPath("data.[].price").type(JsonFieldType.NUMBER).description("상품가격"),
+                                fieldWithPath("data.[].mainImg").type(JsonFieldType.STRING).description("메인사진")
 
                         )))
                 .andDo(print());
