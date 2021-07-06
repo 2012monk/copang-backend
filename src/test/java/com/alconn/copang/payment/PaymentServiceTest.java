@@ -28,6 +28,6 @@ class PaymentServiceTest {
     @Test
     void validateTest() {
 
-        service.validatePayment("imp_828634498901", "123");
+        service.validatePayment("imp_828634498901", 1L);
     }
 }

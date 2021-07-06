@@ -67,25 +67,29 @@ public class PaymentService {
      * @param impUid Iamport 결제번호
      * @return 검증여부
      */
-    public PaymentForm validatePayment(String impUid, String orderId) {
+    public ImpPaymentInfo validatePayment(String impUid, Long orderId) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", this.accessToken);
         headers.setAcceptCharset(Collections.singletonList(StandardCharsets.UTF_8));
         String requestUri = baseUrl + "/payments/" + impUid;
 
         HttpEntity<HttpHeaders> req = new HttpEntity<>(headers);
-        ResponseEntity<ImpResponse> res = restTemplate.exchange(
+        ResponseEntity<ImpPayResponse> res = restTemplate.exchange(
             requestUri,
             HttpMethod.GET,
             req,
-            ImpResponse.class
+            ImpPayResponse.class
         );
-        
-        Map<String, Objects> map = (Map<String, Objects>) Objects.requireNonNull(res.getBody()).getResponse();
 
-        System.out.println("map.get(\"buyer_addr\") = " + map.get("buyer_addr"));
+        PaymentInfoFrom paymentInfoFrom = Objects.requireNonNull(res.getBody()).getResponse();
+        
+//        Map<String, Objects> map = (Map<String, Objects>) Objects.requireNonNull(res.getBody()).getResponse();
+
+//        System.out.println("map.get(\"buyer_addr\") = " + map.get("buyer_addr"));
 
         System.out.println("res.getBody() = " + res.getBody());
+
+        System.out.println("paymentInfoFrom = " + paymentInfoFrom.getPg_id());
 
         return null;
     }

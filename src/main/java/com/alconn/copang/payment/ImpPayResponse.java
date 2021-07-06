@@ -1,20 +1,13 @@
 package com.alconn.copang.payment;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+@NoArgsConstructor
 @SuperBuilder
 @Getter
-@NoArgsConstructor @AllArgsConstructor
-public class ImpResponse<T> {
-
-    private Integer code;
-
-    private String message;
-
-    private T response;
+public class ImpPayResponse extends ImpResponse<PaymentInfoFrom>{
 
 }

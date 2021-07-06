@@ -6,20 +6,31 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor @AllArgsConstructor
+
+@Builder
+@Getter
 @Entity
 public class ImpPaymentInfo {
 
     @Id @GeneratedValue
     private Long impPaymentId;
 
-    @ManyToOne
+    @OneToOne(mappedBy = "impPaymentInfo")
     @JoinColumn(name = "order_id")
     private Orders orders;
 
     private Boolean success;
 
     private String imp_uid;
+
+    private Integer amount;
 
     private String pay_method;
 
@@ -31,6 +42,8 @@ public class ImpPaymentInfo {
 
     private Boolean escrow;
 
-//    private
 
+    public void setOrders(Orders orders) {
+        this.orders = orders;
+    }
 }

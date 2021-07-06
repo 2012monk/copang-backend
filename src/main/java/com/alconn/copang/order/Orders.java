@@ -2,6 +2,7 @@ package com.alconn.copang.order;
 
 import com.alconn.copang.address.Address;
 import com.alconn.copang.client.Client;
+import com.alconn.copang.payment.ImpPaymentInfo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +31,7 @@ public class Orders {
 
     private String requirement;
 
-    private String tid;
+    private String uid;
 
     @Builder.Default
     @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL)
@@ -51,6 +52,10 @@ public class Orders {
     @ManyToOne(optional = false)
     @JoinColumn(name = "address_id")
     private Address address;
+
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private ImpPaymentInfo impPaymentInfo;
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
@@ -90,5 +95,10 @@ public class Orders {
         this.orderItemList.forEach(OrderItem::calculateTotal);
         this.totalAmount = this.orderItemList.stream().mapToInt(OrderItem::getAmount).sum();
         this.totalPrice = this.orderItemList.stream().mapToInt(OrderItem::getUnitTotal).sum();
+    }
+
+    public void setPayment(ImpPaymentInfo impPaymentInfo) {
+        this.impPaymentInfo = impPaymentInfo;
+        impPaymentInfo.setOrders(this);
     }
 }

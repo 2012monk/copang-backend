@@ -1,10 +1,10 @@
 package com.alconn.copang.order;
 
-import com.alconn.copang.client.ClientMapper;
 import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import com.alconn.copang.order.dto.OrderForm;
-import com.alconn.copang.order.mapper.OrderItemMapper;
 import com.alconn.copang.order.mapper.OrderMapper;
+import com.alconn.copang.payment.ImpPaymentInfo;
+import com.alconn.copang.payment.PaymentService;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +22,47 @@ public class OrderService {
 
     private final OrderItemRepository orderItemRepository;
 
-    private final OrderItemMapper orderItemMapper;
-
-    private final ClientMapper clientMapper;
+    private final PaymentService paymentService;
 
     private final OrderMapper orderMapper;
+
+    @Transactional
+    public OrderForm.Response readyOrder(OrderForm.Create form, Long clientId) {
+        Orders orders = orderMapper.placeOrder(form, clientId);
+        orders.connectOrderItems();
+
+//        orders.calculateTotal();
+        repo.save(orders);
+        return OrderForm.Response.builder()
+            .orderId(orders.getOrderId())
+            .build();
+    }
+
+
+
+
+    @Transactional
+    public OrderForm.Response proceedOrder(OrderForm.Create form, Long clientId, Long orderId)
+        throws NoSuchEntityExceptions {
+
+        String uid = form.getUid();
+        ImpPaymentInfo impPaymentInfo = paymentService.validatePayment(uid, orderId);
+
+
+
+        Orders orders = repo.findById(orderId)
+            .orElseThrow(() -> new NoSuchEntityExceptions("주문번호가 존재하지 않습니다"));
+
+        impPaymentInfo.getAmount().equals(orders.get)
+
+        orders.setPayment(impPaymentInfo);
+
+
+
+
+
+    }
+
 
     @Transactional
     public OrderForm.Response placeOrder(OrderForm.Create form, Long clientId) {
@@ -166,7 +202,6 @@ public class OrderService {
 //                )
 //                .client(clientMapper.toResponse(orders.getClient()))
 //                .build();
-
 
     }
 }
