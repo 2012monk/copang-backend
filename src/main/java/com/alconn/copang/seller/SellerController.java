@@ -1,7 +1,11 @@
 package com.alconn.copang.seller;
 
 import com.alconn.copang.annotations.InjectId;
+import com.alconn.copang.client.ClientService;
+import com.alconn.copang.client.Role;
+import com.alconn.copang.client.UserForm;
 import com.alconn.copang.common.ResponseMessage;
+import com.alconn.copang.exceptions.NoSuchUserException;
 import com.alconn.copang.item.dto.ItemDetailForm;
 import com.alconn.copang.shipment.Shipment;
 import java.util.List;
@@ -16,6 +20,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/seller")
 public class SellerController {
+
+    private final ClientService service;
+
+    @GetMapping("/user")
+    public ResponseMessage<UserForm.Response> getSellerInfo(@InjectId(role = Role.SELLER) Long sellerId)
+        throws NoSuchUserException {
+        return ResponseMessage.success(
+            service.getSeller(sellerId)
+        );
+    }
 
     @PostMapping("/item")
     public ResponseMessage<?> registerItem(@RequestBody ItemDetailForm form,

@@ -2,6 +2,8 @@ package com.alconn.copang.client;
 
 import com.alconn.copang.auth.AccessTokenContainer;
 import com.alconn.copang.auth.LoginToken;
+import com.alconn.copang.client.UserForm.Response;
+import com.alconn.copang.client.UserForm.SellerResponse;
 import com.alconn.copang.exceptions.InvalidTokenException;
 import com.alconn.copang.exceptions.LoginFailedException;
 import com.alconn.copang.exceptions.NoSuchUserException;
@@ -153,5 +155,12 @@ public class ClientService {
 
         return mapper.toResponse(client);
 
+    }
+
+    public SellerResponse getSeller(Long sellerId) throws NoSuchUserException {
+
+        Seller seller = sellerRepository.findById(sellerId).orElseThrow(NoSuchUserException::new);
+
+        return mapper.toResponse(seller);
     }
 }
