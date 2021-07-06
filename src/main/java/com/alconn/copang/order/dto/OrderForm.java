@@ -45,6 +45,8 @@ public class OrderForm {
         private Integer totalPrice;
     }
 
+    @NoArgsConstructor @AllArgsConstructor
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @Builder
     @Getter
@@ -68,5 +70,9 @@ public class OrderForm {
         private int totalPrice;
 
         private int totalAmount;
+
+        private String uid;
+
+
     }
 }

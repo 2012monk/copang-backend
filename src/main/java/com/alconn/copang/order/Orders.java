@@ -101,4 +101,8 @@ public class Orders {
         this.impPaymentInfo = impPaymentInfo;
         impPaymentInfo.setOrders(this);
     }
+
+    public void paymentComplete() {
+        this.orderStatus = OrderStatus.COMPLETE_PAYMENT;
+    }
 }

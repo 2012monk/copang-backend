@@ -1,6 +1,7 @@
 package com.alconn.copang.order;
 
 import com.alconn.copang.exceptions.NoSuchEntityExceptions;
+import com.alconn.copang.exceptions.ValidationException;
 import com.alconn.copang.order.dto.OrderForm;
 import com.alconn.copang.order.mapper.OrderMapper;
 import com.alconn.copang.payment.ImpPaymentInfo;
@@ -30,8 +31,6 @@ public class OrderService {
     public OrderForm.Response readyOrder(OrderForm.Create form, Long clientId) {
         Orders orders = orderMapper.placeOrder(form, clientId);
         orders.connectOrderItems();
-
-//        orders.calculateTotal();
         repo.save(orders);
         return OrderForm.Response.builder()
             .orderId(orders.getOrderId())
@@ -43,24 +42,30 @@ public class OrderService {
 
     @Transactional
     public OrderForm.Response proceedOrder(OrderForm.Create form, Long clientId, Long orderId)
-        throws NoSuchEntityExceptions {
+        throws NoSuchEntityExceptions, ValidationException {
 
         String uid = form.getUid();
         ImpPaymentInfo impPaymentInfo = paymentService.validatePayment(uid, orderId);
 
-
-
         Orders orders = repo.findById(orderId)
             .orElseThrow(() -> new NoSuchEntityExceptions("주문번호가 존재하지 않습니다"));
 
-        impPaymentInfo.getAmount().equals(orders.get)
+        orders.calculateTotal();
+        if (orders.getTotalAmount() != (int) impPaymentInfo.getAmount()) {
+            throw new ValidationException("요청하신 주문정보의 데이터와 일치하지 않습니다");
+        }
+
+        if (!impPaymentInfo.getSuccess()) {
+            throw new ValidationException("결제가 완료되지 않았습니다!");
+        }
 
         orders.setPayment(impPaymentInfo);
 
+        orders.paymentComplete();
 
+        repo.save(orders);
 
-
-
+        return orderMapper.toResponse(orders);
     }
 
 
