@@ -414,4 +414,17 @@ operation::wishlist/get-list[snippets='http-request,request-headers,http-respons
 operation::wishlist/delete[snippets='http-request,request-headers,request-fields,http-response,response-fields']
 
 
+= 판매자 API
+
+== 판매자 등록
+==== `POST` /api/auth/seller
+
+operation::auth/signup-seller[snippets='http-request,request-fields,http-response,response-fields']
+== 판매자 정보 조회
+==== `GET` /api/seller/user
+
+operation::seller/get-seller[snippets='http-request,request-headers,http-response,response-fields,response-fields-data']
+
+
+
 
