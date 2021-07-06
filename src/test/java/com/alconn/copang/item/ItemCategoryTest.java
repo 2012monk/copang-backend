@@ -165,7 +165,7 @@ public class ItemCategoryTest {
     public void categoryItem() throws Exception{
         testData();
         Long categoryId=categoryRepository.findAll().get(0).getCategoryId();
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/item/list/categoryid={categoryId}", categoryId)
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/item/list/categoryid={categoryId}", 0l)
                 .characterEncoding("utf-8")
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())
