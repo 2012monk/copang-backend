@@ -47,5 +47,15 @@ public class Category {
 
     public void changeLayer(int layer){this.layer=layer;}
 
-
+    @Override
+    public String toString() {
+        return "Category{" +
+                "categoryId=" + categoryId +
+                ", categoryName='" + categoryName + '\'' +
+                ", parentId=" + parentId +
+                ", childCheck='" + childCheck + '\'' +
+                ", layer=" + layer +
+                ", itemList=" + itemList +
+                '}';
+    }
 }

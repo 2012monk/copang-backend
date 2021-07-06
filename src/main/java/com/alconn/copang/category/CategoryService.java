@@ -96,27 +96,29 @@ public class CategoryService {
     public List<Long> childCategoryExtract(Long id,List<Long> idtest){
         //부모 카테고리 조회 자식여부 확인 -> 없으면 저장
         List<Category> td= categoryRepository.findByParentId(id);
-        if(td.size()>0){
-            for(int i=0; i<td.size();i++){
-//                if(td.get(i).getChildCheck().equalsIgnoreCase("y")){
-//                   idtest.addAll(childCategoryExtract(td.get(i).getCategoryId()));
-//                }
-//                else {
-//                    idtest.add(td.get(i).getCategoryId());
-//                }
-                idtest.add(td.get(i).getCategoryId());
-                childCategoryExtract(td.get(i).getCategoryId(),idtest);
-//                idtest.addAll(childCategoryExtract(td.get(i).getCategoryId(),idtest));
-            }
-        }
-        else
+        if(td.size()==0) {
             try {
                 categoryRepository.findById(id);
                 idtest.add(id);
+                return idtest;
             }catch (Exception e){
                 throw new NoSuchElementException("없는 카테고리입니다");
             }
-
+        }
+        else if(td.size()>0){
+            for(int i=0; i<td.size();i++){
+////                if(td.get(i).getChildCheck().equalsIgnoreCase("y")){
+////                   idtest.addAll(childCategoryExtract(td.get(i).getCategoryId()));
+////                }
+////                else {
+////                    idtest.add(td.get(i).getCategoryId());
+////                }
+//                idtest.add(td.get(i).getCategoryId());
+                idtest.add(id);
+                childCategoryExtract(td.get(i).getCategoryId(),idtest);
+////                idtest.addAll(childCategoryExtract(td.get(i).getCategoryId(),idtest));
+            }
+        }
         return idtest;
     }
 
@@ -126,11 +128,11 @@ public class CategoryService {
         public CategoryView.CategoryListDto rootCategory(Long id){
             Map<Long, List<CategoryView.CategoryListDto>> parentGroup = categoryRepository.findAll()
                     .stream()
-                    .   map(category -> CategoryView.CategoryListDto.builder()
-                            .categoryId(category.getCategoryId())
-                            .categoryName(category.getCategoryName())
-                            .parentId(category.getParentId())
-                            .build()).collect(groupingBy(c->c.getParentId()));
+                    .map(category -> CategoryView.CategoryListDto.builder()
+                        .categoryId(category.getCategoryId())
+                        .categoryName(category.getCategoryName())
+                        .parentId(category.getParentId())
+                        .build()).collect(groupingBy(c->c.getParentId()));
 
             CategoryView.CategoryListDto rootCategoryDto=  CategoryView.CategoryListDto.builder()
                     .categoryId(id)

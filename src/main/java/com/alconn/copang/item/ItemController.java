@@ -33,7 +33,7 @@ public class ItemController {
 
     //카테고리 클릭 시 자식 카테고리 조회하여 상품출력
     @GetMapping("/list/categoryid={categoryId}")
-        public ResponseMessage<List<ItemDetailForm.MainForm>> categoryItemlist(@PathVariable(name = "categoryId")Long id){
+        public ResponseMessage<List<ItemDetailForm.MainForm>> categoryItemlist(@PathVariable(name = "categoryId")Long id) throws NoSuchEntityExceptions {
             List<ItemDetailForm.MainForm> itemDetailFormList=itemDetailService.findCategpryMainList(id);
             return ResponseMessage.<List<ItemDetailForm.MainForm>>builder()
                     .message("카테고리상품리스트")

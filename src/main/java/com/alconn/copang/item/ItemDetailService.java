@@ -38,7 +38,7 @@ public class ItemDetailService {
 
 //====
 //    카테고리에 맞는 상품중 대표옵션만 출력
-    public List<ItemDetailForm.MainForm> findCategpryMainList(Long categoryId){
+    public List<ItemDetailForm.MainForm> findCategpryMainList(Long categoryId) throws NoSuchEntityExceptions {
         List<Long> idstest=new ArrayList<>();
         List<Long> ids=categoryService.childCategoryExtract(categoryId,idstest);
         System.out.println("ids.toString() = " + ids.toString());
@@ -48,9 +48,9 @@ public class ItemDetailService {
         ItemMainApply itemMainApply=ItemMainApply.APPLY;
         List<ItemDetail> list=itemDetailRepository.listItemDetailCategoryFind(itemList,itemMainApply);
 
-        System.out.println("list.get(0) = " + list.get(0).getItem().getCategory().getCategoryId());
-        List<ItemDetailForm.MainForm> listForm=itemMapper.mainPage(list);
+        if(list.size()==0) throw new NoSuchEntityExceptions("해당하는 상품이 없습니다");
 
+        List<ItemDetailForm.MainForm> listForm=itemMapper.mainPage(list);
 
         return listForm;
     }

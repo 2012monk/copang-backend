@@ -153,11 +153,10 @@ public class ItemCategoryTest {
 
     //테스트
     @Test
-    public void findCategpryMainListTest(){
+    public void findCategpryMainListTest() throws Exception{
         testData();
         System.out.println("categoryRepository.findAll().get(0) = " + categoryRepository.findAll().get(0).getCategoryId());
         Long id=categoryRepository.findAll().get(0).getCategoryId();
-        System.out.println("매퍼 오류인지 테스트= " + id);
         System.out.println(" = " + itemDetailService.findCategpryMainList(id).toString());
     }
 
@@ -166,7 +165,7 @@ public class ItemCategoryTest {
     public void categoryItem() throws Exception{
         testData();
         Long categoryId=categoryRepository.findAll().get(0).getCategoryId();
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/item/list/categoryid={categoryId}", 0l)
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/item/list/categoryid={categoryId}", categoryId)
                 .characterEncoding("utf-8")
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())
