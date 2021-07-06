@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.NotEmpty;
@@ -40,7 +41,7 @@ public class UserForm {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @Getter
-    @Builder
+    @SuperBuilder
     @AllArgsConstructor @NoArgsConstructor
     public static class Response {
 
@@ -56,5 +57,19 @@ public class UserForm {
 
         @JsonFormat(pattern = "yyyy.MM.dd", locale = "Seoul/Asia", shape = JsonFormat.Shape.STRING)
         private LocalDateTime signInDate;
+    }
+
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Getter
+    @SuperBuilder
+    @AllArgsConstructor @NoArgsConstructor
+    public static class SellerResponse extends Response{
+
+        private Long sellerCode;
+
+        private String sellerName;
+
+
     }
 }

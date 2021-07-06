@@ -31,7 +31,7 @@ public class ClientController {
                 .build();
     }
 
-    @Secured("ROLE_CLIENT")
+//    @Secured("ROLE_CLIENT")
     @GetMapping("/list")
     public ResponseMessage<List<Client>> getAllUsers() {
         return ResponseMessage.<List<Client>>builder()

@@ -42,6 +42,7 @@ public class TestUtils {
             .phone("010-0030-9090")
             .realName("길동홍길동")
             .role(Role.SELLER)
+            .sellerName("판매자노출명")
             .build();
     }
 
