@@ -1,10 +1,12 @@
 package com.alconn.copang.order;
 
-import com.alconn.copang.client.ClientMapper;
 import com.alconn.copang.exceptions.NoSuchEntityExceptions;
+import com.alconn.copang.exceptions.UnauthorizedException;
+import com.alconn.copang.exceptions.ValidationException;
 import com.alconn.copang.order.dto.OrderForm;
-import com.alconn.copang.order.mapper.OrderItemMapper;
 import com.alconn.copang.order.mapper.OrderMapper;
+import com.alconn.copang.payment.ImpPaymentInfo;
+import com.alconn.copang.payment.PaymentService;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -22,60 +24,56 @@ public class OrderService {
 
     private final OrderItemRepository orderItemRepository;
 
-    private final OrderItemMapper orderItemMapper;
-
-    private final ClientMapper clientMapper;
+    private final PaymentService paymentService;
 
     private final OrderMapper orderMapper;
+
+    @Transactional
+    public OrderForm.Response readyOrder(OrderForm.Create form, Long clientId) {
+        Orders orders = orderMapper.placeOrder(form, clientId);
+        orders.connectOrderItems();
+        repo.save(orders);
+        return OrderForm.Response.builder()
+            .orderId(orders.getOrderId())
+            .build();
+    }
+
+    @Transactional
+    public OrderForm.Response orderPayment(String uid, Long clientId, Long orderId)
+        throws NoSuchEntityExceptions, ValidationException, UnauthorizedException {
+
+//        String uid = form.getUid();
+        ImpPaymentInfo impPaymentInfo = paymentService.validatePayment(uid, orderId);
+
+        Orders orders = repo.findById(orderId)
+            .orElseThrow(() -> new NoSuchEntityExceptions("주문번호가 존재하지 않습니다"));
+
+        orders.calculateTotal();
+        if (orders.getTotalPrice() != (int) impPaymentInfo.getAmount()) {
+            throw new ValidationException("요청하신 주문정보의 가격과 일치하지 않습니다");
+        }
+
+        if (orders.getClient().getClientId() != clientId) {
+            throw new UnauthorizedException("주문에대한 권한이 없습니다");
+        }
+        orders.setPayment(impPaymentInfo);
+
+        orders.paymentComplete();
+
+        repo.save(orders);
+
+        return orderMapper.toResponse(orders);
+    }
+
 
     @Transactional
     public OrderForm.Response placeOrder(OrderForm.Create form, Long clientId) {
         // item id, item detail id 키값만으로 빌드해서 저장한다
         Orders orders = orderMapper.placeOrder(form, clientId);
         orders.connectOrderItems();
-
-//        orders.calculateTotal();
         repo.save(orders);
 
         return orderMapper.toResponse(orders);
-//        Orders orders = Orders.builder()
-//                .client(Client.builder().clientId(clientId)
-//                .address(Address.builder().addressId(form.getAddressId()).build())
-//                .orderState(OrderStatus.READY)
-//                .orderDate(LocalDateTime.now())
-//                .totalAmount(form.getTotalAmount())
-//                .totalPrice(form.getTotalPrice())
-//                .build();
-
-//        orders.setOrderItemList(orderItems);
-//        repo.save(orders);
-
-//        orderItemRepository.saveAllAndFlush(orderItems);
-//        OrderForm.Response response = mapper.toResponse(orders);
-
-//        Orders o = getOneOrders(orders.getOrderId());
-
-        //        System.out.println("orderItems = " + orderItems.get(0).getItemDetail().getItem().getItemCreate());
-//        return OrderForm.Response.builder()
-//        .orderDate(orders.getOrderDate())
-//        .orderId(orders.getOrderId())
-//        .orderItems(orders.getOrderItemList()
-//                .stream().map(i ->
-//                OrderItemForm.builder()
-//                    .itemDetailId(i.getItemDetail().getItemDetailId())
-//                    .itemId(i.getId())
-//                    .itemName(i.getItemDetail().getItem().getItemName())
-//                    .optionName(i.getItemDetail().getOptionName())
-//                    .optionValue(i.getItemDetail().getOptionValue())
-//                    .amount(i.getAmount())
-//                    .price(i.getItemDetail().getPrice())
-//                    .build()
-//                ).collect(Collectors.toList()))
-//        .clientId(orders.getClient().getClientId())
-//        .totalAmount(orders.getTotalAmount())
-//        .totalPrice(orders.getTotalPrice())
-//        .build();
-//        return null;
     }
 
     private Orders getOneOrders(Long id) {
@@ -88,7 +86,7 @@ public class OrderService {
 
 
     @Transactional
-    public OrderForm.Response proceedOrder(Long orderId) throws NoSuchEntityExceptions {
+    public OrderForm.Response orderPayment(Long orderId) throws NoSuchEntityExceptions {
 
         Orders orders = repo.findById(orderId).orElseThrow(NoSuchEntityExceptions::new);
 
@@ -166,7 +164,6 @@ public class OrderService {
 //                )
 //                .client(clientMapper.toResponse(orders.getClient()))
 //                .build();
-
 
     }
 }

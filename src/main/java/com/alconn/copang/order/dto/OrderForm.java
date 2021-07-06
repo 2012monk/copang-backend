@@ -4,6 +4,7 @@ import com.alconn.copang.address.Address;
 import com.alconn.copang.address.AddressForm;
 import com.alconn.copang.client.UserForm;
 import com.alconn.copang.order.OrderStatus;
+import com.alconn.copang.payment.PaymentType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import javax.validation.Valid;
@@ -30,18 +31,21 @@ public class OrderForm {
         @NotNull(message = "주소 아이디 는 필수 입력값입니다")
         private Long addressId;
 
-        private String tid;
+//        @NotEmpty(message = "결제번호는 존재해야합니다")
+        private String uid;
+
+        private PaymentType paymentType;
 
         @Valid
         @Size(min = 1, message = "주문 상품은 최소 하나이상 존재해야 합니다")
         private List<OrderItemForm> orderItems;
 
-//        @NotBlank @Positive
         private Integer totalAmount;
 
-//        @NotBlank @Positive
         private Integer totalPrice;
     }
+
+    @NoArgsConstructor @AllArgsConstructor
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @Builder
@@ -66,5 +70,9 @@ public class OrderForm {
         private int totalPrice;
 
         private int totalAmount;
+
+        private String uid;
+
+
     }
 }

@@ -282,7 +282,7 @@ class OrderControllerTest {
                         .orderStatus(status)
                         .build();
 
-        given(service.proceedOrder(orderId)).willReturn(response);
+        given(service.orderPayment(orderId)).willReturn(response);
 
         ResultActions result = this.mvc.perform(
                 RestDocumentationRequestBuilders.
@@ -445,5 +445,91 @@ class OrderControllerTest {
             .content(mapper.writeValueAsString(create))
         ).andDo(print())
             .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void orderReadyTest() throws Exception {
+
+        OrderForm.Response res =
+            OrderForm.Response.builder()
+            .orderId(1L)
+            .build();
+
+        OrderItemForm form = OrderItemForm.builder()
+            .itemName("name")
+            .amount(1)
+            .price(20000)
+            .build();
+
+        OrderForm.Create create=
+            OrderForm.Create.builder()
+                .orderItems(Collections.singletonList(form))
+                .addressId(1L)
+                .build();
+
+        given(this.service.readyOrder(any(OrderForm.Create.class), eq(1L))).willReturn(res);
+
+        this.mvc.perform(
+            post("/api/orders/ready")
+            .header(HttpHeaders.AUTHORIZATION, utils.genAuthHeader())
+            .content(mapper.writeValueAsString(create))
+            .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isCreated())
+            .andDo(print())
+            .andDo(
+                document(
+                    "orders/{method-name}",
+                    getDocumentRequest(),
+                    getDocumentResponse(),
+                    getAuthHeader()
+                )
+            );
+
+    }
+
+    @Test
+    void orderPayment() throws Exception {
+
+        UserForm.Response client =
+            get쿠팡노예();
+
+        AddressForm address = getAddressForm();
+
+        List<OrderItemForm> orderItems = genOrderItems("고구마");
+
+
+        OrderForm.Response response =
+            OrderForm.Response.builder()
+                .orderId(1L)
+                .client(client)
+                .orderDate(LocalDateTime.now())
+                .orderStatus(OrderStatus.READY)
+                .address(address)
+                .totalPrice(80000)
+                .totalAmount(4)
+                .orderItems(orderItems)
+                .build();
+
+        given(this.service.orderPayment(eq("imp-uid"), eq(response.getOrderId()), eq(1L))).willReturn(response);
+        this.mvc.perform(
+            RestDocumentationRequestBuilders.
+            post("/api/orders/{orderId}/pay/{uid}", 1L, "imp-uid")
+            .header(HttpHeaders.AUTHORIZATION, utils.genAuthHeader())
+        )
+            .andDo(print())
+            .andDo(
+                document(
+                    "orders/{method-name}",
+                    getDocumentRequest(),
+                    getDocumentResponse(),
+                    getAuthHeader(),
+                    pathParameters(
+                        parameterWithName("uid").description("imp_uid 결제 번호"),
+                        parameterWithName("orderId").description("주문번호")
+                    )
+
+                )
+            );
     }
 }

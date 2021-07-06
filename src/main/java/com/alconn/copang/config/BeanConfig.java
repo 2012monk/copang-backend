@@ -1,30 +1,45 @@
 package com.alconn.copang.config;
 
-import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.CachingUserDetailsService;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.core.GrantedAuthorityDefaults;
-import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
-import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
-
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class BeanConfig {
 
-//
+    //
     @Bean
-    public Set<String> blackList(){
+    public Set<String> blackList() {
         return new HashSet<>();
     }
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        HttpComponentsClientHttpRequestFactory f =
+            new HttpComponentsClientHttpRequestFactory();
+        f.setReadTimeout(5000);
+        f.setConnectTimeout(3000);
+        HttpClient client = HttpClientBuilder.create()
+            .setMaxConnTotal(100)
+            .setMaxConnPerRoute(5)
+            .build();
+        f.setHttpClient(client);
+        RestTemplate t = new RestTemplate(f);
+        t.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
+        return t;
     }
 
 //    @Bean
