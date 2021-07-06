@@ -244,6 +244,7 @@ public class AuthDocumentTest {
             .description("안녕하세요!")
             .phone("010-0030-9090")
             .realName("충성")
+            .sellerName("판매자이름")
             .build();
 
 //        given(service.signupClient(any(UserForm.class))).willReturn(client);
@@ -268,7 +269,8 @@ public class AuthDocumentTest {
                     fieldWithPath("description").type(JsonFieldType.STRING).description("소개")
                         .optional(),
                     fieldWithPath("phone").type(JsonFieldType.STRING).description("휴대전화번호")
-                        .optional()
+                        .optional(),
+                    fieldWithPath("sellerName").type(JsonFieldType.STRING).description("판매자 명")
                 ),
                 relaxedResponseFields(
                     fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메세지"),
@@ -277,7 +279,8 @@ public class AuthDocumentTest {
                     fieldWithPath("data.username").type(JsonFieldType.STRING).description("아이디"),
                     fieldWithPath("data.phone").type(JsonFieldType.STRING).description("휴대전화번호"),
                     fieldWithPath("data.realName").type(JsonFieldType.STRING).description("이름"),
-                    fieldWithPath("data.role").type(JsonFieldType.STRING).description("유저타입")
+                    fieldWithPath("data.role").type(JsonFieldType.STRING).description("유저타입"),
+                    fieldWithPath("data.sellerName").type(JsonFieldType.STRING).description("판매자 이름")
 //                    fieldWithPath("data.signInDate").type(JsonFieldType.STRING).description("가입날짜")
 
                 )
