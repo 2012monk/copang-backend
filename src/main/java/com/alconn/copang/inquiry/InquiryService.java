@@ -29,6 +29,7 @@ public class InquiryService {
         return mapper.toDto(inquiry);
     }
 
+    @Transactional
     public InquiryForm.Response registerReply(Request requestForm, Long sellerId,
         Long inquiryId) throws NoSuchEntityExceptions, ValidationException {
 
@@ -46,16 +47,7 @@ public class InquiryService {
         return mapper.toDto(inquiry);
     }
 
-    public List<InquiryForm.Response> getInquiresBySeller(Long sellerId) {
-        /* implement me*/
-        return null;
-    }
 
-    public List<InquiryForm.Response> getInquiresByItem(Long itemId) {
-
-        return repository.findInquiriesByItemDetail_Item_ItemId(itemId)
-        .stream().map(mapper::toDto).collect(Collectors.toList());
-    }
 
     @Transactional
     public InquiryForm.Response updateInquiry(Request request, Long inquiryId,
@@ -69,6 +61,7 @@ public class InquiryService {
         return mapper.toDto(inquiry);
     }
 
+    @Transactional
     public InquiryForm.Response updateReply(Request request, Long inquiryId, Long sellerId)
         throws NoSuchEntityExceptions, UnauthorizedException {
         Inquiry inquiry = repository.findById(inquiryId).orElseThrow(NoSuchEntityExceptions::new);
@@ -83,6 +76,17 @@ public class InquiryService {
 
     public List<Response> getInquiresByClient(Long clientId) {
         return repository.findInquiriesByClient_ClientId(clientId)
+            .stream().map(mapper::toDto).collect(Collectors.toList());
+    }
+
+    public List<InquiryForm.Response> getInquiresBySeller(Long sellerId) {
+        /* implement me*/
+        return null;
+    }
+
+    public List<InquiryForm.Response> getInquiresByItem(Long itemId) {
+
+        return repository.findInquiriesByItemDetail_Item_ItemId(itemId)
             .stream().map(mapper::toDto).collect(Collectors.toList());
     }
 }

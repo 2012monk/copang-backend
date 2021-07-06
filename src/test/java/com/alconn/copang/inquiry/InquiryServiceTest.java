@@ -101,7 +101,16 @@ class InquiryServiceTest {
         Response response1 = service
             .registerReply(req, seller.getClientId(), response.getInquiryId());
 
+
         assertNotNull(response1.getContent());
+
+        List<Response> res = service.getInquiresByClient(client.getClientId());
+
+        assertEquals(1, res.size());
+        assertNotNull(res.get(0).getReply());
+
+        System.out
+            .println("res.get(0).getReply().getContent() = " + res.get(0).getReply().getContent());
 
     }
 

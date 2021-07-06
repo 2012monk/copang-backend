@@ -10,6 +10,7 @@ import com.alconn.copang.inquiry.InquiryForm.Response;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +30,7 @@ public class InquiryController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public ResponseMessage<InquiryForm.Response> registerInquiry(
-        @RequestBody InquiryForm.Request request,
+        @Validated @RequestBody InquiryForm.Request request,
         @InjectId Long clientId) {
         return ResponseMessage.success(
             service.registerInquiry(request, clientId)
@@ -40,7 +41,8 @@ public class InquiryController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseMessage<InquiryForm.Response> registerReply(
         @RequestBody InquiryForm.Request request,
-        @InjectId(role = Role.SELLER) Long sellerId, @PathVariable(name = "inquiryId") Long inquiryId)
+        @InjectId(role = Role.SELLER) Long sellerId,
+        @PathVariable(name = "inquiryId") Long inquiryId)
         throws NoSuchEntityExceptions, ValidationException {
         return ResponseMessage.success(
             service.registerReply(request, sellerId, inquiryId)
@@ -48,7 +50,8 @@ public class InquiryController {
     }
 
     @GetMapping("/seller")
-    public ResponseMessage<List<Response>> getInquiresBySeller(@InjectId(role = Role.SELLER) Long sellerId) {
+    public ResponseMessage<List<Response>> getInquiresBySeller(
+        @InjectId(role = Role.SELLER) Long sellerId) {
         return ResponseMessage.success(
             service.getInquiresBySeller(sellerId)
         );
