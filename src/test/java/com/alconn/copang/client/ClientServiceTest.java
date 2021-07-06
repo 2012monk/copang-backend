@@ -6,6 +6,7 @@ import com.alconn.copang.seller.Seller;
 import com.alconn.copang.seller.SellerRepository;
 import com.alconn.copang.utils.TestUtils;
 import javax.persistence.EntityManager;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,6 +43,7 @@ class ClientServiceTest {
         
     }
 
+    @Disabled
     @Transactional
     @Test
     void getSeller() throws NoSuchUserException {
