@@ -114,6 +114,7 @@ class ReviewServiceTest {
     }
 
 
+    @Transactional
     @DisplayName("아이템 기준으로 리뷰를 가져온다")
     @Test
     void reviewRegister() {
@@ -132,6 +133,7 @@ class ReviewServiceTest {
 
         assertNotNull(responses);
         assertEquals(responses.size(), 1);
+        assertNotNull(responses.get(0).getItemName());
     }
 
     @Disabled
