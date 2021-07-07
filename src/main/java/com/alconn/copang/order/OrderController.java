@@ -1,6 +1,7 @@
 package com.alconn.copang.order;
 
 import com.alconn.copang.annotations.InjectId;
+import com.alconn.copang.client.Role;
 import com.alconn.copang.common.ResponseMessage;
 import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import com.alconn.copang.exceptions.UnauthorizedException;
@@ -88,6 +89,13 @@ public class OrderController {
             .message("success")
             .data(service.listOrderClient(clientId))
             .build();
+    }
+
+    @GetMapping("/seller")
+    public ResponseMessage<List<OrderForm.Response>> getSellerOrders(@InjectId(role = Role.SELLER) Long sellerId) {
+        return ResponseMessage.success(
+            service.getOrdersBySeller(sellerId)
+        );
     }
 
 

@@ -4,6 +4,7 @@ import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import com.alconn.copang.exceptions.UnauthorizedException;
 import com.alconn.copang.exceptions.ValidationException;
 import com.alconn.copang.order.dto.OrderForm;
+import com.alconn.copang.order.dto.OrderForm.Response;
 import com.alconn.copang.order.mapper.OrderMapper;
 import com.alconn.copang.payment.ImpPaymentInfo;
 import com.alconn.copang.payment.PaymentService;
@@ -165,5 +166,12 @@ public class OrderService {
 //                .client(clientMapper.toResponse(orders.getClient()))
 //                .build();
 
+    }
+
+    public List<Response> getOrdersBySeller(Long sellerId) {
+//        List<Orders> orders = repo.findSellerOrders(sellerId);
+//
+//        return orders.stream().map(orderMapper::toResponse).collect(Collectors.toList());
+        return null;
     }
 }
