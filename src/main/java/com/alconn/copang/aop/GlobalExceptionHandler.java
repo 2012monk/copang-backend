@@ -144,6 +144,7 @@ public class GlobalExceptionHandler {
         log.warn("access denied ", e);
         return ResponseMessage.<String>builder()
                 .message("권한이 없습니다")
+                .data(e.getMessage())
                 .code(403)
                 .build();
     }

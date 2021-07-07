@@ -10,10 +10,8 @@ import com.alconn.copang.order.mapper.OrderMapper;
 import com.alconn.copang.order.mapper.SellerOrderMapper;
 import com.alconn.copang.payment.ImpPaymentInfo;
 import com.alconn.copang.payment.PaymentService;
-import com.alconn.copang.seller.Seller;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -133,11 +131,13 @@ public class OrderService {
     }
 
     public List<SellerOrderForm.Response> getOrdersBySeller(Long sellerId) {
-        List<SellerOrder> sellerOrders = sellerOrderRepository.findSellerOrdersBySeller_ClientId(sellerId);
+        List<SellerOrder> sellerOrders = sellerOrderRepository
+            .findSellerOrdersBySeller_ClientId(sellerId);
         sellerOrders.forEach(SellerOrder::calculateTotal);
 
         return sellerOrders.stream()
-            .map(s -> sellerOrderMapper.mtoForm(s, s.getOrderItems().get(0).getOrders())).collect(Collectors.toList());
+            .map(s -> sellerOrderMapper.mtoForm(s, s.getOrderItems().get(0).getOrders()))
+            .collect(Collectors.toList());
     }
 
     public List<SellerOrder> getSellers(Long sellerId) {

@@ -67,10 +67,8 @@ public class ReviewService {
 
 
     public List<Response> getUserReview(Long clientId) {
-        List<Review> list = repository.findReviewsByWriter_ClientId(clientId)
-            .stream().sorted(Comparator.comparing(Review::getRegisterDate))
-            .collect(Collectors.toList());
-        return mapper.toDto(list);
+        List<Review> list = repository.findReviewsByWriter_ClientIdOrderByRegisterDate(clientId);
+        return list.stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
     public List<Response> getSellerReview(Long sellerId) {
