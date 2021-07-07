@@ -17,7 +17,6 @@ import javax.persistence.Id;
 @Getter
 @Entity
 public class Shipment {
-    //배송조회
 
     @Id @GeneratedValue
     private Long shipmentId;

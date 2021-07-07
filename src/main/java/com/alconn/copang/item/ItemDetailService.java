@@ -9,6 +9,7 @@ import com.alconn.copang.item.dto.ItemForm;
 import com.alconn.copang.item.dto.ItemViewForm;
 import com.alconn.copang.item.mapper.ItemMapper;
 import com.alconn.copang.seller.Seller;
+import com.alconn.copang.shipment.ShipmentInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
@@ -61,7 +62,9 @@ public class ItemDetailService {
     //다중 저장
     @Transactional
     public ItemForm itemDetailListSave(ItemForm itemForm, Long sellerId){
-        //매퍼 풀기
+        //배송 저장
+        ShipmentInfo shipmentInfo=itemMapper.shipToEntity(itemForm);
+
         Item item=Item.builder()
                 .itemName(itemForm.getItemName())
                 .itemComment(itemForm.getItemComment())

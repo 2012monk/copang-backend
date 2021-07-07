@@ -25,20 +25,26 @@ public class ShipmentInfo {
     @Id @GeneratedValue
     private Long id;
 
+    //출고지주소 나중에 작업한다하심
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "release_place_id")
     private Address shippingPlace;
 
+    //택배사
     @Enumerated(EnumType.STRING)
     private LogisticCode logisticCompany;
 
+    //배송비 관련 상태컬럼
     @Enumerated(EnumType.STRING)
     private ShippingChargeType shippingChargeType;
 
+    //얼마이상무료
     private int freeShipOverPrice;
 
+    //출시일
     private Integer releaseDate;
 
+    //배송비
     private Integer shippingPrice;
 
 

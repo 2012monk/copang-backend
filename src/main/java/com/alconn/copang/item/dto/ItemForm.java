@@ -1,5 +1,8 @@
 package com.alconn.copang.item.dto;
 
+import com.alconn.copang.shipment.ShipmentForm;
+import com.alconn.copang.shipment.ShipmentInfo;
+import com.alconn.copang.shipment.dto.ShipmentInfoForm;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,6 +36,9 @@ public class ItemForm {
 
     @Builder.Default
     private List<ItemDetailForm.DetailForm> itemDetailFormList=new ArrayList<>();
+
+    @Builder.Default
+    private ShipmentInfoForm shipmentInfoForm;
 
 
 
