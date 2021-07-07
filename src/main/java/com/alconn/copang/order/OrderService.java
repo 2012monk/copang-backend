@@ -7,8 +7,10 @@ import com.alconn.copang.order.dto.OrderForm;
 import com.alconn.copang.order.mapper.OrderMapper;
 import com.alconn.copang.payment.ImpPaymentInfo;
 import com.alconn.copang.payment.PaymentService;
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,8 +41,8 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderForm.Response orderPayment(String uid, Long clientId, Long orderId)
-        throws NoSuchEntityExceptions, ValidationException, UnauthorizedException {
+    public OrderForm.Response orderPayment(String uid, @NotNull Long clientId, Long orderId)
+        throws NoSuchEntityExceptions, ValidationException, AccessDeniedException {
 
 //        String uid = form.getUid();
         ImpPaymentInfo impPaymentInfo = paymentService.validatePayment(uid, orderId);
@@ -53,8 +55,9 @@ public class OrderService {
             throw new ValidationException("요청하신 주문정보의 가격과 일치하지 않습니다");
         }
 
-        if (orders.getClient().getClientId() != clientId) {
-            throw new UnauthorizedException("주문에대한 권한이 없습니다");
+        if (clientId != null &&
+            !orders.getClient().getClientId().equals(clientId)) {
+            throw new AccessDeniedException("주문에대한 권한이 없습니다");
         }
         orders.setPayment(impPaymentInfo);
 

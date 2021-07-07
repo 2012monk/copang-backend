@@ -6,6 +6,7 @@ import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import com.alconn.copang.exceptions.UnauthorizedException;
 import com.alconn.copang.exceptions.ValidationException;
 import com.alconn.copang.order.dto.OrderForm;
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -57,8 +58,8 @@ public class OrderController {
     public ResponseMessage<OrderForm.Response> paymentCheck(
         @InjectId Long clientId, @PathVariable(value = "orderId") Long orderId,
         @PathVariable(value = "uid") String uid)
-        throws NoSuchEntityExceptions, ValidationException, UnauthorizedException {
-        return ResponseMessage.success(service.orderPayment(uid,clientId,orderId));
+        throws NoSuchEntityExceptions, ValidationException, AccessDeniedException {
+        return ResponseMessage.success(service.orderPayment(uid, clientId, orderId));
     }
 
     @PatchMapping("/{orderId}/proceed")
