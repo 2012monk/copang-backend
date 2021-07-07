@@ -33,6 +33,7 @@ import com.alconn.copang.payment.ImpPaymentInfo;
 import com.alconn.copang.payment.PaymentService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -220,7 +221,7 @@ class OrderServiceTest {
     @Transactional
     @Test
     void paymentTest()
-        throws JsonProcessingException, InvalidTokenException, LoginFailedException, ValidationException, NoSuchEntityExceptions, UnauthorizedException {
+        throws JsonProcessingException, InvalidTokenException, LoginFailedException, ValidationException, NoSuchEntityExceptions, UnauthorizedException, AccessDeniedException {
         objectMapper.writerWithDefaultPrettyPrinter();
         Client client = Client.builder()
 //            .clientId(1L)
@@ -309,6 +310,7 @@ class OrderServiceTest {
         manager.clear();
 
         Response response1 = service.orderPayment(impId, client.getClientId(), id);
+//        Response response1 = service.orderPayment(impId, 2L, id);
 
         assertNotNull(response1);
         assertEquals(client.getClientId(), response1.getClient().getClientId());
