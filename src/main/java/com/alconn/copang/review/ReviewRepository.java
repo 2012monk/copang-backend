@@ -11,4 +11,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
         @Param(value = "itemId") Long itemId, Sort sort);
 
     List<Review> findReviewsByWriter_ClientIdOrderByRegisterDate(@Param(value = "clientId") Long clientId);
+
+    List<Review> findReviewsByOrderItem_ItemDetail_Item_Seller_ClientIdOrderByRegisterDate(@Param(value = "sellerId") Long sellerId);
 }

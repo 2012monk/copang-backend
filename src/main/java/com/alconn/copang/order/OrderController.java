@@ -1,11 +1,13 @@
 package com.alconn.copang.order;
 
 import com.alconn.copang.annotations.InjectId;
+import com.alconn.copang.client.Role;
 import com.alconn.copang.common.ResponseMessage;
 import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import com.alconn.copang.exceptions.UnauthorizedException;
 import com.alconn.copang.exceptions.ValidationException;
 import com.alconn.copang.order.dto.OrderForm;
+import com.alconn.copang.order.dto.SellerOrderForm.Response;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -58,17 +60,17 @@ public class OrderController {
     public ResponseMessage<OrderForm.Response> paymentCheck(
         @InjectId Long clientId, @PathVariable(value = "orderId") Long orderId,
         @PathVariable(value = "uid") String uid)
-        throws NoSuchEntityExceptions, ValidationException, AccessDeniedException {
-        return ResponseMessage.success(service.orderPayment(uid, clientId, orderId));
+        throws NoSuchEntityExceptions, ValidationException, UnauthorizedException, AccessDeniedException {
+        return ResponseMessage.success(service.orderPayment(uid,clientId,orderId));
     }
 
-    @PatchMapping("/{orderId}/proceed")
-    public ResponseMessage<OrderForm.Response> updateOrderState(@PathVariable Long orderId)
+    @PatchMapping("/{sellerOrderId}/shipment")
+    public ResponseMessage<OrderForm.Response> updateOrderState(@PathVariable Long sellerOrderId)
         throws NoSuchEntityExceptions {
 
         return ResponseMessage.<OrderForm.Response>builder()
             .message("success")
-            .data(service.orderPayment(orderId))
+            .data(service.placeShipment(sellerOrderId))
             .build();
     }
 
@@ -89,6 +91,13 @@ public class OrderController {
             .message("success")
             .data(service.listOrderClient(clientId))
             .build();
+    }
+
+    @GetMapping("/seller")
+    public ResponseMessage<List<Response>> getSellerOrders(@InjectId(role = Role.SELLER) Long sellerId) {
+        return ResponseMessage.success(
+            service.getOrdersBySeller(sellerId)
+        );
     }
 
 

@@ -29,8 +29,12 @@ import com.alconn.copang.item.ItemRepository;
 import com.alconn.copang.order.dto.OrderForm;
 import com.alconn.copang.order.dto.OrderForm.Response;
 import com.alconn.copang.order.dto.OrderItemForm;
+import com.alconn.copang.order.dto.SellerOrderForm;
 import com.alconn.copang.payment.ImpPaymentInfo;
 import com.alconn.copang.payment.PaymentService;
+import com.alconn.copang.seller.Seller;
+import com.alconn.copang.seller.SellerRepository;
+import com.alconn.copang.utils.TestUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.file.AccessDeniedException;
@@ -92,6 +96,14 @@ class OrderServiceTest {
     @Autowired
     private ItemDetailRepository itemDetailRepository;
 
+    @Autowired
+    private SellerRepository sellerRepository;
+
+    @Autowired
+    private TestUtils utils;
+
+    @Autowired
+    private OrderRepository orderRepository;
     @Test
     void listClient() {
 
@@ -231,6 +243,9 @@ class OrderServiceTest {
             .role(Role.CLIENT)
             .description("쿠팡노예")
             .build();
+        Seller seller = utils.getSeller();
+        sellerRepository.save(seller);
+
 
         Address address = Address.builder()
 //            .addressId(1L)
@@ -252,6 +267,7 @@ class OrderServiceTest {
         // ItemDetail, Item 생성
         Item item = Item.builder()
             .itemName("name123")
+            .seller(seller)
             .build();
         itemRepository.save(item);
 
@@ -314,7 +330,148 @@ class OrderServiceTest {
 
         assertNotNull(response1);
         assertEquals(client.getClientId(), response1.getClient().getClientId());
+
+        manager.flush();
+        manager.clear();
+
+        List<SellerOrderForm.Response> l = service.getOrdersBySeller(seller.getClientId());
+        assertEquals(1, l.size());
     }
 
+    @Transactional
+    @Test
+    void orderBySeller() throws NoSuchEntityExceptions {
+        objectMapper.writerWithDefaultPrettyPrinter();
 
+        Seller seller = utils.getSeller();
+
+        sellerRepository.save(seller);
+        Client client = Client.builder()
+//            .clientId(1L)
+            .username("test@testclient.com")
+            .password("1234")
+            .phone("010-9090-8989")
+            .role(Role.CLIENT)
+            .description("쿠팡노예")
+            .build();
+
+        Address address = Address.builder()
+//            .addressId(1L)
+            .receiverPhone("1")
+            .receiverName("3")
+            .addressName("41")
+            .preRequest("4124")
+            .address("서울")
+            .detail("주소1123")
+            .client(client)
+            .build();
+
+        repo.save(client);
+        manager.flush();
+        manager.clear();
+        //  Client, Address 생성
+        addressRepository.save(address);
+
+        // ItemDetail, Item 생성
+        Item item = Item.builder()
+            .itemName("name123")
+            .seller(seller)
+            .build();
+        itemRepository.save(item);
+
+        ItemDetail detail = ItemDetail.builder()
+            .stockQuantity(400)
+            .mainImg("noimage")
+            .optionName("수량")
+            .optionValue("1KG")
+            .price(1000)
+            .build();
+
+        ItemDetail detail1 = ItemDetail.builder()
+            .stockQuantity(400)
+            .mainImg("noimage")
+            .optionName("수량")
+            .optionValue("1KG")
+            .price(1000)
+            .build();
+        detail.itemConnect(item);
+        detail1.itemConnect(item);
+        itemDetailRepository.save(detail);
+        itemDetailRepository.save(detail1);
+        manager.flush();
+        manager.clear();
+
+        Address rec = addressRepository.getById(address.getAddressId());
+        assertNotNull(rec);
+        assertEquals(rec.getAddress(), address.getAddress());
+        List<OrderItemForm> orderItemForms =
+            Collections.singletonList(
+                OrderItemForm.builder()
+                    .itemDetailId(detail.getItemDetailId())
+//                    .itemId(detail.getItem().getItemId())
+//                    .itemName(detail.getItem().getItemName())
+                    .amount(1)
+                    .build());
+
+        // Order 요청폼 작성
+        OrderForm.Create create = OrderForm.Create.builder()
+            .addressId(address.getAddressId())
+            .orderItems(orderItemForms)
+//            .totalAmount(orderItemForms.stream().mapToInt(OrderItemForm::getAmount).sum())
+//            .totalPrice(orderItemForms.stream().mapToInt(o -> o.getAmount() * details.get(0).getPrice()).sum())
+            .build();
+
+        Long oid1 = service.placeOrder(create, client.getClientId()).getOrderId();
+
+        manager.flush();
+        manager.clear();
+        service.setSellerOrder(oid1);
+
+        Long oid2 = service.placeOrder(create, client.getClientId()).getOrderId();
+
+        manager.flush();
+        manager.clear();
+        service.setSellerOrder(oid2);
+
+        List<OrderItemForm> items = new ArrayList<OrderItemForm>(){{
+            add(OrderItemForm.builder().itemDetailId(detail.getItemDetailId()).amount(2).build());
+            add(OrderItemForm.builder().itemDetailId(detail1.getItemDetailId()).amount(1).build());
+        }};
+
+        OrderForm.Create create1 = OrderForm.Create.builder()
+            .addressId(address.getAddressId())
+            .orderItems(items)
+            .build();
+
+        Response response = service.placeOrder(create1, client.getClientId());
+
+
+        manager.flush();
+        manager.clear();
+
+        service.setSellerOrder(response.getOrderId());
+
+        manager.flush();
+        manager.clear();
+//        List<Response> sellers = service.getOrdersBySeller(seller.getClientId());
+//
+//        assertEquals(1, sellers.size());
+
+//        List<OrderItem> orders = orderRepository.joinTest(seller.getClientId());
+        List<SellerOrder> orders = service.getSellers(seller.getClientId());
+
+        System.out.println("orders.size() = " + orders.size());
+
+        List<SellerOrderForm.Response> orderForms = service.getOrdersBySeller(seller.getClientId());
+
+        orderForms.forEach(o -> {
+            try {
+                System.out.println("objectMapper\n            .writeValueAsString(o) = " + objectMapper
+                    .writeValueAsString(o));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }
 }
