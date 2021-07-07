@@ -37,6 +37,7 @@ import com.alconn.copang.seller.SellerRepository;
 import com.alconn.copang.utils.TestUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -232,7 +233,7 @@ class OrderServiceTest {
     @Transactional
     @Test
     void paymentTest()
-        throws JsonProcessingException, InvalidTokenException, LoginFailedException, ValidationException, NoSuchEntityExceptions, UnauthorizedException {
+        throws JsonProcessingException, InvalidTokenException, LoginFailedException, ValidationException, NoSuchEntityExceptions, UnauthorizedException, AccessDeniedException {
         objectMapper.writerWithDefaultPrettyPrinter();
         Client client = Client.builder()
 //            .clientId(1L)
@@ -242,6 +243,8 @@ class OrderServiceTest {
             .role(Role.CLIENT)
             .description("쿠팡노예")
             .build();
+        Seller seller = utils.getSeller();
+        sellerRepository.save(seller);
 
 
         Address address = Address.builder()
@@ -264,6 +267,7 @@ class OrderServiceTest {
         // ItemDetail, Item 생성
         Item item = Item.builder()
             .itemName("name123")
+            .seller(seller)
             .build();
         itemRepository.save(item);
 
@@ -325,6 +329,12 @@ class OrderServiceTest {
 
         assertNotNull(response1);
         assertEquals(client.getClientId(), response1.getClient().getClientId());
+
+        manager.flush();
+        manager.clear();
+
+        List<SellerOrderForm.Response> l = service.getOrdersBySeller(seller.getClientId());
+        assertEquals(1, l.size());
     }
 
     @Transactional

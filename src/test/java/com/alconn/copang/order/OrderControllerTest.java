@@ -272,18 +272,75 @@ class OrderControllerTest {
 
 
     @Test
-    void proceedOrder() throws Exception {
+    void getSellerOrder() throws Exception {
         Long orderId = 19082L;
 
         List<OrderItemForm> orderItemForms = new ArrayList<>();
         for (int i=0;i<2;i++){
-
+            orderItemForms.add(
+                OrderItemForm.builder()
+                .optionName("중량")
+                .optionValue(i + "KG")
+                .itemDetailId((long) i)
+                .itemId(1L)
+                .price(2000)
+                .itemName("감자")
+                .amount(2)
+                    .unitTotal(2000 * 2)
+                .mainImg("no image")
+                .build()
+            );
         }
 
-//        SellerOrderForm.Response response =
-//            SellerOrderForm.Response.builder()
-//            .orderDate(LocalDateTime.now())
-//            .orderItems()
+        UserForm.Response client =
+            UserForm.Response.builder()
+            .clientId(5L)
+            .phone("010-9090-9090")
+            .realName("길동홍")
+            .build();
+
+        SellerOrderForm.Response response =
+            SellerOrderForm.Response.builder()
+            .orderDate(LocalDateTime.now())
+            .orderItems(orderItemForms)
+            .totalAmount(orderItemForms.stream().mapToInt(OrderItemForm::getAmount).sum())
+            .totalPrice(orderItemForms.stream().mapToInt(o -> o.getPrice() * o.getAmount()).sum())
+            .sellerOrderId(3L)
+            .client(client)
+            .address(getAddressForm())
+            .build();
+
+        given(this.service.getOrdersBySeller(eq(1L))).willReturn(Collections.singletonList(response));
+
+        this.mvc.perform(
+            get("/api/orders/seller")
+            .header(HttpHeaders.AUTHORIZATION, utils.getSellerAuthHeader())
+        ).andExpect(status().isOk())
+            .andDo(print())
+            .andDo(
+                document(
+                    "orders/{method-name}",
+                    getDocumentRequest(),
+                    getDocumentResponse(),
+                    getAuthHeader(),
+                    relaxedResponseFields(
+                        fieldWithPath("message").description("결과 메세지"),
+                        fieldWithPath("code").description("결과 코드"),
+                        fieldWithPath("data").description("응답데이터")
+                    ),
+                    relaxedResponseFields(
+                        beneathPath("data").withSubsectionId("data"),
+                        fieldWithPath("sellerOrderId").type(JsonFieldType.NUMBER).description("판매자 발주서 번호"),
+                        fieldWithPath("client").type(JsonFieldType.OBJECT).description("구매자 정보"),
+                        fieldWithPath("orderItems").type(JsonFieldType.ARRAY).description("발주 상품 목록"),
+                        fieldWithPath("orderDate").type(JsonFieldType.STRING).description("주문 날짜"),
+                        fieldWithPath("address").type(JsonFieldType.OBJECT).description("주문자 주소"),
+                        fieldWithPath("totalPrice").type(JsonFieldType.NUMBER).description("총금액"),
+                        fieldWithPath("totalAmount").type(JsonFieldType.NUMBER).description("총 수량")
+
+                    )
+                )
+            );
     }
 
     @Test
