@@ -7,6 +7,7 @@ import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import com.alconn.copang.exceptions.UnauthorizedException;
 import com.alconn.copang.exceptions.ValidationException;
 import com.alconn.copang.order.dto.OrderForm;
+import com.alconn.copang.order.dto.SellerOrderForm.Response;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -62,13 +63,13 @@ public class OrderController {
         return ResponseMessage.success(service.orderPayment(uid,clientId,orderId));
     }
 
-    @PatchMapping("/{orderId}/proceed")
-    public ResponseMessage<OrderForm.Response> updateOrderState(@PathVariable Long orderId)
+    @PatchMapping("/{sellerOrderId}/shipment")
+    public ResponseMessage<OrderForm.Response> updateOrderState(@PathVariable Long sellerOrderId)
         throws NoSuchEntityExceptions {
 
         return ResponseMessage.<OrderForm.Response>builder()
             .message("success")
-            .data(service.orderPayment(orderId))
+            .data(service.placeShipment(sellerOrderId))
             .build();
     }
 
@@ -92,7 +93,7 @@ public class OrderController {
     }
 
     @GetMapping("/seller")
-    public ResponseMessage<List<OrderForm.Response>> getSellerOrders(@InjectId(role = Role.SELLER) Long sellerId) {
+    public ResponseMessage<List<Response>> getSellerOrders(@InjectId(role = Role.SELLER) Long sellerId) {
         return ResponseMessage.success(
             service.getOrdersBySeller(sellerId)
         );

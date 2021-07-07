@@ -29,6 +29,7 @@ import com.alconn.copang.item.ItemRepository;
 import com.alconn.copang.order.dto.OrderForm;
 import com.alconn.copang.order.dto.OrderForm.Response;
 import com.alconn.copang.order.dto.OrderItemForm;
+import com.alconn.copang.order.dto.SellerOrderForm;
 import com.alconn.copang.payment.ImpPaymentInfo;
 import com.alconn.copang.payment.PaymentService;
 import com.alconn.copang.seller.Seller;
@@ -422,8 +423,8 @@ class OrderServiceTest {
         service.setSellerOrder(oid2);
 
         List<OrderItemForm> items = new ArrayList<OrderItemForm>(){{
-            add(OrderItemForm.builder().itemDetailId(detail.getItemDetailId()).build());
-            add(OrderItemForm.builder().itemDetailId(detail1.getItemDetailId()).build());
+            add(OrderItemForm.builder().itemDetailId(detail.getItemDetailId()).amount(2).build());
+            add(OrderItemForm.builder().itemDetailId(detail1.getItemDetailId()).amount(1).build());
         }};
 
         OrderForm.Create create1 = OrderForm.Create.builder()
@@ -449,6 +450,17 @@ class OrderServiceTest {
         List<SellerOrder> orders = service.getSellers(seller.getClientId());
 
         System.out.println("orders.size() = " + orders.size());
+
+        List<SellerOrderForm.Response> orderForms = service.getOrdersBySeller(seller.getClientId());
+
+        orderForms.forEach(o -> {
+            try {
+                System.out.println("objectMapper\n            .writeValueAsString(o) = " + objectMapper
+                    .writeValueAsString(o));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        });
 
     }
 }

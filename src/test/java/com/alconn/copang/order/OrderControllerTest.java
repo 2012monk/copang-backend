@@ -5,6 +5,7 @@ import com.alconn.copang.client.UserForm;
 import com.alconn.copang.exceptions.InvalidTokenException;
 import com.alconn.copang.order.dto.OrderForm;
 import com.alconn.copang.order.dto.OrderItemForm;
+import com.alconn.copang.order.dto.SellerOrderForm;
 import com.alconn.copang.utils.TestUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -273,40 +274,16 @@ class OrderControllerTest {
     @Test
     void proceedOrder() throws Exception {
         Long orderId = 19082L;
-        OrderStatus status = OrderStatus.PROCEED;
 
-        OrderForm.Response response =
-                OrderForm.Response
-                        .builder()
-                        .orderId(orderId)
-                        .orderStatus(status)
-                        .build();
+        List<OrderItemForm> orderItemForms = new ArrayList<>();
+        for (int i=0;i<2;i++){
 
-        given(service.orderPayment(orderId)).willReturn(response);
+        }
 
-        ResultActions result = this.mvc.perform(
-                RestDocumentationRequestBuilders.
-                patch("/api/orders/{orderId}/proceed", orderId)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + utils.genToken())
-        );
-
-        result.andExpect(status().isOk())
-                .andDo(document("orders/{method-name}",
-                        getDocumentRequest(),
-                        getDocumentResponse(),
-                        getAuthHeader(),
-                        pathParameters(
-                                parameterWithName("orderId").description("주문번호")
-                       ),
-//                        commonFields(),
-                        relaxedResponseFields(
-                                fieldWithPath("message").description("결과 메세지"),
-                                fieldWithPath("code").description("결과 코드"),
-                                fieldWithPath("data").description("응답데이터"),
-                                fieldWithPath("data.orderId").type(JsonFieldType.NUMBER).description("주문번호"),
-                                fieldWithPath("data.orderStatus").type(JsonFieldType.STRING).description("주문상태")
-                        )
-                ));
+//        SellerOrderForm.Response response =
+//            SellerOrderForm.Response.builder()
+//            .orderDate(LocalDateTime.now())
+//            .orderItems()
     }
 
     @Test

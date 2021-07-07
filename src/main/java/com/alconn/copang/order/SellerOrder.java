@@ -40,6 +40,12 @@ public class SellerOrder {
         orderItems.forEach(o -> o.setSellerOrder(this));
     }
 
+    public void calculateTotal() {
+        this.totalAmount = orderItems.stream().mapToInt(OrderItem::getAmount).sum();
+        orderItems.forEach(OrderItem::calculateTotal);
+        this.totalPrice = orderItems.stream().mapToInt(OrderItem::getUnitTotal).sum();
+    }
+
 
 
 }
