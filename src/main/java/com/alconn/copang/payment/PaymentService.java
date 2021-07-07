@@ -43,9 +43,9 @@ public class PaymentService {
     @Value("${spring.imp.api-url}")
     private String baseUrl;
 
-    private String accessToken;
+    private static String accessToken;
 
-    private Integer exp;
+    private static Integer exp;
 
     private final RestTemplate restTemplate;
 
@@ -72,6 +72,7 @@ public class PaymentService {
      */
     public ImpPaymentInfo validatePayment(String impUid, Long orderId)
         throws ValidationException, NoSuchEntityExceptions {
+        init();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", this.accessToken);
         headers.setAcceptCharset(Collections.singletonList(StandardCharsets.UTF_8));
@@ -146,8 +147,8 @@ public class PaymentService {
         Integer exp = (Integer) response.get("expired_at");
         System.out.println("res.getBody() = " + res.getBody());
 
-        this.accessToken = token;
-        this.exp = exp;
+        accessToken = token;
+        PaymentService.exp = exp;
         return token;
 
     }
