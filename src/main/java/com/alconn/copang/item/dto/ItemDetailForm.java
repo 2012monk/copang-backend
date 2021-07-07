@@ -43,7 +43,6 @@ public class ItemDetailForm {
 
     private String subImg;
 
-
     //메인화면
     @Getter
     @Builder

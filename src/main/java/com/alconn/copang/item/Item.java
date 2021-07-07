@@ -44,20 +44,26 @@ public class Item {
     @JoinColumn(name = "categoryId")
     private Category category;
 
-    //=====
+    private String brand;
+
+
+
+
     public void changeCategory(Category category){
         this.category=category;
         category.getItemList().add(this);
     }
-    //=====
 
-    //=====
+
+
     //수정
-    public void updateMethod(String itemName, String itemComment){
+    public void updateMethod(String itemName, String itemComment,String brand){
         this.itemName=(itemName==null? this.itemName:itemName);
         this.itemComment=(itemComment==null? this.itemComment:itemComment);
+        this.brand=(itemComment==null? this.brand:brand);
+
     }
-    //=====
+
 
 
 }

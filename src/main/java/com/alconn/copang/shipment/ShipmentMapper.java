@@ -1,14 +1,12 @@
-package com.alconn.copang.payment;
+package com.alconn.copang.shipment;
 
-import com.alconn.copang.payment.dto.PaymentInfoFrom;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface PaymentMapper {
+public interface ShipmentMapper {
 
-    ImpPaymentInfo toEntity(PaymentInfoFrom paymentInfoFrom);
 
 
 }

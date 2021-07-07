@@ -17,6 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemForm {
+
     private Long itemId;
 
     @NotBlank
@@ -25,9 +26,10 @@ public class ItemForm {
     @NotEmpty
     private String itemComment;
 
-    //=====
+    @NotNull
     private Long categoryId;
-    //=====
+
+    private String brand;
 
     @Builder.Default
     private List<ItemDetailForm.DetailForm> itemDetailFormList=new ArrayList<>();
@@ -40,6 +42,7 @@ public class ItemForm {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ItemFormUpdate{
+
         @NotNull
         private  Long itemId;
 
@@ -49,9 +52,9 @@ public class ItemForm {
         @NotEmpty
         private String itemComment;
 
-        //=====
         private Long categoryId;
-        //=====
+
+        private String brand;
 
         @Builder.Default
         private List<ItemDetailForm.DetailUpdateClass> itemDetailUpdateClassList =new ArrayList<>();
@@ -74,10 +77,9 @@ public class ItemForm {
         @NotEmpty
         private String itemComment;
 
+        private String brand;
 
-        //=====
         private Long categoryId;
-        //=====
 
         private ItemDetailForm.DetailUpdateClass detailUpdateClass;
     }
@@ -92,17 +94,7 @@ public class ItemForm {
        @NotNull
        private Long itemId;
 
-       @NotBlank
-       private String itemName;
-
-       @NotEmpty
-       private String itemComment;
-
-        //=====
-        private Long categoryId;
-        //=====
-
-        private ItemDetailForm.DetailForm detailForm;
+       private ItemDetailForm.DetailForm detailForm;
     }
 
 }

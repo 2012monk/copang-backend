@@ -28,6 +28,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -91,7 +94,7 @@ public class ItemDetailServiceTest {
         Item item = Item.builder()
             .itemName("테스트상품")
             .itemComment("상품설명")
-            .seller(seller)
+//            .seller(seller)
             //=====
             .category(categoryRepository.findAll().get(0))
             //=====
@@ -143,14 +146,37 @@ public class ItemDetailServiceTest {
     @DisplayName("대표 이미지 출력용")
     @Test
     public void findMainTest() {
-        findMockData();
-        findMockData();
+
+        for(int i=0;i<10;i++) {
+            Item item = Item.builder()
+                    .itemName("의류")
+                    .itemComment("설명")
+                    .build();
+
+            itemRepository.save(item);
+
+            ItemDetail itemDetail = ItemDetail.builder()
+                    .mainImg("메인사진")
+                    .optionName("옵션명")
+                    .stockQuantity(i)
+                    .price(i)
+                    .optionValue("옵션값")
+                    .itemMainApply(ItemMainApply.APPLY)
+                    .build();
+            itemDetail.itemConnect(item);
+            itemDetailRepository.save(itemDetail);
+        }
+
         em.flush();
         em.clear();
-        List<ItemDetail> list = itemDetailRepository.listItemDetailsMainFind(ItemMainApply.APPLY);
+
+        Pageable pageable= PageRequest.of(4,5, Sort.by("stockQuantity").descending());
+
+        List<ItemDetail> list = itemDetailRepository.listItemDetailsMainFind(ItemMainApply.APPLY,pageable);
+        System.out.println("list.size() = " + list.size());
         List<ItemDetailForm> list2 = itemMapper.listDomainToDto(list);
         for (ItemDetailForm itemDetailForm : list2) {
-            System.out.println("itemDetail = " + itemDetailForm.toString());
+            System.out.println("itemDetail = " + itemDetailForm.getStockQuantity());
         }
     }
 
@@ -271,8 +297,6 @@ public class ItemDetailServiceTest {
 
         ItemForm.ItemSingle itemSingle = ItemForm.ItemSingle.builder()
             .itemId(item.getItemId())
-            .itemName("양말")
-            .itemComment("양말설명")
             .detailForm(ItemDetailForm.DetailForm.builder()
                 .price(100)
                 .stockQuantity(20)
@@ -301,7 +325,7 @@ public class ItemDetailServiceTest {
         Item item = Item.builder()
             .itemName("테스트상품")
             .itemComment("상품설명")
-            .seller(Seller.builder().clientId(client.getClientId()).build())
+//            .seller(Seller.builder().clientId(client.getClientId()).build())
             //=====
             .category(categoryRepository.findAll().get(0))
             //=====
@@ -339,10 +363,36 @@ public class ItemDetailServiceTest {
 
         em.flush();
         em.clear();
+        int page = 0;
+        ItemViewForm.MainViewForm mainList = itemDetailService.findMainList(page);
 
-        List<MainForm> mainList = itemDetailService.findMainList();
+//        assertNotNull(mainList);
+//        assertEquals(1, mainList.size());
+    }
 
-        assertNotNull(mainList);
-        assertEquals(1, mainList.size());
+    @Transactional
+    @Test
+    public void repotest(){
+        Item item= Item.builder()
+                .itemName("tq")
+                .itemComment("teq")
+                .build();
+        itemRepository.save(item);
+
+        ItemDetail itemDetail=ItemDetail.builder()
+                .price(100)
+                .stockQuantity(1000)
+                .optionName("Aa")
+                .optionValue("aa")
+                .mainImg("a")
+                .build();
+        itemDetail.itemConnect(item);
+
+        itemDetailRepository.save(itemDetail);
+        em.flush();
+        em.clear();
+
+        System.out.println("itemDetailRepository.findAll().get(0) = " + itemDetailRepository.findItemDetailPage(itemRepository.findAll().get(0).getItemId()).toString());
+
     }
 }

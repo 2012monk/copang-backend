@@ -11,6 +11,8 @@ import com.alconn.copang.item.mapper.ItemMapper;
 import com.alconn.copang.seller.Seller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,7 +56,7 @@ public class ItemDetailService {
 
         return listForm;
     }
-//====
+
 
     //다중 저장
     @Transactional
@@ -63,18 +65,18 @@ public class ItemDetailService {
         Item item=Item.builder()
                 .itemName(itemForm.getItemName())
                 .itemComment(itemForm.getItemComment())
+                .brand(itemForm.getBrand())
                 .seller(Seller.builder().clientId(sellerId).build())
                 .build();
         Category category=categoryRepository.findById(itemForm.getCategoryId()).orElseThrow(()->new NoSuchElementException("카테고리 정보를 확인해주세요"));
-        //==== 자식 카테고리가 있는 상황에 추가시 에러발생``
-        if(category.getChildCheck().equalsIgnoreCase("y")) {
-            throw new DataIntegrityViolationException("자식 카테고리에 등록해주세요");
-        }
-        //====
-       //=====
+//
+//        if(category.getChildCheck().equalsIgnoreCase("y")) {
+//            throw new DataIntegrityViolationException("자식 카테고리에 등록해주세요");
+//        }
+
         item.changeCategory(category);
         categoryRepository.save(category);
-        //=====
+
         itemService.saveItem(item);
 
         List<ItemDetail> itemDetailList = itemMapper.listDtoToDomainN(itemForm.getItemDetailFormList());
@@ -123,10 +125,34 @@ public class ItemDetailService {
     }
 
     //전체출력 ( 대표 출력 )
-    public List<ItemDetailForm.MainForm> findMainList(){
-        List<ItemDetail> list=itemDetailRepository.listItemDetailsMainFind(ItemMainApply.APPLY);
+    public ItemViewForm.MainViewForm findMainList(int page){
+        //!==
+        System.out.println("page = " + page);
+        //!==
+        if(page<1) page=0;
+        else page-=1;
+
+        Pageable pageable= PageRequest.of(page,30);
+
+
+        List<ItemDetail> list=itemDetailRepository.listItemDetailsMainFind(ItemMainApply.APPLY,pageable);
+
         List<ItemDetailForm.MainForm> listForm=itemMapper.mainPage(list);
-        return listForm;
+        
+        int a=itemDetailRepository.countItemDetailByItemMainApply(ItemMainApply.APPLY);
+
+        //필터링 카운트
+        ItemViewForm.MainViewForm mainViewForm=ItemViewForm.MainViewForm.builder()
+                .totalCount(a)
+                .list(listForm)
+                .build();
+
+        for(ItemDetailForm.MainForm l:listForm){
+            System.out.println("l.toString() = " + l.toString());
+        }
+
+//        return listForm;
+        return mainViewForm;
     }
 
     //상품 상세 페이지
@@ -152,6 +178,7 @@ public class ItemDetailService {
     @Transactional
     public ItemForm delItemDetail(Long id){
         ItemDetail itemDetail=itemDetailRepository.findById(id).orElseThrow(()->new NoSuchElementException("없는 상품입니다"));
+
         List<ItemDetail> itemDetailList=new ArrayList<>();
         itemDetailList.add(itemDetail);
 
@@ -175,7 +202,7 @@ public class ItemDetailService {
         boolean perceive=false;
         if(!item.getItemName().equals(itemFormUpdate.getItemName())||!item.getItemComment().equals(itemFormUpdate.getItemComment())){
             //=====
-            item.updateMethod(itemFormUpdate.getItemName(), itemFormUpdate.getItemComment());
+            item.updateMethod(itemFormUpdate.getItemName(), itemFormUpdate.getItemComment(), itemFormUpdate.getBrand());
             if(item.getCategory().getCategoryId()!=itemFormUpdate.getCategoryId()&&
                     itemFormUpdate.getCategoryId()!=null)
                 categoryRepository.findById(itemFormUpdate.getCategoryId())
@@ -214,30 +241,26 @@ public class ItemDetailService {
     @Transactional
     public ItemViewForm itemSingleUpdate(ItemForm.ItemFormUpdateSingle updateSingle)
         throws NoSuchEntityExceptions {
-        Item item=itemService.itemFindNum(updateSingle.getItemId());
-//=====
-        item.updateMethod(updateSingle.getItemName(), updateSingle.getItemComment());
-        if(item.getCategory().getCategoryId()!=updateSingle.getCategoryId()) {
 
+        Item item=itemService.itemFindNum(updateSingle.getItemId());
+
+        if(item.getCategory().getCategoryId()!=updateSingle.getCategoryId()) {
             item.changeCategory(categoryRepository.findById(updateSingle.getCategoryId())
                     .orElseThrow(() -> new NoSuchElementException("등록된 카테고리가 아닙니다")));
         }
+
+        item.updateMethod(updateSingle.getItemName(), updateSingle.getItemComment(), updateSingle.getBrand());
+
         itemService.saveItem(item);
 
-//        updateMethod로 대체
-//        if(!item.getItemName().equals(updateSingle.getItemName())) {
-//            item.nameUpdate(updateSingle.getItemName());
-//            itemService.saveItem(item);
-//        } else if (!item.getItemName().equals(updateSingle.getItemComment())) {
-//            item.commentUpdate(updateSingle.getItemComment());
-//            itemService.saveItem(item);
-//        }
-//=====
+
         ItemDetail itemDetail=itemDetailRepository.findById(updateSingle.getDetailUpdateClass().getItemDetailId())
                 .orElseThrow(()->new NoSuchElementException("옵션정보를 찾을 수 없습니다"));
+
         itemDetail.itemConnect(item);
 
         ItemDetailForm.DetailUpdateClass detailUpdateClass=updateSingle.getDetailUpdateClass();
+
         itemDetail.updateAllData(
                 detailUpdateClass.getPrice(),
                 detailUpdateClass.getStockQuantity(),
@@ -247,12 +270,10 @@ public class ItemDetailService {
                 detailUpdateClass.getSubImg()
         );
         itemDetailRepository.save(itemDetail);
+
         ItemViewForm itemViewForm=itemMapper.detailViewForm(itemDetail);
         return itemViewForm;
     }
-
-
-
 }
 
 

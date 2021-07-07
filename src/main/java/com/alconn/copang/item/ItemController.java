@@ -1,7 +1,6 @@
 package com.alconn.copang.item;
 
 import com.alconn.copang.annotations.InjectId;
-import com.alconn.copang.aop.GlobalExceptionHandler;
 import com.alconn.copang.client.Role;
 import com.alconn.copang.common.ResponseMessage;
 import com.alconn.copang.exceptions.NoSuchEntityExceptions;
@@ -10,16 +9,10 @@ import com.alconn.copang.item.dto.ItemForm;
 import com.alconn.copang.item.dto.ItemViewForm;
 import java.util.List;
 import javax.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,11 +22,34 @@ public class ItemController {
 
     private final ItemDetailService itemDetailService;
 
-    private final GlobalExceptionHandler globalExceptionHandler;
+    private final PagingFilterService pagingfilterService;
+
+    /*TODO
+    FIXME
+     순서 -- 폼줄이기
+     2. 브랜드 == 끝
+     3. 가격순, 최신순 조회
+     4. 필터링 ( Query String) + 페이징
+     5. 배송추가
+     6. 검색
+    */
+//
+//    //필터링
+//    @GetMapping("/list")
+//    public ResponseMessage<List<ItemDetailForm.MainForm>> listfilter(
+//            @RequestParam(name = "price",required = false) int price,
+//            @RequestParam(name = "price",required = false) int price,
+//            @RequestParam(name = "price",required = false) int price,
+//            @RequestParam(name = "price",required = false) int price,
+//
+//    ){
+//        return null;
+//    }
+
 
     //카테고리 클릭 시 자식 카테고리 조회하여 상품출력
     @GetMapping("/list/categoryid={categoryId}")
-        public ResponseMessage<List<ItemDetailForm.MainForm>> categoryItemlist(@PathVariable(name = "categoryId")Long id) throws NoSuchEntityExceptions {
+        public ResponseMessage<List<ItemDetailForm.MainForm>> categoryItemlist(@Valid @PathVariable(name = "categoryId")Long id) throws NoSuchEntityExceptions {
             List<ItemDetailForm.MainForm> itemDetailFormList=itemDetailService.findCategpryMainList(id);
             return ResponseMessage.<List<ItemDetailForm.MainForm>>builder()
                     .message("카테고리상품리스트")
@@ -41,8 +57,6 @@ public class ItemController {
                     .code(200)
                     .build();
         }
-
-
 
     //저장
     @PostMapping("/add")
@@ -80,17 +94,20 @@ public class ItemController {
             .build();
     }
 
-
+    //page 패스파람으로 받고 페이지별로 갯수
     //메인 대표이미지만 출력
-    @GetMapping("/list")
-    public ResponseMessage<List<ItemDetailForm.MainForm>> list() {
-        List<ItemDetailForm.MainForm> itemDetailFormList = itemDetailService.findMainList();
-        return ResponseMessage.<List<ItemDetailForm.MainForm>>builder()
+    @GetMapping("/list/{pageNumber}")
+//    public ResponseMessage<List<ItemDetailForm.MainForm>> list(@PathVariable(name = "pageNumber",required = false) int page){
+    public ResponseMessage<ItemViewForm.MainViewForm> list(@PathVariable(name = "pageNumber",required = false) int page){
+        ItemViewForm.MainViewForm itemDetailFormList = itemDetailService.findMainList(page);
+        return ResponseMessage.<ItemViewForm.MainViewForm>builder()
             .message("대표리스트")
             .data(itemDetailFormList)
             .code(200)
             .build();
     }
+
+
 
     //상세페이지
     @GetMapping("/list/itemid={itemId}")
