@@ -242,6 +242,8 @@ class OrderServiceTest {
             .role(Role.CLIENT)
             .description("쿠팡노예")
             .build();
+        Seller seller = utils.getSeller();
+        sellerRepository.save(seller);
 
 
         Address address = Address.builder()
@@ -264,6 +266,7 @@ class OrderServiceTest {
         // ItemDetail, Item 생성
         Item item = Item.builder()
             .itemName("name123")
+            .seller(seller)
             .build();
         itemRepository.save(item);
 
@@ -325,6 +328,12 @@ class OrderServiceTest {
 
         assertNotNull(response1);
         assertEquals(client.getClientId(), response1.getClient().getClientId());
+
+        manager.flush();
+        manager.clear();
+
+        List<SellerOrderForm.Response> l = service.getOrdersBySeller(seller.getClientId());
+        assertEquals(1, l.size());
     }
 
     @Transactional
