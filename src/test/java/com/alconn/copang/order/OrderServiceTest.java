@@ -100,6 +100,8 @@ class OrderServiceTest {
     @Autowired
     private TestUtils utils;
 
+    @Autowired
+    private OrderRepository orderRepository;
     @Test
     void listClient() {
 
@@ -324,8 +326,9 @@ class OrderServiceTest {
         assertEquals(client.getClientId(), response1.getClient().getClientId());
     }
 
+    @Transactional
     @Test
-    void orderBySeller() {
+    void orderBySeller() throws NoSuchEntityExceptions {
         objectMapper.writerWithDefaultPrettyPrinter();
 
         Seller seller = utils.getSeller();
@@ -371,8 +374,18 @@ class OrderServiceTest {
             .optionValue("1KG")
             .price(1000)
             .build();
+
+        ItemDetail detail1 = ItemDetail.builder()
+            .stockQuantity(400)
+            .mainImg("noimage")
+            .optionName("수량")
+            .optionValue("1KG")
+            .price(1000)
+            .build();
         detail.itemConnect(item);
+        detail1.itemConnect(item);
         itemDetailRepository.save(detail);
+        itemDetailRepository.save(detail1);
         manager.flush();
         manager.clear();
 
@@ -396,15 +409,46 @@ class OrderServiceTest {
 //            .totalPrice(orderItemForms.stream().mapToInt(o -> o.getAmount() * details.get(0).getPrice()).sum())
             .build();
 
-        service.placeOrder(create, client.getClientId());
+        Long oid1 = service.placeOrder(create, client.getClientId()).getOrderId();
+
+        manager.flush();
+        manager.clear();
+        service.setSellerOrder(oid1);
+
+        Long oid2 = service.placeOrder(create, client.getClientId()).getOrderId();
+
+        manager.flush();
+        manager.clear();
+        service.setSellerOrder(oid2);
+
+        List<OrderItemForm> items = new ArrayList<OrderItemForm>(){{
+            add(OrderItemForm.builder().itemDetailId(detail.getItemDetailId()).build());
+            add(OrderItemForm.builder().itemDetailId(detail1.getItemDetailId()).build());
+        }};
+
+        OrderForm.Create create1 = OrderForm.Create.builder()
+            .addressId(address.getAddressId())
+            .orderItems(items)
+            .build();
+
+        Response response = service.placeOrder(create1, client.getClientId());
+
 
         manager.flush();
         manager.clear();
 
-        List<Response> sellers = service.getOrdersBySeller(seller.getClientId());
+        service.setSellerOrder(response.getOrderId());
 
-        assertEquals(1, sellers.size());
+        manager.flush();
+        manager.clear();
+//        List<Response> sellers = service.getOrdersBySeller(seller.getClientId());
+//
+//        assertEquals(1, sellers.size());
 
+//        List<OrderItem> orders = orderRepository.joinTest(seller.getClientId());
+        List<SellerOrder> orders = service.getSellers(seller.getClientId());
+
+        System.out.println("orders.size() = " + orders.size());
 
     }
 }

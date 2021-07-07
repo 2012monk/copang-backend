@@ -15,7 +15,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long> {
 //    List<Orders> findSellerOrders(@Param(value = "sellerId") Long sellerId);
 
 
-    @Query("select o from Orders o join fetch OrderItem ")
-    List<Orders> joinTest();
+    @Query("select i from OrderItem i where i.itemDetail.item.seller.clientId=:sellerId group by i.orders")
+    List<OrderItem> joinTest(@Param(value = "sellerId") Long sellerId);
 
 }

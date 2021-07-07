@@ -8,7 +8,9 @@ import com.alconn.copang.order.dto.OrderForm.Response;
 import com.alconn.copang.order.mapper.OrderMapper;
 import com.alconn.copang.payment.ImpPaymentInfo;
 import com.alconn.copang.payment.PaymentService;
+import com.alconn.copang.seller.Seller;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,8 @@ public class OrderService {
     private final PaymentService paymentService;
 
     private final OrderMapper orderMapper;
+
+    private final SellerOrderRepository sellerOrderRepository;
 
     @Transactional
     public OrderForm.Response readyOrder(OrderForm.Create form, Long clientId) {
@@ -54,16 +58,53 @@ public class OrderService {
             throw new ValidationException("요청하신 주문정보의 가격과 일치하지 않습니다");
         }
 
-        if (orders.getClient().getClientId() != clientId) {
-            throw new UnauthorizedException("주문에대한 권한이 없습니다");
+        if (!orders.getClient().getClientId().equals(clientId)) {
+            throw new UnauthorizedException("주문에 대한 권한이 없습니다");
         }
         orders.setPayment(impPaymentInfo);
 
         orders.paymentComplete();
 
+        List<OrderItem> orderItems = orders.getOrderItemList();
+
+        Map<Seller, List<OrderItem>> selectBySeller =
+            orderItems.stream().collect(Collectors.groupingBy(c -> c.getItemDetail().getItem().getSeller()));
+
+        List<SellerOrder> sellerOrders =
+            selectBySeller.entrySet().stream().map(c ->
+            SellerOrder.builder()
+            .seller(c.getKey())
+            .orderItems(c.getValue())
+            .build()
+                ).collect(Collectors.toList());
+
+        sellerOrders.forEach(SellerOrder::placeSellerOrder);
+
+        sellerOrderRepository.saveAll(sellerOrders);
         repo.save(orders);
 
         return orderMapper.toResponse(orders);
+    }
+
+    @Transactional
+    public void setSellerOrder(Long orderId) throws NoSuchEntityExceptions {
+        Orders orders = repo.findById(orderId).orElseThrow(NoSuchEntityExceptions::new);
+        List<OrderItem> orderItems = orders.getOrderItemList();
+
+        Map<Seller, List<OrderItem>> selectBySeller =
+            orderItems.stream().collect(Collectors.groupingBy(c -> c.getItemDetail().getItem().getSeller()));
+
+        List<SellerOrder> sellerOrders =
+            selectBySeller.entrySet().stream().map(c ->
+                SellerOrder.builder()
+                    .seller(c.getKey())
+                    .orderItems(c.getValue())
+                    .build()
+            ).collect(Collectors.toList());
+
+        sellerOrders.forEach(SellerOrder::placeSellerOrder);
+
+        sellerOrderRepository.saveAll(sellerOrders);
     }
 
 
@@ -112,14 +153,6 @@ public class OrderService {
         List<Orders> ordersList = repo.findOrdersByClient_ClientId(clientId);
         ordersList.forEach(Orders::calculateTotal);
 
-//        List<OrderForm.Response> responses = ordersList.stream().map(o ->
-//            OrderForm.Response.builder()
-//                .orderId(o.getOrderId())
-//                .orderItems(
-//                    o.getOrderItemList().stream().map(orderItemMapper::toDto)
-//                        .collect(Collectors.toList())).build()
-//        ).collect(Collectors.toList());
-
         return ordersList.stream().map(
             orderMapper::toResponse
         ).collect(Collectors.toList());
@@ -131,47 +164,17 @@ public class OrderService {
 //        orders.getOrderItemList().forEach(OrderItem::calculateTotal);
         orders.calculateTotal();
         return orderMapper.toResponse(orders);
-        //        AddressForm address = AddressForm.builder()
-//                .receiverName(orders.getAddress().getReceiverName())
-//                .address(orders.getAddress().getAddress())
-//                .receiverPhone(orders.getAddress().getReceiverPhone())
-//                .preRequest(orders.getAddress().getPreRequest())
-//                .detail(orders.getAddress().getDetail())
-//                .addressId(orders.getAddress().getAddressId())
-//                .build();
-//        OrderForm.Response response =
-//                OrderForm.Response
-//                .builder()
-//                .orderId(orderId)
-//                .orderStatus(orders.getOrderState())
-//                .address(address)
-//                .orderDate(orders.getOrderDate())
-//                .totalAmount(orders.getTotalAmount())
-//                .totalPrice(orders.getTotalPrice())
-//                .orderItems(
-//                        orders.getOrderItemList()
-//                        .stream().map(i ->
-//                                OrderItemForm.builder()
-//                                .amount(i.getAmount())
-//                                .unitTotal(i.getTotal())
-//                                .price(i.getItemDetail().getPrice())
-//                                .itemId(i.getItemDetail().getItem().getItemId())
-//                                .itemDetailId(i.getItemDetail().getItemDetailId())
-//                                .itemName(i.getItemDetail().getItem().getItemName())
-//                                .optionName(i.getItemDetail().getOptionName())
-//                                .optionValue(i.getItemDetail().getOptionValue())
-//                                .build()
-//                        ).collect(Collectors.toList())
-//                )
-//                .client(clientMapper.toResponse(orders.getClient()))
-//                .build();
 
     }
 
     public List<Response> getOrdersBySeller(Long sellerId) {
-//        List<Orders> orders = repo.findSellerOrders(sellerId);
-//
-//        return orders.stream().map(orderMapper::toResponse).collect(Collectors.toList());
+        List<SellerOrder> sellerOrders = sellerOrderRepository.findSellerOrdersBySeller_ClientId(sellerId);
+
+
         return null;
+    }
+
+    public List<SellerOrder> getSellers(Long sellerId) {
+        return sellerOrderRepository.findSellerOrdersBySeller_ClientId(sellerId);
     }
 }

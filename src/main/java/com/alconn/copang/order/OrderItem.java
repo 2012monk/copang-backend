@@ -24,6 +24,10 @@ public class OrderItem {
     @JoinColumn(name = "orders_id")
     private Orders orders;
 
+    @ManyToOne
+    @JoinColumn(name = "seller_order_id")
+    private SellerOrder sellerOrder;
+
     private int amount;
 
     private int unitTotal;
@@ -37,5 +41,9 @@ public class OrderItem {
 
     public void calculateTotal() {
         this.unitTotal = this.amount * this.itemDetail.getPrice();
+    }
+
+    public void setSellerOrder(SellerOrder sellerOrder) {
+        this.sellerOrder = sellerOrder;
     }
 }
