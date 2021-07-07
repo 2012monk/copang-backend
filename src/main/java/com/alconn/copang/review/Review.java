@@ -40,6 +40,8 @@ public class Review {
 
     private boolean satisfied;
 
+    private String title;
+
     @Lob
     private String content;
 

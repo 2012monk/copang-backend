@@ -4,9 +4,13 @@ import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import com.alconn.copang.exceptions.UnauthorizedException;
 import com.alconn.copang.exceptions.ValidationException;
 import com.alconn.copang.order.dto.OrderForm;
+import com.alconn.copang.order.dto.OrderForm.Response;
+import com.alconn.copang.order.dto.SellerOrderForm;
 import com.alconn.copang.order.mapper.OrderMapper;
+import com.alconn.copang.order.mapper.SellerOrderMapper;
 import com.alconn.copang.payment.ImpPaymentInfo;
 import com.alconn.copang.payment.PaymentService;
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +32,12 @@ public class OrderService {
 
     private final OrderMapper orderMapper;
 
+    private final SellerOrderRepository sellerOrderRepository;
+
+    private final SellerOrderMapper sellerOrderMapper;
+
+    private final SellerOrderService sellerOrderService;
+
     @Transactional
     public OrderForm.Response readyOrder(OrderForm.Create form, Long clientId) {
         Orders orders = orderMapper.placeOrder(form, clientId);
@@ -40,7 +50,7 @@ public class OrderService {
 
     @Transactional
     public OrderForm.Response orderPayment(String uid, Long clientId, Long orderId)
-        throws NoSuchEntityExceptions, ValidationException, UnauthorizedException {
+        throws NoSuchEntityExceptions, ValidationException, UnauthorizedException, AccessDeniedException {
 
 //        String uid = form.getUid();
         ImpPaymentInfo impPaymentInfo = paymentService.validatePayment(uid, orderId);
@@ -53,16 +63,23 @@ public class OrderService {
             throw new ValidationException("요청하신 주문정보의 가격과 일치하지 않습니다");
         }
 
-        if (orders.getClient().getClientId() != clientId) {
-            throw new UnauthorizedException("주문에대한 권한이 없습니다");
+        if (clientId != null &&
+            !orders.getClient().getClientId().equals(clientId)) {
+            throw new AccessDeniedException("주문에대한 권한이 없습니다");
         }
         orders.setPayment(impPaymentInfo);
 
         orders.paymentComplete();
-
+        sellerOrderService.placeSellerOrder(orders);
         repo.save(orders);
 
         return orderMapper.toResponse(orders);
+    }
+
+    @Transactional
+    public void setSellerOrder(Long orderId) throws NoSuchEntityExceptions {
+        Orders orders = repo.findById(orderId).orElseThrow(NoSuchEntityExceptions::new);
+        sellerOrderService.placeSellerOrder(orders);
     }
 
 
@@ -86,18 +103,6 @@ public class OrderService {
 
 
     @Transactional
-    public OrderForm.Response orderPayment(Long orderId) throws NoSuchEntityExceptions {
-
-        Orders orders = repo.findById(orderId).orElseThrow(NoSuchEntityExceptions::new);
-
-        orders.proceedOrder();
-        return OrderForm.Response.builder()
-            .orderId(orderId)
-            .orderStatus(orders.getOrderStatus())
-            .build();
-    }
-
-    @Transactional
     public OrderForm.Response cancelOrder(Long orderId) throws NoSuchEntityExceptions {
         Orders orders = repo.findById(orderId).orElseThrow(NoSuchEntityExceptions::new);
         orders.cancelOrder();
@@ -111,14 +116,6 @@ public class OrderService {
         List<Orders> ordersList = repo.findOrdersByClient_ClientId(clientId);
         ordersList.forEach(Orders::calculateTotal);
 
-//        List<OrderForm.Response> responses = ordersList.stream().map(o ->
-//            OrderForm.Response.builder()
-//                .orderId(o.getOrderId())
-//                .orderItems(
-//                    o.getOrderItemList().stream().map(orderItemMapper::toDto)
-//                        .collect(Collectors.toList())).build()
-//        ).collect(Collectors.toList());
-
         return ordersList.stream().map(
             orderMapper::toResponse
         ).collect(Collectors.toList());
@@ -130,40 +127,24 @@ public class OrderService {
 //        orders.getOrderItemList().forEach(OrderItem::calculateTotal);
         orders.calculateTotal();
         return orderMapper.toResponse(orders);
-        //        AddressForm address = AddressForm.builder()
-//                .receiverName(orders.getAddress().getReceiverName())
-//                .address(orders.getAddress().getAddress())
-//                .receiverPhone(orders.getAddress().getReceiverPhone())
-//                .preRequest(orders.getAddress().getPreRequest())
-//                .detail(orders.getAddress().getDetail())
-//                .addressId(orders.getAddress().getAddressId())
-//                .build();
-//        OrderForm.Response response =
-//                OrderForm.Response
-//                .builder()
-//                .orderId(orderId)
-//                .orderStatus(orders.getOrderState())
-//                .address(address)
-//                .orderDate(orders.getOrderDate())
-//                .totalAmount(orders.getTotalAmount())
-//                .totalPrice(orders.getTotalPrice())
-//                .orderItems(
-//                        orders.getOrderItemList()
-//                        .stream().map(i ->
-//                                OrderItemForm.builder()
-//                                .amount(i.getAmount())
-//                                .unitTotal(i.getTotal())
-//                                .price(i.getItemDetail().getPrice())
-//                                .itemId(i.getItemDetail().getItem().getItemId())
-//                                .itemDetailId(i.getItemDetail().getItemDetailId())
-//                                .itemName(i.getItemDetail().getItem().getItemName())
-//                                .optionName(i.getItemDetail().getOptionName())
-//                                .optionValue(i.getItemDetail().getOptionValue())
-//                                .build()
-//                        ).collect(Collectors.toList())
-//                )
-//                .client(clientMapper.toResponse(orders.getClient()))
-//                .build();
 
+    }
+
+    public List<SellerOrderForm.Response> getOrdersBySeller(Long sellerId) {
+        List<SellerOrder> sellerOrders = sellerOrderRepository
+            .findSellerOrdersBySeller_ClientId(sellerId);
+        sellerOrders.forEach(SellerOrder::calculateTotal);
+
+        return sellerOrders.stream()
+            .map(s -> sellerOrderMapper.mtoForm(s, s.getOrderItems().get(0).getOrders()))
+            .collect(Collectors.toList());
+    }
+
+    public List<SellerOrder> getSellers(Long sellerId) {
+        return sellerOrderRepository.findSellerOrdersBySeller_ClientId(sellerId);
+    }
+
+    public Response placeShipment(Long sellerOrderId) {
+        return null;
     }
 }

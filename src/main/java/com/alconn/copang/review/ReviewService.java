@@ -28,7 +28,8 @@ public class ReviewService {
 
     public List<Response> getReviewByItem(Long itemId) {
 
-        List<Review> list = repository.findReviewsByOrderItem_ItemDetail_Item_ItemId(itemId, Sort.by(Direction.ASC, "rating"));
+        List<Review> list = repository.findReviewsByOrderItem_ItemDetail_Item_ItemId(itemId,
+            Sort.by(Direction.ASC, "rating"));
 
         return list.stream().map(mapper::toDto).collect(Collectors.toList());
     }
@@ -36,7 +37,6 @@ public class ReviewService {
     @Transactional
     public Response postReview(Request requestForm, Long clientId) {
         Review review = mapper.toEntity(requestForm, clientId);
-
 
         repository.save(review);
         return mapper.toDto(review);
@@ -67,15 +67,14 @@ public class ReviewService {
 
 
     public List<Response> getUserReview(Long clientId) {
-        List<Review> list = repository.findReviewsByWriter_ClientId(clientId)
-            .stream().sorted(Comparator.comparing(Review::getRegisterDate))
-            .collect(Collectors.toList());
-        return mapper.toDto(list);
+        List<Review> list = repository.findReviewsByWriter_ClientIdOrderByRegisterDate(clientId);
+        return list.stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
-    // TODO Implement Me
     public List<Response> getSellerReview(Long sellerId) {
-        return null;
+
+        return mapper.toDto(repository
+            .findReviewsByOrderItem_ItemDetail_Item_Seller_ClientIdOrderByRegisterDate(sellerId));
     }
 
 

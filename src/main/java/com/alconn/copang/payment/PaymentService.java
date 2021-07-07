@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -25,6 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+@Slf4j
 
 @Transactional
 @Service
@@ -40,9 +43,9 @@ public class PaymentService {
     @Value("${spring.imp.api-url}")
     private String baseUrl;
 
-    private String accessToken;
+    private static String accessToken;
 
-    private Integer exp;
+    private static Integer exp;
 
     private final RestTemplate restTemplate;
 
@@ -69,25 +72,38 @@ public class PaymentService {
      */
     public ImpPaymentInfo validatePayment(String impUid, Long orderId)
         throws ValidationException, NoSuchEntityExceptions {
+        init();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", this.accessToken);
         headers.setAcceptCharset(Collections.singletonList(StandardCharsets.UTF_8));
         String requestUri = baseUrl + "/payments/" + impUid;
 
         HttpEntity<HttpHeaders> req = new HttpEntity<>(headers);
-        ResponseEntity<ImpPayResponse> res = restTemplate.exchange(
+        ResponseEntity<ImpPayResponse> res = null;
+        try{
+            res = restTemplate.exchange(
             requestUri,
             HttpMethod.GET,
             req,
             ImpPayResponse.class
         );
 
-        ResponseEntity<String> st = restTemplate.exchange(
-            requestUri,
-            HttpMethod.GET,
-            req,
-            String.class
-        );
+        }catch (Exception e) {
+            log.info("http client exception ", e);
+            init();
+            res = restTemplate.exchange(
+                requestUri,
+                HttpMethod.GET,
+                req,
+                ImpPayResponse.class);
+        }
+
+//        ResponseEntity<String> st = restTemplate.exchange(
+//            requestUri,
+//            HttpMethod.GET,
+//            req,
+//            String.class
+//        );
         if (res.getStatusCode() == HttpStatus.NOT_FOUND) {
             throw new NoSuchEntityExceptions("주문번호가 잘못되었습니다");
         }
@@ -131,8 +147,8 @@ public class PaymentService {
         Integer exp = (Integer) response.get("expired_at");
         System.out.println("res.getBody() = " + res.getBody());
 
-        this.accessToken = token;
-        this.exp = exp;
+        accessToken = token;
+        PaymentService.exp = exp;
         return token;
 
     }
