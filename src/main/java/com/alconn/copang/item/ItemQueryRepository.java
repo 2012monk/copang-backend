@@ -44,7 +44,7 @@ public class ItemQueryRepository {
 
     public List<ItemDetail> filterBy(String brand, Integer price, LocalDate startDate, LocalDate endDate) {
         return queryFactory
-            .selectFrom(itemDetail)
+                .selectFrom(itemDetail)
             .where(eqBrand(brand))
             .where(itemDetail.item.itemCreate.after(startDate))
             .where(itemDetail.item.itemCreate.before(endDate))
