@@ -4,12 +4,13 @@ package com.alconn.copang.item.dto;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+
+import com.alconn.copang.shipment.dto.ShipmentInfoForm;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-//엔티티 1:1 매핑시 사용
 @Getter
 @Builder
 @NoArgsConstructor
@@ -64,17 +65,8 @@ public class ItemDetailForm {
 
         private Long sellerId;
 
-        @Override
-        public String toString() {
-            return "MainForm{" +
-                "itemId=" + itemId +
-                ", itemName='" + itemName + '\'' +
-                ", itemDetailId=" + itemDetailId +
-                ", categoryId=" + categoryId +
-                ", price=" + price +
-                ", mainImg='" + mainImg + '\'' +
-                '}';
-        }
+        private ShipmentInfoForm shipmentInfoForm;
+
     }
 
     //상세페이지, 저장
@@ -109,32 +101,4 @@ public class ItemDetailForm {
 
     }
 
-    //업데이트
-    @Getter
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class DetailUpdateClass {
-
-        @NotNull
-        private Long itemDetailId;
-
-        @NotBlank
-        private int price;
-
-        @NotBlank
-        private int stockQuantity;
-
-        @NotNull
-        private String optionName;
-
-        @NotNull
-        private String optionValue;
-
-        @NotBlank
-        private String mainImg;
-
-        private String subImg;
-
-    }
 }

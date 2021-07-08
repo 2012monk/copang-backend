@@ -15,6 +15,19 @@ public class PagingFilterService {
     private final ItemDetailRepository itemDetailRepository;
 
 
+    //
+//    //필터링
+//    @GetMapping("/list")
+//    public ResponseMessage<List<ItemDetailForm.MainForm>> listfilter(
+//            @RequestParam(name = "price",required = false) int price,
+//            @RequestParam(name = "price",required = false) int price,
+//            @RequestParam(name = "price",required = false) int price,
+//            @RequestParam(name = "price",required = false) int price,
+//
+//    ){
+//        return null;
+//    }
+
     public void list(){
 
 

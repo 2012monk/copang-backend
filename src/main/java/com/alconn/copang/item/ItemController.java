@@ -33,18 +33,7 @@ public class ItemController {
      5. 배송추가
      6. 검색
     */
-//
-//    //필터링
-//    @GetMapping("/list")
-//    public ResponseMessage<List<ItemDetailForm.MainForm>> listfilter(
-//            @RequestParam(name = "price",required = false) int price,
-//            @RequestParam(name = "price",required = false) int price,
-//            @RequestParam(name = "price",required = false) int price,
-//            @RequestParam(name = "price",required = false) int price,
-//
-//    ){
-//        return null;
-//    }
+
 
 
     //카테고리 클릭 시 자식 카테고리 조회하여 상품출력
@@ -58,7 +47,7 @@ public class ItemController {
                     .build();
         }
 
-    //저장
+    //상품 등록
     @PostMapping("/add")
     public ResponseMessage<ItemForm> add(@Valid @RequestBody ItemForm itemForm,
         @InjectId(role = Role.SELLER) Long sellerId) {
@@ -146,11 +135,11 @@ public class ItemController {
 
     //상품 전체 수정 + 카테고리 수정 포함
     @PutMapping("/update/list")
-    public ResponseMessage<ItemForm.ItemFormUpdate> itemUpdate(
-        @Valid @RequestBody ItemForm.ItemFormUpdate itemForm) throws NoSuchEntityExceptions {
-        ItemForm.ItemFormUpdate itemForm2 = itemDetailService.updateItemDetail(itemForm);
+    public ResponseMessage<ItemForm> itemUpdate(
+        @Valid @RequestBody ItemForm itemForm) throws NoSuchEntityExceptions {
+        ItemForm itemForm2 = itemDetailService.updateItemDetail(itemForm);
 
-        return ResponseMessage.<ItemForm.ItemFormUpdate>builder()
+        return ResponseMessage.<ItemForm>builder()
             .message("상품전체수정목록")
             .data(itemForm2)
             .code(200)

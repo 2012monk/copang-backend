@@ -10,6 +10,7 @@ import com.alconn.copang.item.dto.ItemViewForm;
 import com.alconn.copang.item.mapper.ItemMapper;
 import com.alconn.copang.seller.Seller;
 import com.alconn.copang.shipment.ShipmentInfo;
+import com.alconn.copang.shipment.ShipmentInfoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
@@ -17,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -39,6 +39,8 @@ public class ItemDetailService {
 
     private final CategoryService categoryService;
 
+    private final ShipmentInfoRepository shipmentInfoRepository;
+
 //====
 //    카테고리에 맞는 상품중 대표옵션만 출력
     public List<ItemDetailForm.MainForm> findCategpryMainList(Long categoryId) throws NoSuchEntityExceptions {
@@ -59,20 +61,23 @@ public class ItemDetailService {
     }
 
 
-    //다중 저장
+    //상품 등록
     @Transactional
     public ItemForm itemDetailListSave(ItemForm itemForm, Long sellerId){
         //배송 저장
         ShipmentInfo shipmentInfo=itemMapper.shipToEntity(itemForm);
+        System.out.println("shipmentInfo.getFreeShipOverPrice() = " + shipmentInfo.getFreeShipOverPrice());
+        shipmentInfoRepository.save(shipmentInfo);
 
         Item item=Item.builder()
                 .itemName(itemForm.getItemName())
                 .itemComment(itemForm.getItemComment())
                 .brand(itemForm.getBrand())
                 .seller(Seller.builder().clientId(sellerId).build())
+                .shipmentInfo(shipmentInfo)
                 .build();
-        Category category=categoryRepository.findById(itemForm.getCategoryId()).orElseThrow(()->new NoSuchElementException("카테고리 정보를 확인해주세요"));
 //
+        Category category=categoryRepository.findById(itemForm.getCategoryId()).orElseThrow(()->new NoSuchElementException("카테고리 정보를 확인해주세요"));
 //        if(category.getChildCheck().equalsIgnoreCase("y")) {
 //            throw new DataIntegrityViolationException("자식 카테고리에 등록해주세요");
 //        }
@@ -139,9 +144,8 @@ public class ItemDetailService {
 
 
         List<ItemDetail> list=itemDetailRepository.listItemDetailsMainFind(ItemMainApply.APPLY,pageable);
-
         List<ItemDetailForm.MainForm> listForm=itemMapper.mainPage(list);
-        
+
         int a=itemDetailRepository.countItemDetailByItemMainApply(ItemMainApply.APPLY);
 
         //필터링 카운트
@@ -194,10 +198,10 @@ public class ItemDetailService {
     //DTO로 받아서 전체 업데이트
     @Transactional
 //    public ItemForm updateItemDetail(ItemForm.ItemFormUpdate itemFormUpdate){
-    public ItemForm.ItemFormUpdate updateItemDetail(ItemForm.ItemFormUpdate itemFormUpdate)
+    public ItemForm updateItemDetail(ItemForm itemFormUpdate)
         throws NoSuchEntityExceptions {
         //풀기
-        List<ItemDetailForm.DetailUpdateClass> iDetailUpdateClasses =itemFormUpdate.getItemDetailUpdateClassList();
+        List<ItemDetailForm.DetailForm> iDetailUpdateClasses =itemFormUpdate.getItemDetailFormList();
 
        //item이 바뀌었는지 확인
         Item item=itemService.itemFindNum(itemFormUpdate.getItemId());
@@ -219,7 +223,7 @@ public class ItemDetailService {
         List<ItemDetail> itemDetailList=itemDetailRepository.findItemDetailPage(itemFormUpdate.getItemId());
 
         //옵션 변경
-        if(itemFormUpdate.getItemDetailUpdateClassList().size()==itemDetailList.size()){
+        if(itemFormUpdate.getItemDetailFormList().size()==itemDetailList.size()){
             for(int i=0;i<itemDetailList.size();i++){
                 itemDetailList.get(i).updateAllData(iDetailUpdateClasses.get(i).getPrice(),
                         iDetailUpdateClasses.get(i).getStockQuantity(),
@@ -236,7 +240,7 @@ public class ItemDetailService {
         itemDetailRepository.saveAll(itemDetailList);
 
         //재포장
-        ItemForm.ItemFormUpdate itemForm=itemMapper.updateItemForm(item,itemDetailList);
+        ItemForm itemForm=itemMapper.updateItemForm(item,itemDetailList);
         return itemForm;
     }
 
@@ -262,7 +266,7 @@ public class ItemDetailService {
 
         itemDetail.itemConnect(item);
 
-        ItemDetailForm.DetailUpdateClass detailUpdateClass=updateSingle.getDetailUpdateClass();
+        ItemDetailForm.DetailForm detailUpdateClass=updateSingle.getDetailUpdateClass();
 
         itemDetail.updateAllData(
                 detailUpdateClass.getPrice(),

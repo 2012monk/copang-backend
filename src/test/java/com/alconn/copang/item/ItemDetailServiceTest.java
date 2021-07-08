@@ -236,7 +236,7 @@ public class ItemDetailServiceTest {
             .itemName("신발")
             .itemComment("신발설명")
             .categoryId(categoryRepository.findAll().get(0).getCategoryId())
-            .detailUpdateClass(ItemDetailForm.DetailUpdateClass.builder()
+            .detailUpdateClass(ItemDetailForm.DetailForm.builder()
                 .itemDetailId(list.get(0).getItemDetailId())
                 .price(10000)
                 .stockQuantity(10)
@@ -259,11 +259,11 @@ public class ItemDetailServiceTest {
         List<ItemDetail> list = findMockData();
         List<ItemDetail> testList = itemDetailRepository
             .findItemDetailPage(list.get(0).getItem().getItemId());
-        List<ItemDetailForm.DetailUpdateClass> testUpdateList = new ArrayList<>();
+        List<ItemDetailForm.DetailForm> testUpdateList = new ArrayList<>();
 
         for (ItemDetail itemDetail : testList) {
             testUpdateList.add(
-                ItemDetailForm.DetailUpdateClass.builder()
+                ItemDetailForm.DetailForm.builder()
                     .itemDetailId(itemDetail.getItemDetailId())
                     .price(20000)
                     .stockQuantity(30)
@@ -276,14 +276,14 @@ public class ItemDetailServiceTest {
 
         }
 
-        ItemForm.ItemFormUpdate itemFormUpdate = ItemForm.ItemFormUpdate.builder()
+        ItemForm itemFormUpdate = ItemForm.builder()
             .itemId(testList.get(0).getItem().getItemId())
             .itemName(testList.get(0).getItem().getItemName())
             .itemComment(testList.get(0).getItem().getItemComment())
-            .itemDetailUpdateClassList(testUpdateList)
+            .itemDetailFormList(testUpdateList)
             .build();
 
-        ItemForm.ItemFormUpdate itemForm = itemDetailService.updateItemDetail(itemFormUpdate);
+        ItemForm itemForm = itemDetailService.updateItemDetail(itemFormUpdate);
 
         em.flush();
         em.clear();

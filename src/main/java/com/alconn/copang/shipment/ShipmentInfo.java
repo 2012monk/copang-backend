@@ -1,15 +1,10 @@
 package com.alconn.copang.shipment;
 
 import com.alconn.copang.address.Address;
-import javax.persistence.Embeddable;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+
+import javax.persistence.*;
+
+import com.alconn.copang.item.Item;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,9 +21,9 @@ public class ShipmentInfo {
     private Long id;
 
     //출고지주소 나중에 작업한다하심
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "release_place_id")
-    private Address shippingPlace;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "release_place_id")
+//    private Address shippingPlace;
 
     //택배사
     @Enumerated(EnumType.STRING)
@@ -41,11 +36,18 @@ public class ShipmentInfo {
     //얼마이상무료
     private int freeShipOverPrice;
 
-    //출시일
+    //출고일..?
     private Integer releaseDate;
 
     //배송비
     private Integer shippingPrice;
 
+    @OneToOne(mappedBy = "shipmentInfo")
+    private Item item;
+
+    public void itemConnect(Item item){
+
+
+    }
 
 }

@@ -255,7 +255,7 @@ operation::address/update-address[snippets='http-request,request-headers,request
 
 상품중에 대표로 선택된 옵션들만 출력됩니다, 현재는 첫번째가 대표로 선택됩니다
 
-operation::item/get-mainlist[snippets='http-request,http-response']
+operation::item/get-mainlist[snippets='path-parameters,http-request,http-response,response-fields']
 
 == 상품 상세 목록
 ==== `GET` /api/item/itemid=:itemId

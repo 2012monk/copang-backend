@@ -21,10 +21,13 @@ public interface ItemMapper {
     ShipmentInfo shipToEntity(ItemForm itemForm);
 
     //상품메인 조회
+    @Mapping(source = "itemDetailList.item.shipmentInfo",target = "shipmentInfoForm")
     List<ItemDetailForm.MainForm> mainPage(List<ItemDetail> itemDetailList);
+
 
     @Mapping(target = ".", source = "item")
     @Mapping(target = ".",source = "item.category")
+    @Mapping(source = "item.shipmentInfo", target = "shipmentInfoForm")
     ItemDetailForm.MainForm toPage(ItemDetail detail);
 
     // Seller mapping 추가
@@ -45,9 +48,8 @@ public interface ItemMapper {
 
     //상품상세 조회
     @Mapping(source = "itemDetailList",target = "itemDetailFormList")
-    //=====
     @Mapping(source = "item.category.categoryId",target = "categoryId")
-    //=====
+    @Mapping(source = "item.shipmentInfo", target = "shipmentInfoForm")
     ItemForm itemDetailToDto(Item item, List<ItemDetail> itemDetailList);
 
 
@@ -56,11 +58,11 @@ public interface ItemMapper {
 
     //update ItemDetailList + item => to Form 매핑
     //update 받고 보내는 form
-    @Mapping(source = "itemDetailList", target = "itemDetailUpdateClassList")
+    @Mapping(source = "itemDetailList", target = "itemDetailFormList")
     //====
     @Mapping(source = "item.category.categoryId", target = "categoryId")
     //====
-    ItemForm.ItemFormUpdate  updateItemForm(Item item,List<ItemDetail> itemDetailList);
+    ItemForm  updateItemForm(Item item,List<ItemDetail> itemDetailList);
 
 
     //단일 저장

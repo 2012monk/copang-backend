@@ -35,4 +35,17 @@ public class ShipmentInfoForm {
 
     //배송비
     private Integer shippingPrice;
+
+    @Override
+    public String toString() {
+        return "ShipmentInfoForm{" +
+                "id=" + id +
+                ", shippingPlace=" + shippingPlace +
+                ", logisticCompany=" + logisticCompany +
+                ", shippingChargeType=" + shippingChargeType +
+                ", freeShipOverPrice=" + freeShipOverPrice +
+                ", releaseDate=" + releaseDate +
+                ", shippingPrice=" + shippingPrice +
+                '}';
+    }
 }

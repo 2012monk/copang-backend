@@ -37,35 +37,8 @@ public class ItemForm {
     @Builder.Default
     private List<ItemDetailForm.DetailForm> itemDetailFormList=new ArrayList<>();
 
-    @Builder.Default
     private ShipmentInfoForm shipmentInfoForm;
 
-
-
-    //전체 수정
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ItemFormUpdate{
-
-        @NotNull
-        private  Long itemId;
-
-        @NotNull
-        private String itemName;
-
-        @NotEmpty
-        private String itemComment;
-
-        private Long categoryId;
-
-        private String brand;
-
-        @Builder.Default
-        private List<ItemDetailForm.DetailUpdateClass> itemDetailUpdateClassList =new ArrayList<>();
-
-    }
 
     //옵션 수정
     @Getter
@@ -87,7 +60,7 @@ public class ItemForm {
 
         private Long categoryId;
 
-        private ItemDetailForm.DetailUpdateClass detailUpdateClass;
+        private ItemDetailForm.DetailForm detailUpdateClass;
     }
 
     //옵션 추가

@@ -19,7 +19,7 @@ public class ShipmentForm {
     @Builder
     @Getter
     public static class Request {
-
+        private Long id;
     }
 
     @JsonInclude(Include.NON_NULL)
