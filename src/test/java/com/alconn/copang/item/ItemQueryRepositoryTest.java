@@ -1,5 +1,7 @@
 package com.alconn.copang.item;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,11 +55,13 @@ class ItemQueryRepositoryTest {
         itemRepository.saveAll(items);
         itemDetailRepository.saveAll(detailsToSave);
 
-        List<ItemDetail> details1 = itemQueryRepository.searchByKeywords("라면 고구마", 0, 40);
+        List<ItemDetail> details1 = itemQueryRepository.searchByKeywords("라면+고구마", 0, 40);
 
         System.out.println("details1.size() = " + details1.size());
         details1.forEach(d -> System.out
             .println("d.getItem().getItemName() = " + d.getItem().getItemName()));
+
+        assertEquals(4, details1.size());
 
 
     }
