@@ -19,7 +19,9 @@ public class ShipmentForm {
     @Builder
     @Getter
     public static class Request {
-        private Long id;
+
+        private List<Long> shippingItems;
+
     }
 
     @JsonInclude(Include.NON_NULL)

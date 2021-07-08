@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface OrderRepository extends JpaRepository<Orders, Long> {
+public interface OrderRepository extends JpaRepository<Orders, Long>{
 
     List<Orders> findOrdersByClient_ClientId(@Param(value = "clientId") Long clientId);
 

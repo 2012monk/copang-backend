@@ -53,4 +53,12 @@ public class ResponseMessage<T> {
                 .code(200)
                 .build();
         }
+
+        public static <T> ResponseMessage<T> badRequest(T data) {
+            return ResponseMessage.<T>builder()
+                .message("잘못된 요청입니다")
+                .data(data)
+                .code(-1)
+                .build();
+        }
 }

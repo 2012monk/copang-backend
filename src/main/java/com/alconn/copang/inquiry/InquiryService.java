@@ -80,8 +80,10 @@ public class InquiryService {
     }
 
     public List<InquiryForm.Response> getInquiresBySeller(Long sellerId) {
-        /* implement me*/
-        return null;
+        List<Inquiry> inquiries = repository
+            .findInquiriesByItemDetail_Item_Seller_ClientId(sellerId);
+
+        return inquiries.stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
     public List<InquiryForm.Response> getInquiresByItem(Long itemId) {

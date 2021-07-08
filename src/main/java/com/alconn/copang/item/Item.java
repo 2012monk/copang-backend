@@ -52,6 +52,9 @@ public class Item {
 
 
 
+    private Integer averageRating;
+
+    //=====
     public void changeCategory(Category category){
         this.category=category;
         category.getItemList().add(this);

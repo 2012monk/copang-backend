@@ -9,6 +9,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -28,6 +30,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
     uniqueConstraints = {
         @UniqueConstraint(name = "uk__username", columnNames = {"username"})}
 )
+//@Inheritance(strategy = InheritanceType.JOINED)
 public class Client {
 
     @Id
