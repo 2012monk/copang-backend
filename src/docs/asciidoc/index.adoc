@@ -271,6 +271,10 @@ operation::item/get-categorymainlist[snippets='http-request,path-parameters,http
 
 상품 새로 등록
 
+logisticCompany : HYUNDAI, KGB, EPOST, HANJIN, CJGLS
+
+ShippingChargeType : FREE, CONDITIONAL_FREE, NOT_FREE
+
 operation::item/post-save[snippets='http-request,request-fields,http-response,response-fields']
 
 == 상품 옵션 추가

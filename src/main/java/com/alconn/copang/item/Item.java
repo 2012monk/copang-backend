@@ -35,7 +35,7 @@ public class Item {
     @JoinColumn(name = "categoryId")
     private Category category;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE,orphanRemoval = true)
     @JoinColumn(name = "shipment_info_id")
     private ShipmentInfo shipmentInfo;
 
@@ -49,9 +49,6 @@ public class Item {
 
     private String brand;
 
-
-
-
     private Integer averageRating;
 
     //=====
@@ -59,8 +56,6 @@ public class Item {
         this.category=category;
         category.getItemList().add(this);
     }
-
-
 
     //수정
     public void updateMethod(String itemName, String itemComment,String brand){

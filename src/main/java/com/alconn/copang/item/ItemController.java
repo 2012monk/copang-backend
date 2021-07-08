@@ -119,7 +119,7 @@ public class ItemController {
             .build();
     }
 
-    //상품 수정 + 카테고리 수정 포함
+    //상품 수정 + 카테고리 수정 + 배송수정
     @PutMapping("/update/list")
     public ResponseMessage<ItemForm> itemUpdate(
         @Valid @RequestBody ItemForm itemForm) throws NoSuchEntityExceptions {

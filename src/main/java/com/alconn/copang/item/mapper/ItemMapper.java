@@ -56,12 +56,9 @@ public interface ItemMapper {
     @Mapping(target = "item", source = ".")
     List<ItemDetail> listDtoToDomainN(List<ItemDetailForm.DetailForm> detailFormList);
 
-    //update ItemDetailList + item => to Form 매핑
-    //update 받고 보내는 form
     @Mapping(source = "itemDetailList", target = "itemDetailFormList")
-    //====
     @Mapping(source = "item.category.categoryId", target = "categoryId")
-    //====
+    @Mapping(source = "item.shipmentInfo", target = "shipmentInfoForm")
     ItemForm  updateItemForm(Item item,List<ItemDetail> itemDetailList);
 
 
