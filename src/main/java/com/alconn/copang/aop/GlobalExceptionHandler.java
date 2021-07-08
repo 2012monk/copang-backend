@@ -13,6 +13,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -197,5 +198,12 @@ public class GlobalExceptionHandler {
 //            .build();
 //    }
 
+    @ExceptionHandler(ConversionFailedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseMessage<String > handleConflict(ConversionFailedException e){
+        return ResponseMessage.badRequest(
+            Objects.requireNonNull(e.getSourceType()).getType().getSimpleName() + e.getMessage()
+        );
+    }
 
 }

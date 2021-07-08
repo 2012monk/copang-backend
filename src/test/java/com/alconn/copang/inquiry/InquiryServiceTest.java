@@ -9,6 +9,7 @@ import com.alconn.copang.exceptions.UnauthorizedException;
 import com.alconn.copang.exceptions.ValidationException;
 import com.alconn.copang.inquiry.InquiryForm.Request;
 import com.alconn.copang.inquiry.InquiryForm.Response;
+import com.alconn.copang.item.Item;
 import com.alconn.copang.item.ItemDetail;
 import com.alconn.copang.item.ItemDetailService;
 import com.alconn.copang.seller.Seller;
@@ -21,6 +22,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -54,13 +56,22 @@ class InquiryServiceTest {
     @BeforeEach
     void setUp() {
         detail = utils.getItemDetail();
-        detailService.itemDetailSave(detail);
+
 
         client = utils.generateRealClient();
         seller = utils.getSeller();
-
         repo.save(client);
         sellerRepository.save(seller);
+
+        Item item =
+            Item.builder()
+                .itemName("신발1")
+                .seller(seller)
+                .build();
+
+        ReflectionTestUtils.setField(detail, "item", item);
+
+        detailService.itemDetailSave(detail);
     }
 
     @AfterEach
@@ -186,5 +197,20 @@ class InquiryServiceTest {
         assertEquals(request.getContent(), response1.getContent());
         assertNotEquals(response1.getContent(),response.getContent());
 
+    }
+
+    @Test
+    void getSellerInquires() {
+        InquiryForm.Request request =
+            InquiryForm.Request.builder()
+                .content("문의사항")
+                .itemDetailId(detail.getItemDetailId())
+                .build();
+
+        InquiryForm.Response response = service.registerInquiry(request, client.getClientId());
+
+        List<Response> in = service.getInquiresBySeller(seller.getClientId());
+
+        assertEquals(1, in.size());
     }
 }
