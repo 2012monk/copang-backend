@@ -6,7 +6,6 @@ import com.alconn.copang.order.dto.SellerOrderForm.Response;
 import com.alconn.copang.order.mapper.SellerOrderMapper;
 import com.alconn.copang.seller.Seller;
 import com.alconn.copang.shipment.Shipment;
-import com.alconn.copang.shipment.ShipmentForm;
 import com.alconn.copang.shipment.ShipmentForm.Request;
 import java.util.List;
 import java.util.Map;
@@ -28,30 +27,33 @@ public class SellerOrderService {
 
     @Transactional
     public boolean placeSellerOrder(Orders orders) {
-            List<OrderItem> orderItems = orders.getOrderItemList();
-            Map<Seller, List<OrderItem>> selectBySeller =
-                orderItems.stream().collect(Collectors.groupingBy(c -> c.getItemDetail().getItem().getSeller()));
+        List<OrderItem> orderItems = orders.getOrderItemList();
+        Map<Seller, List<OrderItem>> selectBySeller =
+            orderItems.stream()
+                .collect(Collectors.groupingBy(c -> c.getItemDetail().getItem().getSeller()));
 
-            List<SellerOrder> sellerOrders =
-                selectBySeller.entrySet().stream().map(c ->
-                    SellerOrder.builder()
-                        .seller(c.getKey())
-                        .orderItems(c.getValue())
-                        .build()
-                ).collect(Collectors.toList());
+        List<SellerOrder> sellerOrders =
+            selectBySeller.entrySet().stream().map(c ->
+                SellerOrder.builder()
+                    .seller(c.getKey())
+                    .orderItems(c.getValue())
+                    .build()
+            ).collect(Collectors.toList());
 
-            sellerOrders.forEach(SellerOrder::placeSellerOrder);
+        sellerOrders.forEach(SellerOrder::placeSellerOrder);
 
-            sellerOrderRepository.saveAll(sellerOrders);
-            return true;
+        sellerOrderRepository.saveAll(sellerOrders);
+        return true;
     }
 
     public List<SellerOrderForm.Response> getOrdersBySeller(Long sellerId) {
-        List<SellerOrder> sellerOrders = sellerOrderRepository.findSellerOrdersBySeller_ClientId(sellerId);
+        List<SellerOrder> sellerOrders = sellerOrderRepository
+            .findSellerOrdersBySeller_ClientId(sellerId);
         sellerOrders.forEach(SellerOrder::calculateTotal);
 
         return sellerOrders.stream()
-            .map(s -> sellerOrderMapper.mtoForm(s, s.getOrderItems().get(0).getOrders())).collect(Collectors.toList());
+            .map(s -> sellerOrderMapper.mtoForm(s, s.getOrderItems().get(0).getOrders()))
+            .collect(Collectors.toList());
     }
 
     public List<SellerOrder> getSellers(Long sellerId) {
@@ -61,18 +63,21 @@ public class SellerOrderService {
     @Transactional
     public String placeShipment(Long sellerOrderId, Request form)
         throws NoSuchEntityExceptions {
-        SellerOrder order = sellerOrderRepository.findById(sellerOrderId).orElseThrow(NoSuchEntityExceptions::new);
+        SellerOrder order = sellerOrderRepository.findById(sellerOrderId)
+            .orElseThrow(NoSuchEntityExceptions::new);
 
         Shipment shipment = sellerOrderMapper.toShipment(form);
         List<Long> shippingItems = form.getShippingItems();
         List<OrderItem> items =
-            order.getOrderItems().stream().filter(o -> shippingItems.contains(o.getOrderItemId())).map(
-                i ->{
-                    OrderItem orderItem = OrderItem.builder().orderItemId(i.getOrderItemId()).build();
-                    orderItem.setShipment(shipment);
-                    return orderItem;
-                }
-            ).collect(Collectors.toList());
+            order.getOrderItems().stream().filter(o -> shippingItems.contains(o.getOrderItemId()))
+                .map(
+                    i -> {
+                        OrderItem orderItem = OrderItem.builder().orderItemId(i.getOrderItemId())
+                            .build();
+                        orderItem.setShipment(shipment);
+                        return orderItem;
+                    }
+                ).collect(Collectors.toList());
 
         sellerOrderRepository.save(order);
         return "success";

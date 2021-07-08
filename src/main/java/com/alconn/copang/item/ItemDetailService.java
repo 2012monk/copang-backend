@@ -12,8 +12,10 @@ import com.alconn.copang.seller.Seller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -86,9 +88,9 @@ public class ItemDetailService {
         Category category = categoryRepository.findById(itemForm.getCategoryId())
             .orElseThrow(() -> new NoSuchElementException("카테고리 정보를 확인해주세요"));
         //==== 자식 카테고리가 있는 상황에 추가시 에러발생``
-        if (category.getChildCheck().equalsIgnoreCase("y")) {
-            throw new DataIntegrityViolationException("자식 카테고리에 등록해주세요");
-        }
+//        if(category.getChildCheck().equalsIgnoreCase("y")) {
+//            throw new DataIntegrityViolationException("자식 카테고리에 등록해주세요");
+//        }
         //====
         //=====
         item.changeCategory(category);
