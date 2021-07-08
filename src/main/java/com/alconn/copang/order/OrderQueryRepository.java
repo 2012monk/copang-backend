@@ -1,21 +1,13 @@
 package com.alconn.copang.order;
 
-import static com.alconn.copang.order.QOrderItem.*;
-import static com.alconn.copang.order.QSellerOrder.*;
-import static com.alconn.copang.seller.QSeller.*;
+import static com.alconn.copang.order.QSellerOrder.sellerOrder;
 
-import com.alconn.copang.item.QItem;
-import com.fasterxml.jackson.databind.deser.DataFormatReaders.Match;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.ExpressionUtils;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.beans.Expression;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javafx.beans.binding.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

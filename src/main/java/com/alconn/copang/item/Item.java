@@ -44,6 +44,8 @@ public class Item {
     @JoinColumn(name = "categoryId")
     private Category category;
 
+    private Integer averageRating;
+
     //=====
     public void changeCategory(Category category){
         this.category=category;

@@ -51,6 +51,14 @@ dependencies {
 
     implementation 'com.querydsl:querydsl-jpa'
     implementation 'com.querydsl:querydsl-apt'
+    // ====================== 새로운 설정 ===========================
+//    compileOnly "com.querydsl:querydsl-core" // querydsl
+//    compileOnly "com.querydsl:querydsl-jpa" // querydsl
+//    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa" // querydsl JPAAnnotationProcessor 사용 지정
+//    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+//    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    // ====================== 새로운 설정 ===========================
+
 
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
 
@@ -93,6 +101,23 @@ configurations {
 compileQuerydsl{
     options.annotationProcessorPath = configurations.querydsl
 }
+
+// ====================== 새로운 설정 ===========================
+//def generated='src/main/generated'
+//sourceSets {
+//    main.java.srcDirs += [ generated ]
+//}
+//
+//tasks.withType(JavaCompile) {
+//    options.annotationProcessorGeneratedSourcesDirectory = file(generated)
+//}
+//
+//clean.doLast {
+//    file(generated).deleteDir()
+//}
+// ====================== 새로운 설정 ===========================
+
+
 project.afterEvaluate {
     project.tasks.compileQuerydsl.options.compilerArgs = [
             "-proc:only",
