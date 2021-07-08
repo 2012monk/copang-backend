@@ -15,11 +15,16 @@ import com.alconn.copang.item.dto.ItemViewForm;
 import com.alconn.copang.item.mapper.ItemMapper;
 import com.alconn.copang.seller.Seller;
 import com.alconn.copang.seller.SellerRepository;
+import com.alconn.copang.shipment.LogisticCode;
+import com.alconn.copang.shipment.ShippingChargeType;
+import com.alconn.copang.shipment.dto.ShipmentInfoForm;
 import com.alconn.copang.utils.TestUtils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.persistence.EntityManager;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -84,32 +89,32 @@ public class ItemDetailServiceTest {
     private Item itemTest() {
 //=====
         Category category = Category.builder()
-            .layer(1)
-            .categoryName("의류")
-            .categoryId(0l)
-            .build();
+                .layer(1)
+                .categoryName("의류")
+                .categoryId(0l)
+                .build();
         categoryRepository.save(category);
 //=====
 
         Item item = Item.builder()
-            .itemName("테스트상품")
-            .itemComment("상품설명")
+                .itemName("테스트상품")
+                .itemComment("상품설명")
 //            .seller(seller)
-            //=====
-            .category(categoryRepository.findAll().get(0))
-            //=====
-            .build();
+                //=====
+                .category(categoryRepository.findAll().get(0))
+                //=====
+                .build();
         return item;
     }
 
     private ItemDetail itemDetailTest() {
         ItemDetail itemDetail = ItemDetail.builder()
-            .stockQuantity(10)
-            .price(10000)
-            .mainImg("메인이미지")
-            .optionName("색상")
-            .optionValue("빨강")
-            .build();
+                .stockQuantity(10)
+                .price(10000)
+                .mainImg("메인이미지")
+                .optionName("색상")
+                .optionValue("빨강")
+                .build();
         return itemDetail;
     }
 
@@ -147,7 +152,7 @@ public class ItemDetailServiceTest {
     @Test
     public void findMainTest() {
 
-        for(int i=0;i<10;i++) {
+        for (int i = 0; i < 10; i++) {
             Item item = Item.builder()
                     .itemName("의류")
                     .itemComment("설명")
@@ -170,9 +175,9 @@ public class ItemDetailServiceTest {
         em.flush();
         em.clear();
 
-        Pageable pageable= PageRequest.of(4,5, Sort.by("stockQuantity").descending());
+        Pageable pageable = PageRequest.of(4, 5, Sort.by("stockQuantity").descending());
 
-        List<ItemDetail> list = itemDetailRepository.listItemDetailsMainFind(ItemMainApply.APPLY,pageable);
+        List<ItemDetail> list = itemDetailRepository.listItemDetailsMainFind(ItemMainApply.APPLY, pageable);
         System.out.println("list.size() = " + list.size());
         List<ItemDetailForm> list2 = itemMapper.listDomainToDto(list);
         for (ItemDetailForm itemDetailForm : list2) {
@@ -232,25 +237,25 @@ public class ItemDetailServiceTest {
     public void updateTestSingle() throws NoSuchEntityExceptions {
         List<ItemDetail> list = findMockData();
         ItemForm.ItemFormUpdateSingle updateSingle = ItemForm.ItemFormUpdateSingle.builder()
-            .itemId(list.get(0).getItem().getItemId())
-            .itemName("신발")
-            .itemComment("신발설명")
-            .categoryId(categoryRepository.findAll().get(0).getCategoryId())
-            .detailUpdateClass(ItemDetailForm.DetailForm.builder()
-                .itemDetailId(list.get(0).getItemDetailId())
-                .price(10000)
-                .stockQuantity(10)
-                .optionName("색상")
-                .optionValue("초록")
-                .mainImg("신발초록색사진")
-                .build()
-            )
-            .build();
+                .itemId(list.get(0).getItem().getItemId())
+                .itemName("신발")
+                .itemComment("신발설명")
+                .categoryId(categoryRepository.findAll().get(0).getCategoryId())
+                .detailUpdateClass(ItemDetailForm.DetailForm.builder()
+                        .itemDetailId(list.get(0).getItemDetailId())
+                        .price(10000)
+                        .stockQuantity(10)
+                        .optionName("색상")
+                        .optionValue("초록")
+                        .mainImg("신발초록색사진")
+                        .build()
+                )
+                .build();
         ItemViewForm itemViewForm = itemDetailService.itemSingleUpdate(updateSingle);
         System.out.println("itemViewForm.getItemId() = " + itemViewForm.getItemId());
         System.out.println("itemViewForm.getItemId() = " + itemViewForm.getItemName());
         System.out.println("itemViewForm.getItemDetailViewForm().getMainImg() = " + itemViewForm
-            .getItemDetailViewForm().getMainImg());
+                .getItemDetailViewForm().getMainImg());
     }
 
     //전체수정
@@ -258,30 +263,39 @@ public class ItemDetailServiceTest {
     public void updateTest() throws NoSuchEntityExceptions {
         List<ItemDetail> list = findMockData();
         List<ItemDetail> testList = itemDetailRepository
-            .findItemDetailPage(list.get(0).getItem().getItemId());
+                .findItemDetailPage(list.get(0).getItem().getItemId());
         List<ItemDetailForm.DetailForm> testUpdateList = new ArrayList<>();
 
         for (ItemDetail itemDetail : testList) {
             testUpdateList.add(
-                ItemDetailForm.DetailForm.builder()
-                    .itemDetailId(itemDetail.getItemDetailId())
-                    .price(20000)
-                    .stockQuantity(30)
-                    .optionName("수정")
-                    .optionValue("수정테스트")
-                    .mainImg("수정사진")
-                    .subImg("수정이미지")
-                    .build()
+                    ItemDetailForm.DetailForm.builder()
+                            .itemDetailId(itemDetail.getItemDetailId())
+                            .price(20000)
+                            .stockQuantity(30)
+                            .optionName("수정")
+                            .optionValue("수정테스트")
+                            .mainImg("수정사진")
+                            .subImg("수정이미지")
+                            .build()
             );
 
         }
 
+        ShipmentInfoForm shipmentInfo = ShipmentInfoForm.builder()
+                .logisticCompany(LogisticCode.EPOST)
+                .freeShipOverPrice(19000)
+                .shippingPrice(2500)
+                .shippingChargeType(ShippingChargeType.CONDITIONAL_FREE)
+                .releaseDate(1111)
+                .build();
+
         ItemForm itemFormUpdate = ItemForm.builder()
-            .itemId(testList.get(0).getItem().getItemId())
-            .itemName(testList.get(0).getItem().getItemName())
-            .itemComment(testList.get(0).getItem().getItemComment())
-            .itemDetailFormList(testUpdateList)
-            .build();
+                .itemId(testList.get(0).getItem().getItemId())
+                .itemName(testList.get(0).getItem().getItemName())
+                .itemComment(testList.get(0).getItem().getItemComment())
+                .itemDetailFormList(testUpdateList)
+                .shipmentInfoForm(shipmentInfo)
+                .build();
 
         ItemForm itemForm = itemDetailService.updateItemDetail(itemFormUpdate);
 
@@ -296,15 +310,15 @@ public class ItemDetailServiceTest {
         Item item = itemRepository.findAll().get(0);
 
         ItemForm.ItemSingle itemSingle = ItemForm.ItemSingle.builder()
-            .itemId(item.getItemId())
-            .detailForm(ItemDetailForm.DetailForm.builder()
-                .price(100)
-                .stockQuantity(20)
-                .optionName("색상")
-                .optionValue("검은색")
-                .mainImg("양말사진")
-                .build())
-            .build();
+                .itemId(item.getItemId())
+                .detailForm(ItemDetailForm.DetailForm.builder()
+                        .price(100)
+                        .stockQuantity(20)
+                        .optionName("색상")
+                        .optionValue("검은색")
+                        .mainImg("양말사진")
+                        .build())
+                .build();
         ItemViewForm itemViewForm = itemDetailService.itemSingle(itemSingle);
         System.out.println("itemViewForm.tp = " + itemViewForm.toString());
     }
@@ -313,50 +327,48 @@ public class ItemDetailServiceTest {
     @Test
     void saveTEst() {
         Category category = Category.builder()
-            .layer(1)
-            .categoryName("의류")
-            .categoryId(0l)
-            .build();
+                .layer(1)
+                .categoryName("의류")
+                .categoryId(0l)
+                .build();
         categoryRepository.save(category);
         //=====
         Client client = utils.generateRealClient();
         clientRepo.save(client);
 
         Item item = Item.builder()
-            .itemName("테스트상품")
-            .itemComment("상품설명")
+                .itemName("테스트상품")
+                .itemComment("상품설명")
 //            .seller(Seller.builder().clientId(client.getClientId()).build())
-            //=====
-            .category(categoryRepository.findAll().get(0))
-            //=====
-            .build();
+                //=====
+                .category(categoryRepository.findAll().get(0))
+                //=====
+                .build();
 
         ItemDetail detail =
-            ItemDetail.builder()
-            .item(item)
-            .price(123)
-            .mainImg("123")
-            .optionValue("123")
-            .optionName("123")
-            .stockQuantity(123)
-            .build();
+                ItemDetail.builder()
+                        .item(item)
+                        .price(123)
+                        .mainImg("123")
+                        .optionValue("123")
+                        .optionName("123")
+                        .stockQuantity(123)
+                        .build();
 
         ItemDetailForm.DetailForm d =
-            ItemDetailForm.DetailForm.builder()
-            .price(123)
-                .mainImg("123")
-                .optionValue("123")
-                .optionName("123")
-                .stockQuantity(123)
-            .build();
-        ItemForm form=
-            ItemForm.builder()
-            .itemName("123")
-            .categoryId(item.getCategory().getCategoryId())
-            .itemDetailFormList(Collections.singletonList(d))
-            .build();
-
-
+                ItemDetailForm.DetailForm.builder()
+                        .price(123)
+                        .mainImg("123")
+                        .optionValue("123")
+                        .optionName("123")
+                        .stockQuantity(123)
+                        .build();
+        ItemForm form =
+                ItemForm.builder()
+                        .itemName("123")
+                        .categoryId(item.getCategory().getCategoryId())
+                        .itemDetailFormList(Collections.singletonList(d))
+                        .build();
 
 
         itemDetailService.itemDetailListSave(form, seller.getClientId());
@@ -372,14 +384,14 @@ public class ItemDetailServiceTest {
 
     @Transactional
     @Test
-    public void repotest(){
-        Item item= Item.builder()
+    public void repotest() {
+        Item item = Item.builder()
                 .itemName("tq")
                 .itemComment("teq")
                 .build();
         itemRepository.save(item);
 
-        ItemDetail itemDetail=ItemDetail.builder()
+        ItemDetail itemDetail = ItemDetail.builder()
                 .price(100)
                 .stockQuantity(1000)
                 .optionName("Aa")
