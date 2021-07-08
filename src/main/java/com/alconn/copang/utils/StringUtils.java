@@ -13,7 +13,11 @@ public class StringUtils {
     }
 
     public static String[] filterAndSplitByEmpty(String target) {
-        return filterSpChar(target).split(" ");
+        return filterSpChar(target.replaceAll("[+]", " ")).split(" ");
+    }
+
+    public static boolean isEmpty(String target) {
+        return target.equals("");
     }
 
 }
