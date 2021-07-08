@@ -66,7 +66,6 @@ public class ItemDetailForm {
         private Long sellerId;
 
         private ShipmentInfoForm shipmentInfoForm;
-
     }
 
     //상세페이지, 저장

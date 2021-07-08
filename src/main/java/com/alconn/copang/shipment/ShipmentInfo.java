@@ -16,38 +16,36 @@ import lombok.NoArgsConstructor;
 @Entity
 public class ShipmentInfo {
 
-    //배송판매자등록
     @Id @GeneratedValue
     private Long id;
 
-    //출고지주소 나중에 작업한다하심
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "release_place_id")
-//    private Address shippingPlace;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "release_place_id")
+    private Address shippingPlace;
 
-    //택배사
     @Enumerated(EnumType.STRING)
     private LogisticCode logisticCompany;
 
-    //배송비 관련 상태컬럼
     @Enumerated(EnumType.STRING)
     private ShippingChargeType shippingChargeType;
 
-    //얼마이상무료
     private int freeShipOverPrice;
 
-    //출고일..?
     private Integer releaseDate;
 
-    //배송비
     private Integer shippingPrice;
 
     @OneToOne(mappedBy = "shipmentInfo")
     private Item item;
-
-    public void itemConnect(Item item){
-
+    
+    public void update(LogisticCode logisticCompany, ShippingChargeType shippingChargeType, int freeShipOverPrice, Integer releaseDate, Integer shippingPrice){
+        this.logisticCompany= logisticCompany!=null? logisticCompany:this.logisticCompany;
+        this.shippingChargeType= shippingChargeType!=null? shippingChargeType:this.shippingChargeType;
+        this.freeShipOverPrice= freeShipOverPrice!=0? freeShipOverPrice:this.freeShipOverPrice;
+        this.releaseDate= releaseDate!=null? releaseDate:this.releaseDate;
+        this.shippingPrice= shippingPrice!=null? shippingPrice:this.shippingPrice;
 
     }
+    
 
 }

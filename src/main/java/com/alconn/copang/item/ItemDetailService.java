@@ -93,8 +93,8 @@ public class ItemDetailService {
     @Transactional
     public ItemForm itemDetailListSave(ItemForm itemForm, Long sellerId) {
         //배송 저장
+        //예외처리
         ShipmentInfo shipmentInfo = itemMapper.shipToEntity(itemForm);
-        System.out.println("shipmentInfo.getFreeShipOverPrice() = " + shipmentInfo.getFreeShipOverPrice());
         shipmentInfoRepository.save(shipmentInfo);
 
         Item item = Item.builder()
@@ -223,9 +223,8 @@ public class ItemDetailService {
         return itemForm;
     }
 
-    //DTO로 받아서 전체 업데이트
+    //상품 전체 수정
     @Transactional
-//    public ItemForm updateItemDetail(ItemForm.ItemFormUpdate itemFormUpdate){
     public ItemForm updateItemDetail(ItemForm itemFormUpdate)
             throws NoSuchEntityExceptions {
         //풀기
@@ -234,15 +233,27 @@ public class ItemDetailService {
         //item이 바뀌었는지 확인
         Item item = itemService.itemFindNum(itemFormUpdate.getItemId());
 
+        if (itemFormUpdate.getShipmentInfoForm().getId()!=null){
+        ShipmentInfo shipmentInfo= shipmentInfoRepository.findById(itemFormUpdate.getShipmentInfoForm().getId()).orElseThrow(
+                ()->new NoSuchElementException("등록된 배송주소가 아닙니다"));
+            shipmentInfo.update(
+                    itemFormUpdate.getShipmentInfoForm().getLogisticCompany(),
+                    itemFormUpdate.getShipmentInfoForm().getShippingChargeType(),
+                    itemFormUpdate.getShipmentInfoForm().getFreeShipOverPrice(),
+                    itemFormUpdate.getShipmentInfoForm().getReleaseDate(),
+                    itemFormUpdate.getShipmentInfoForm().getShippingPrice()
+            );
+        }
+
         boolean perceive = false;
         if (!item.getItemName().equals(itemFormUpdate.getItemName()) || !item.getItemComment().equals(itemFormUpdate.getItemComment())) {
-            //=====
             item.updateMethod(itemFormUpdate.getItemName(), itemFormUpdate.getItemComment(), itemFormUpdate.getBrand());
             if (item.getCategory().getCategoryId() != itemFormUpdate.getCategoryId() &&
                     itemFormUpdate.getCategoryId() != null)
                 categoryRepository.findById(itemFormUpdate.getCategoryId())
                         .orElseThrow(() -> new NoSuchElementException("등록된 카테고리가 아닙니다"));
-            //=====
+
+
             itemService.saveItem(item);
             perceive = true;
         }
@@ -285,6 +296,9 @@ public class ItemDetailService {
         }
 
         item.updateMethod(updateSingle.getItemName(), updateSingle.getItemComment(), updateSingle.getBrand());
+
+        //예외처리
+
 
         itemService.saveItem(item);
 

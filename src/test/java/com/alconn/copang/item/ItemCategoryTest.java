@@ -155,9 +155,7 @@ public class ItemCategoryTest {
     @Test
     public void findCategpryMainListTest() throws Exception{
         testData();
-        System.out.println("categoryRepository.findAll().get(0) = " + categoryRepository.findAll().get(0).getCategoryId());
         Long id=categoryRepository.findAll().get(0).getCategoryId();
-        System.out.println(" = " + itemDetailService.findCategpryMainList(id).toString());
     }
 
     @DisplayName("카테고리 상품목록")

@@ -24,18 +24,6 @@ public class ItemController {
 
     private final PagingFilterService pagingfilterService;
 
-    /*TODO
-    FIXME
-     순서 -- 폼줄이기
-     2. 브랜드 == 끝
-     3. 가격순, 최신순 조회
-     4. 필터링 ( Query String) + 페이징
-     5. 배송추가
-     6. 검색
-    */
-
-
-
     //카테고리 클릭 시 자식 카테고리 조회하여 상품출력
     @GetMapping("/list/categoryid={categoryId}")
         public ResponseMessage<List<ItemDetailForm.MainForm>> categoryItemlist(@Valid @PathVariable(name = "categoryId")Long id) throws NoSuchEntityExceptions {
@@ -96,8 +84,6 @@ public class ItemController {
             .build();
     }
 
-
-
     //상세페이지
     @GetMapping("/list/itemid={itemId}")
     public ResponseMessage<ItemForm> itemDetailPageResponse(
@@ -133,7 +119,7 @@ public class ItemController {
             .build();
     }
 
-    //상품 전체 수정 + 카테고리 수정 포함
+    //상품 수정 + 카테고리 수정 포함
     @PutMapping("/update/list")
     public ResponseMessage<ItemForm> itemUpdate(
         @Valid @RequestBody ItemForm itemForm) throws NoSuchEntityExceptions {
