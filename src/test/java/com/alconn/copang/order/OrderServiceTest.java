@@ -30,7 +30,6 @@ import com.alconn.copang.order.dto.OrderForm;
 import com.alconn.copang.order.dto.OrderForm.Response;
 import com.alconn.copang.order.dto.OrderItemForm;
 import com.alconn.copang.order.dto.SellerOrderForm;
-import com.alconn.copang.payment.ImpPaymentInfo;
 import com.alconn.copang.payment.PaymentService;
 import com.alconn.copang.seller.Seller;
 import com.alconn.copang.seller.SellerRepository;
@@ -39,6 +38,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -104,6 +104,9 @@ class OrderServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private SellerOrderService sellerOrderService;
     @Test
     void listClient() {
 
@@ -125,16 +128,7 @@ class OrderServiceTest {
             .description("쿠팡노예")
             .build();
 
-        Address address = Address.builder()
-//            .addressId(1L)
-            .receiverPhone("1")
-            .receiverName("3")
-            .addressName("41")
-            .preRequest("4124")
-            .address("서울")
-            .detail("주소1123")
-            .client(client)
-            .build();
+        Address address = getAddress(client);
 
         repo.save(client);
         manager.flush();
@@ -247,16 +241,7 @@ class OrderServiceTest {
         sellerRepository.save(seller);
 
 
-        Address address = Address.builder()
-//            .addressId(1L)
-            .receiverPhone("1")
-            .receiverName("3")
-            .addressName("41")
-            .preRequest("4124")
-            .address("서울")
-            .detail("주소1123")
-            .client(client)
-            .build();
+        Address address = getAddress(client);
 
         repo.save(client);
         manager.flush();
@@ -355,16 +340,7 @@ class OrderServiceTest {
             .description("쿠팡노예")
             .build();
 
-        Address address = Address.builder()
-//            .addressId(1L)
-            .receiverPhone("1")
-            .receiverName("3")
-            .addressName("41")
-            .preRequest("4124")
-            .address("서울")
-            .detail("주소1123")
-            .client(client)
-            .build();
+        Address address = getAddress(client);
 
         repo.save(client);
         manager.flush();
@@ -461,6 +437,7 @@ class OrderServiceTest {
         List<SellerOrder> orders = service.getSellers(seller.getClientId());
 
         System.out.println("orders.size() = " + orders.size());
+        assertEquals(3, orders.size());
 
         List<SellerOrderForm.Response> orderForms = service.getOrdersBySeller(seller.getClientId());
 
@@ -473,5 +450,117 @@ class OrderServiceTest {
             }
         });
 
+        List<SellerOrderForm.Response> sellerOrder = sellerOrderService
+            .getSellerOrder(seller.getClientId());
+
+        assertEquals(1, sellerOrder.size());
+        for (SellerOrderForm.Response o : sellerOrder) {
+            try {
+                System.out.println(" sellerOrders " + objectMapper.writeValueAsString(o));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private Address getAddress(Client client) {
+        return Address.builder()
+//            .addressId(1L)
+            .receiverPhone("1")
+            .receiverName("3")
+            .addressName("41")
+            .preRequest("4124")
+            .address("서울")
+            .detail("주소1123")
+            .client(client)
+            .build();
+    }
+
+    private void setUpClient() {
+        objectMapper.writerWithDefaultPrettyPrinter();
+
+        Seller seller = utils.getSeller();
+
+        sellerRepository.save(seller);
+        Client client = Client.builder()
+            .username("test@testclient.com")
+            .password("1234")
+            .phone("010-9090-8989")
+            .role(Role.CLIENT)
+            .description("쿠팡노예")
+            .build();
+
+        Address address = getAddress(client);
+
+        repo.save(client);
+        addressRepository.save(address);
+
+    }
+
+    @Transactional
+    @Test
+    void searchTest() throws NoSuchEntityExceptions {
+        Client client = utils.generateRealClient();
+        Seller seller = utils.getSeller();
+        Address address = getAddress(client);
+        sellerRepository.save(seller);
+        repo.save(client);
+        addressRepository.save(address);
+        String[] names = new String[]{
+            "과자", "사이다", "선풍기", "양말"
+        };
+
+        List<ItemDetail> items = Arrays.stream(names).map(
+            n -> ItemDetail.builder()
+                .item(
+                    Item.builder()
+                        .itemName(n)
+                        .seller(seller)
+                        .build()
+                )
+                .optionName("수량")
+                .optionValue("킬로")
+                .price(1200)
+                .stockQuantity(2)
+                .mainImg("123")
+                .build()
+        ).collect(Collectors.toList());
+        items.forEach(i -> i.itemConnect(i.getItem()));
+        items.forEach(i -> itemRepository.save(i.getItem()));
+        itemDetailRepository.saveAll(items);
+
+
+        Orders orders =
+            Orders.builder()
+            .client(client)
+            .address(address)
+                .orderItemList(
+                    items.stream().map(i -> OrderItem.builder().itemDetail(i).amount(1).build())
+                    .collect(Collectors.toList())
+                )
+            .build();
+
+        orders.connectOrderItems();
+        orderRepository.save(orders);
+
+        service.setSellerOrder(orders.getOrderId());
+
+
+        manager.flush();
+        manager.clear();
+
+
+        List<SellerOrder> sellers = service.getSellers(seller.getClientId());
+        assertEquals(1, sellers.size());
+
+//        List<SellerOrder> list = sellerOrderService.searchByKeyWords(seller.getClientId(), "과자 사이다");
+        List<SellerOrderForm.Response> list = sellerOrderService.searchByKeyWords(seller.getClientId(), "abb df");
+        list.forEach(s -> {
+            try {
+                System.out.println("objectMapper = " + objectMapper.writeValueAsString(s));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        });
     }
 }

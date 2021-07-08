@@ -2,6 +2,7 @@ plugins {
     id 'org.springframework.boot' version '2.5.1'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
+    id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
     id 'java'
 }
 
@@ -34,7 +35,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.1.1'
 
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 //    implementation 'org.springframework.cloud:spring-cloud-starter'
@@ -49,7 +49,9 @@ dependencies {
             //'org.bouncycastle:bcprov-jdk15on:1.60',
             'io.jsonwebtoken:jjwt-jackson:0.11.2' // or 'io.jsonwebtoken:jjwt-gson:0.11.2' for gson
 
-    // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
+    implementation 'com.querydsl:querydsl-jpa'
+    implementation 'com.querydsl:querydsl-apt'
+
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
 
 
@@ -73,6 +75,32 @@ dependencies {
 
 }
 
+def querydslSrcDir = "$buildDir/generated/querydsl"
+
+querydsl {
+    jpa = true
+    querydslSourcesDir = querydslSrcDir
+}
+
+sourceSets {
+    main.java.srcDirs querydslSrcDir
+}
+
+configurations {
+    querydsl.extendsFrom compileClasspath
+}
+
+compileQuerydsl{
+    options.annotationProcessorPath = configurations.querydsl
+}
+project.afterEvaluate {
+    project.tasks.compileQuerydsl.options.compilerArgs = [
+            "-proc:only",
+            "-processor", project.querydsl.processors() +
+                    ',lombok.launch.AnnotationProcessorHider$AnnotationProcessor'
+    ]
+}
+
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
@@ -89,8 +117,9 @@ asciidoctor {
     configurations 'asciidoctorExtensions'
     inputs.dir snippetsDir
     dependsOn test
-
 }
+
+
 
 bootJar {
     dependsOn asciidoctor // (3)

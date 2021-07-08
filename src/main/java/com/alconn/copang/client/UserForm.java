@@ -18,7 +18,7 @@ public class UserForm {
 //    public UserForm(PasswordEncoder encoder) {
 //    }
     @Setter
-    private Long id;
+    private Long clientId;
 
     @NotEmpty( message = "아이디는 존재해야 합니다")
     private String username;

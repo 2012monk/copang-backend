@@ -5,16 +5,14 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.requestHe
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.alconn.copang.ApiDocumentUtils;
-import com.alconn.copang.auth.LoginToken;
 import com.alconn.copang.auth.AccessTokenContainer;
+import com.alconn.copang.auth.LoginToken;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
@@ -24,7 +22,6 @@ import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -42,7 +39,6 @@ import org.springframework.test.web.servlet.ResultActions;
 @SpringBootTest
 @AutoConfigureRestDocs
 @AutoConfigureMockMvc
-//@ExtendWith(RestDocumentationExtension.class)
 class ClientControllerTest {
 
     @Autowired
@@ -52,9 +48,9 @@ class ClientControllerTest {
     @Autowired
     ObjectMapper objectMapper;
     @Autowired
-    private MockMvc mvc;
+    ClientMapper mapper;
     @Autowired
-    private ModelMapper mapper;
+    private MockMvc mvc;
 
     //    @BeforeEach
     void setUp() {
@@ -218,7 +214,8 @@ class ClientControllerTest {
         ReflectionTestUtils.setField(token, "username", client.getUsername());
         ReflectionTestUtils.setField(token, "password", client.getPassword());
         AccessTokenContainer container = service.login(token);
-        UserForm form = mapper.map(client, UserForm.class);
+        UserForm form = mapper.c(client);
+
 //        UserForm form = new UserForm();
         ReflectionTestUtils.setField(form, "realName", "이름바꿨습니다");
 
