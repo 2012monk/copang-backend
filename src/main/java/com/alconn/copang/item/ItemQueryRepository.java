@@ -121,11 +121,15 @@ public class ItemQueryRepository {
     private BooleanExpression eqLogisticChargeType(ShippingChargeType type) {
         return type == null ? null : itemDetail.item.shipmentInfo.shippingChargeType.eq(type);
     }
+
     public void list() {
 
     }
 
 
+    public MainViewForm list(ItemMapper itemMapper) {
+        return search(new ItemSearchCondition(), itemMapper);
+    }
 
     public MainViewForm search(ItemSearchCondition condition, ItemMapper itemMapper) {
         BooleanBuilder builder = new BooleanBuilder();
@@ -135,7 +139,8 @@ public class ItemQueryRepository {
         }
         builder.and(itemDetail.itemMainApply.eq(ItemMainApply.APPLY));
         List<Tuple> fetch = queryFactory
-            .select(itemDetail, review.rating.avg(), item.itemId.count())
+            .select(itemDetail, review.rating.avg().coalesce(0d), item.itemId.count(),
+                review.count())
             .from(item)
             .offset((long) condition.getPage() * condition.getSize())
             .limit(condition.getSize())
@@ -153,13 +158,16 @@ public class ItemQueryRepository {
                 eqLogisticChargeType(condition.getShippingChargeType())
             )
             .groupBy(item)
+            .orderBy(review.rating.avg().desc())
             .fetchJoin()
             .fetch();
         List<ItemDetail> details = new ArrayList<>();
-        for (Tuple t:fetch) {
+        for (Tuple t : fetch) {
             ItemDetail detail = t.get(itemDetail);
-            if (detail != null){
-                detail.getItem().setAvg(t.get(review.rating.avg()));
+            if (detail != null) {
+//                detail.getItem().setAvg(t.get(review.rating.avg()));
+                detail.getItem().setCountReviews(t.get(review.count()));
+                detail.getItem().setAvg(t.get(1, Double.class));
                 details.add(detail);
             }
         }

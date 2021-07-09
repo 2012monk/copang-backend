@@ -2,6 +2,8 @@ package com.alconn.copang.item.dto;
 
 
 import com.alconn.copang.shipment.dto.ShipmentInfoForm;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -44,6 +46,7 @@ public class ItemDetailForm {
     private String subImg;
 
     //메인화면
+    @JsonInclude(Include.NON_NULL)
     @Getter
     @Builder
     @NoArgsConstructor
@@ -62,9 +65,11 @@ public class ItemDetailForm {
 
         private String mainImg;
 
-        private Long sellerId;
+        private String sellerName;
 
         private Double averageRating;
+
+        private Long countReviews;
 
         private ShipmentInfoForm shipmentInfoForm;
     }

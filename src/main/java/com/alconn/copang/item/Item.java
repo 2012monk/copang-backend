@@ -13,9 +13,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,14 +48,15 @@ public class Item {
     @JoinColumn(name = "categoryId")
     private Category category;
 
-    // ==============추가부분 =================== */
-    private Double averageRating;
-
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn
     private ItemRank itemRank;
 
-    // ==============추가부분 =================== */
+    @Transient
+    private Double averageRating;
+
+    @Transient
+    private Long countReviews;
 
     @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "shipment_info_id")
@@ -66,6 +69,7 @@ public class Item {
     @Column(nullable = false)
     private String itemName;
 
+    @Lob
     private String itemComment;
 
     private String brand;
@@ -88,5 +92,9 @@ public class Item {
 
     public void setAvg(Double aDouble) {
         this.averageRating = aDouble;
+    }
+
+    public void setCountReviews(Long aLong) {
+        this.countReviews = aLong;
     }
 }

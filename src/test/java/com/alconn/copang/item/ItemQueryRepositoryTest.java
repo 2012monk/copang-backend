@@ -11,6 +11,7 @@ import com.alconn.copang.address.Address;
 import com.alconn.copang.address.AddressRepository;
 import com.alconn.copang.client.Client;
 import com.alconn.copang.client.ClientRepo;
+import com.alconn.copang.item.dto.ItemDetailForm.MainForm;
 import com.alconn.copang.item.dto.ItemViewForm.MainViewForm;
 import com.alconn.copang.order.OrderItem;
 import com.alconn.copang.order.OrderRepository;
@@ -153,15 +154,15 @@ class ItemQueryRepositoryTest {
     void dateFormatTest() throws Exception {
         String date = "2020-08-09";
 //        String endDate = "2021-08-09";
-        Long endDate = System.currentTimeMillis();
+        long endDate = System.currentTimeMillis();
         this.mvc.perform(
             get(
 
                 "/search"
             )
             .characterEncoding("utf-8")
-            .queryParam("startDate", endDate.toString())
-            .queryParam("endDate", endDate.toString())
+            .queryParam("startDate", Long.toString(endDate))
+            .queryParam("endDate", Long.toString(endDate))
         )
             .andDo(print());
     }
@@ -268,9 +269,10 @@ class ItemQueryRepositoryTest {
 
         MainViewForm search = service.search(new ItemSearchCondition());
 
-        search.getList().forEach(i -> System.out
-            .println("i.getAverageRating() = " + i.getAverageRating()));
-        search.getList().forEach(i -> System.out.println("i.getItemName() = " + i.getItemName()));
         System.out.println("search.getTotalCount() = " + search.getTotalCount());
+        for (MainForm m: search.getList()) {
+            System.out.println("m.getAverageRating() = " + m.getAverageRating());
+            System.out.println("m.getCount() = " + m.getCountReviews());
+        }
     }
 }
