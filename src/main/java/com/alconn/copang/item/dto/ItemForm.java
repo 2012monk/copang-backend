@@ -13,6 +13,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Setter;
 
 //저장
 @Getter
@@ -33,6 +34,12 @@ public class ItemForm {
     private Long categoryId;
 
     private String brand;
+
+    @Builder.Default
+    @Setter
+    private Double averageRating = 0D;
+
+    private Integer countReview;
 
     @Builder.Default
     private List<ItemDetailForm.DetailForm> itemDetailFormList=new ArrayList<>();

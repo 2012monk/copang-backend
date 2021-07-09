@@ -126,6 +126,17 @@ public class ItemQueryRepository {
 
     }
 
+    public Double getAverageRating(Long itemId) {
+        return queryFactory
+            .select(review.rating.avg().coalesce(0D))
+            .from(review)
+            .join(orderItem).on(review.orderItem.eq(orderItem))
+            .join(itemDetail).on(orderItem.itemDetail.eq(itemDetail))
+            .join(item).on(itemDetail.item.eq(item))
+            .where(item.itemId.eq(itemId))
+            .fetchFirst();
+    }
+
 
     public MainViewForm list(ItemMapper itemMapper) {
         return search(new ItemSearchCondition(), itemMapper);
