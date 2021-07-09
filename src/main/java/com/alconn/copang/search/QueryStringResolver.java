@@ -1,6 +1,7 @@
 package com.alconn.copang.search;
 
 import com.alconn.copang.annotations.QueryStringBody;
+import com.alconn.copang.exceptions.ValidationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.URLDecoder;
 import java.util.regex.Pattern;
@@ -38,7 +39,12 @@ public class QueryStringResolver implements HandlerMethodArgumentResolver {
         query = URLDecoder.decode(query, "UTF-8");
         log.debug("query String parameter :{} ",  query);
         final String json = qs2json(URLDecoder.decode(query, "UTF-8"));
-        return mapper.readValue(json, parameter.getParameterType());
+        try{
+            return mapper.readValue(json, parameter.getParameterType());
+        }catch (Exception e) {
+            log.debug("fail to parse json ", e);
+            throw new ValidationException("query string 형식이 잘못되었습니다 확인해주세요");
+        }
     }
 
     private String qs2json(String a) {
