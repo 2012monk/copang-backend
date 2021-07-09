@@ -153,7 +153,7 @@ bootJar {
 //        into 'src/main/resources/static/docs'    // /static/docs로 복사!
 //    }
     from ("${asciidoctor.outputDir}") {
-        into 'static/docs'
+        into 'static/api/docs'
     }
 }
 
@@ -161,7 +161,7 @@ task copyDocument(type: Copy) {
     dependsOn asciidoctor
 
     from file("build/docs/asciidoc/")
-    into file("src/main/resources/static/docs")
+    into file("src/main/resources/static/api/docs")
 }
 
 
