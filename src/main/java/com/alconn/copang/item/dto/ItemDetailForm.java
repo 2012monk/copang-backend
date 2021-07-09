@@ -65,6 +65,8 @@ public class ItemDetailForm {
 
         private Long sellerId;
 
+        private Integer averageRating;
+
         @Override
         public String toString() {
             return "MainForm{" +

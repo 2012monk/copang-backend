@@ -88,7 +88,8 @@ class AuthControllerTest {
 //                .addFilters(new JwtValidateFilter(userDetailsService, blackList))
             .addFilters(filter)
 
-            .addFilters(new CharacterEncodingFilter("UTF-8"))
+            .addFilters(
+                new CharacterEncodingFilter("UTF-8"))
             .apply(documentationConfiguration(restDocumentation))
             .alwaysDo(document("Auth/{method-name}", ApiDocumentUtils.getDocumentRequest(),
                 ApiDocumentUtils.getDocumentResponse()))

@@ -1,8 +1,11 @@
 package com.alconn.copang.utils;
 
+import com.alconn.copang.address.Address;
+import com.alconn.copang.address.AddressForm;
 import com.alconn.copang.client.Client;
 import com.alconn.copang.client.ClientRepo;
 import com.alconn.copang.client.Role;
+import com.alconn.copang.common.EntityPriority;
 import com.alconn.copang.exceptions.InvalidTokenException;
 import com.alconn.copang.item.Item;
 import com.alconn.copang.item.ItemDetail;
@@ -22,6 +25,31 @@ public class TestUtils {
     @Autowired
     JwtTokenProvider provider;
 
+    public AddressForm getMockAddress() {
+        return AddressForm.builder()
+            .addressId(1L)
+            .address("의정부")
+            .detail("306보충대")
+            .priority(EntityPriority.PRIMARY)
+            .clientId(43L)
+            .receiverName("길동홍")
+            .receiverPhone("080-800-9898")
+            .preRequest("문앞")
+            .build();
+    }
+
+    public Address getAddress(Client client) {
+        return Address.builder()
+//            .addressId(1L)
+            .receiverPhone("010-9999-9888")
+            .receiverName("받는사람이름!")
+            .addressName("주소명")
+            .preRequest("빨리요제발")
+            .address("서울")
+            .detail("주소1123")
+            .client(client)
+            .build();
+    }
 
     public Client generateRealClient() {
         return Client.builder()
