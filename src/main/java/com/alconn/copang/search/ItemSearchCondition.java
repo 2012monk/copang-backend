@@ -1,7 +1,7 @@
 package com.alconn.copang.search;
 
-import com.alconn.copang.shipment.ShipmentType;
 import com.alconn.copang.shipment.ShippingChargeType;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,8 +21,10 @@ public class ItemSearchCondition {
 
     private Integer priceUnder;
 
+//    @JsonDeserialize(converter = EpochTimeToDateConvert.class)
     private LocalDate startDate;
 
+//    @JsonDeserialize(converter = EpochTimeToDateConvert.class)
     private LocalDate endDate;
 
     private String keyword;

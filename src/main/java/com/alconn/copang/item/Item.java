@@ -1,17 +1,27 @@
 package com.alconn.copang.item;
 
 import com.alconn.copang.category.Category;
-import com.alconn.copang.client.Client;
 import com.alconn.copang.item.rating.ItemRank;
 import com.alconn.copang.seller.Seller;
 import com.alconn.copang.shipment.ShipmentInfo;
-import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-
-import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Getter
@@ -25,12 +35,12 @@ public class Item {
     private Seller seller;
 
     @CreationTimestamp
-    @Column(name = "item_time",updatable = false)
+    @Column(name = "item_time", updatable = false)
     private LocalDate itemCreate;
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE,orphanRemoval = true)
+    @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @Builder.Default
-    private List<ItemDetail> itemDetails=new ArrayList<>();
+    private List<ItemDetail> itemDetails = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "categoryId")
@@ -45,11 +55,12 @@ public class Item {
 
     // ==============추가부분 =================== */
 
-    @OneToOne(cascade = CascadeType.REMOVE,orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "shipment_info_id")
     private ShipmentInfo shipmentInfo;
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long itemId;
 
     @Column(nullable = false)
@@ -61,19 +72,21 @@ public class Item {
 
 
     //=====
-    public void changeCategory(Category category){
-        this.category=category;
+    public void changeCategory(Category category) {
+        this.category = category;
         category.getItemList().add(this);
     }
 
     //수정
-    public void updateMethod(String itemName, String itemComment,String brand){
-        this.itemName=(itemName==null? this.itemName:itemName);
-        this.itemComment=(itemComment==null? this.itemComment:itemComment);
-        this.brand=(itemComment==null? this.brand:brand);
+    public void updateMethod(String itemName, String itemComment, String brand) {
+        this.itemName = (itemName == null ? this.itemName : itemName);
+        this.itemComment = (itemComment == null ? this.itemComment : itemComment);
+        this.brand = (itemComment == null ? this.brand : brand);
 
     }
 
 
-
+    public void setAvg(Double aDouble) {
+        this.averageRating = aDouble;
+    }
 }

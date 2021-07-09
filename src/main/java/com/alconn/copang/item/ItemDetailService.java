@@ -182,9 +182,9 @@ public class ItemDetailService {
                 .list(listForm)
                 .build();
 
-        for (ItemDetailForm.MainForm l : listForm) {
-            System.out.println("l.toString() = " + l.toString());
-        }
+//        for (ItemDetailForm.MainForm l : listForm) {
+//            System.out.println("l.toString() = " + l.toString());
+//        }
 
 //        return listForm;
         return mainViewForm;

@@ -1,11 +1,10 @@
 package com.alconn.copang.item.dto;
 
 
+import com.alconn.copang.shipment.dto.ShipmentInfoForm;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-
-import com.alconn.copang.shipment.dto.ShipmentInfoForm;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -65,7 +64,7 @@ public class ItemDetailForm {
 
         private Long sellerId;
 
-        private Integer averageRating;
+        private Double averageRating;
 
         private ShipmentInfoForm shipmentInfoForm;
     }

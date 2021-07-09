@@ -33,7 +33,7 @@ public class QueryStringResolver implements HandlerMethodArgumentResolver {
 //        req.setCharacterEncoding("UTF-8");
         String query = req.getQueryString();
         if (query == null) {
-            return null;
+            return parameter.getParameterType().newInstance();
         }
         query = URLDecoder.decode(query, "UTF-8");
         log.debug("query String parameter :{} ",  query);
@@ -43,18 +43,18 @@ public class QueryStringResolver implements HandlerMethodArgumentResolver {
 
     private String qs2json(String a) {
         String res = "{\"";
-//        res += a.replaceAll("[=]", "\":\"")
-//            .replaceAll("[&]", "\",\"");
+        res += a.replaceAll("[=]", "\":\"")
+            .replaceAll("[&]", "\",\"");
 
-        for (int i = 0; i < a.length(); i++) {
-            if (a.charAt(i) == '=') {
-                res += "\"" + ":" + "\"";
-            } else if (a.charAt(i) == '&') {
-                res += "\"" + "," + "\"";
-            } else {
-                res += a.charAt(i);
-            }
-        }
+//        for (int i = 0; i < a.length(); i++) {
+//            if (a.charAt(i) == '=') {
+//                res += "\"" + ":" + "\"";
+//            } else if (a.charAt(i) == '&') {
+//                res += "\"" + "," + "\"";
+//            } else {
+//                res += a.charAt(i);
+//            }
+//        }
         res += "\"" + "}";
         return res;
     }

@@ -21,6 +21,7 @@ public interface ItemMapper {
     ShipmentInfo shipToEntity(ItemForm itemForm);
 
     //상품메인 조회
+    @Mapping(source = "itemDetailList.item.averageRating", target = "averageRating")
     @Mapping(source = "itemDetailList.item.shipmentInfo",target = "shipmentInfoForm")
     List<ItemDetailForm.MainForm> mainPage(List<ItemDetail> itemDetailList);
 

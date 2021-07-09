@@ -11,12 +11,15 @@ import com.alconn.copang.address.Address;
 import com.alconn.copang.address.AddressRepository;
 import com.alconn.copang.client.Client;
 import com.alconn.copang.client.ClientRepo;
+import com.alconn.copang.item.dto.ItemViewForm.MainViewForm;
 import com.alconn.copang.order.OrderItem;
 import com.alconn.copang.order.OrderRepository;
 import com.alconn.copang.order.Orders;
 import com.alconn.copang.order.dto.OrderItemForm;
 import com.alconn.copang.review.Review;
 import com.alconn.copang.review.ReviewRepository;
+import com.alconn.copang.search.ItemSearchCondition;
+import com.alconn.copang.search.SearchService;
 import com.alconn.copang.seller.Seller;
 import com.alconn.copang.seller.SellerRepository;
 import com.alconn.copang.utils.TestUtils;
@@ -26,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -43,6 +47,8 @@ import org.springframework.util.MultiValueMap;
 @SpringBootTest
 class ItemQueryRepositoryTest {
 
+    @Autowired
+    EntityManager m;
 
     @Autowired
     ItemQueryRepository itemQueryRepository;
@@ -61,6 +67,9 @@ class ItemQueryRepositoryTest {
 
     @Autowired
     ClientRepo clientRepo;
+
+    @Autowired
+    SearchService service;
 
     @Autowired
     OrderRepository orderRepository;
@@ -140,7 +149,33 @@ class ItemQueryRepositoryTest {
             .andExpect(status().isOk());
     }
 
-    @Disabled
+    @Test
+    void dateFormatTest() throws Exception {
+        String date = "2020-08-09";
+//        String endDate = "2021-08-09";
+        Long endDate = System.currentTimeMillis();
+        this.mvc.perform(
+            get(
+
+                "/search"
+            )
+            .characterEncoding("utf-8")
+            .queryParam("startDate", endDate.toString())
+            .queryParam("endDate", endDate.toString())
+        )
+            .andDo(print());
+    }
+
+    @Test
+    void nullTest() throws Exception {
+
+        this.mvc.perform(
+            get("/api/item/search")
+        )
+            .andDo(print());
+    }
+
+//    @Disabled
     @Transactional
     @DisplayName("평균 별점 수집")
     @Test
@@ -210,12 +245,32 @@ class ItemQueryRepositoryTest {
                 .writer(client)
                 .build()
             ).collect(Collectors.toList());
+        reviews.addAll(
+            orderItems.stream().map(o -> Review.builder()
+                .content("좋아요")
+                .rating(random.nextInt(3))
+                .orderItem(
+                    o
+                )
+                .writer(client)
+                .build()
+            ).collect(Collectors.toList())
+        );
 
         reviewRepository.saveAll(reviews);
 
-//        List<ItemDetail> itemWithReview = itemQueryRepository.getItemWithReview();
+        m.flush();
+        m.clear();
+
+//        List<ItemDetail> itemWithReview = itemQueryRepository.se();
 //        itemWithReview.forEach(i -> System.out
 //            .println("i.getItem().getAverageRating() = " + i.getItem().getAverageRating()));
 
+        MainViewForm search = service.search(new ItemSearchCondition());
+
+        search.getList().forEach(i -> System.out
+            .println("i.getAverageRating() = " + i.getAverageRating()));
+        search.getList().forEach(i -> System.out.println("i.getItemName() = " + i.getItemName()));
+        System.out.println("search.getTotalCount() = " + search.getTotalCount());
     }
 }

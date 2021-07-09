@@ -1,16 +1,24 @@
 package com.alconn.copang.item;
 
+import static com.alconn.copang.item.QItem.item;
 import static com.alconn.copang.item.QItemDetail.itemDetail;
+import static com.alconn.copang.order.QOrderItem.orderItem;
+import static com.alconn.copang.review.QReview.review;
 
-import com.alconn.copang.item.dto.ItemDetailForm;
+import com.alconn.copang.item.dto.ItemViewForm.MainViewForm;
+import com.alconn.copang.item.mapper.ItemMapper;
 import com.alconn.copang.search.ItemSearchCondition;
+import com.alconn.copang.shipment.ShippingChargeType;
 import com.alconn.copang.utils.StringUtils;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -47,7 +55,7 @@ public class ItemQueryRepository {
     public List<ItemDetail> filterBy(String brand, Integer price, LocalDate startDate,
         LocalDate endDate) {
         return queryFactory
-                .selectFrom(itemDetail)
+            .selectFrom(itemDetail)
             .where(eqBrand(brand))
             .where(itemDetail.item.itemCreate.after(startDate))
             .where(itemDetail.item.itemCreate.before(endDate))
@@ -74,7 +82,8 @@ public class ItemQueryRepository {
                 eqPriceUnder(condition.getPriceUnder()),
                 afterDate(condition.getStartDate()),
                 beforeDate(condition.getEndDate()),
-                eqCategory(condition.getCategoryId())
+                eqCategory(condition.getCategoryId()),
+                eqLogisticChargeType(condition.getShippingChargeType())
             )
             .offset((long) condition.getPage() * condition.getSize())
             .limit(condition.getSize())
@@ -109,26 +118,55 @@ public class ItemQueryRepository {
         return categoryId == null ? null : itemDetail.item.category.categoryId.eq(categoryId);
     }
 
+    private BooleanExpression eqLogisticChargeType(ShippingChargeType type) {
+        return type == null ? null : itemDetail.item.shipmentInfo.shippingChargeType.eq(type);
+    }
+    public void list() {
 
-    // Review join 방법찾을필요 있음
-    public List<ItemDetailForm.MainForm> getItemWithReview() {
+    }
 
-//        return queryFactory
-//            .select(Projections.fields(ItemDetail.class,
-//                itemDetail.item,
-//                ExpressionUtils.as(
-//                    JPAExpressions.select(review.rating.avg()),
-//
-//                    "averageRating")))
-//            .from(itemDetail)
-//            .join(itemDetail.item)
-////            .fetchJoin()
-////            .leftJoin(review).on(itemDetail.eq(review.orderItem.itemDetail))
-//            .join(orderItem).on(itemDetail.eq(orderItem.itemDetail))
-//            .join(review).on(orderItem.itemDetail.eq(itemDetail))
-//            .fetch();
-        return null;
 
+
+    public MainViewForm search(ItemSearchCondition condition, ItemMapper itemMapper) {
+        BooleanBuilder builder = new BooleanBuilder();
+        if (!StringUtils.isEmpty(condition.getKeyword())) {
+            String[] keywords = StringUtils.filterAndSplitByEmpty(condition.getKeyword());
+            Arrays.stream(keywords).forEach(s -> builder.or(itemDetail.item.itemName.contains(s)));
+        }
+        builder.and(itemDetail.itemMainApply.eq(ItemMainApply.APPLY));
+        List<Tuple> fetch = queryFactory
+            .select(itemDetail, review.rating.avg(), item.itemId.count())
+            .from(item)
+            .offset((long) condition.getPage() * condition.getSize())
+            .limit(condition.getSize())
+            .join(itemDetail).on(item.eq(itemDetail.item))
+            .leftJoin(orderItem).on(itemDetail.eq(orderItem.itemDetail))
+            .leftJoin(review).on(orderItem.eq(review.orderItem))
+            .where(builder)
+            .where(
+                eqBrand(condition.getBrand()),
+                eqPriceOver(condition.getPriceOver()),
+                eqPriceUnder(condition.getPriceUnder()),
+                afterDate(condition.getStartDate()),
+                beforeDate(condition.getEndDate()),
+                eqCategory(condition.getCategoryId()),
+                eqLogisticChargeType(condition.getShippingChargeType())
+            )
+            .groupBy(item)
+            .fetchJoin()
+            .fetch();
+        List<ItemDetail> details = new ArrayList<>();
+        for (Tuple t:fetch) {
+            ItemDetail detail = t.get(itemDetail);
+            if (detail != null){
+                detail.getItem().setAvg(t.get(review.rating.avg()));
+                details.add(detail);
+            }
+        }
+        return MainViewForm.builder()
+            .list(itemMapper.mainPage(details))
+            .totalCount(Objects.requireNonNull(fetch.get(0).get(item.itemId.count())).intValue())
+            .build();
     }
 
 }

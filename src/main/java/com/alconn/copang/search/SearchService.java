@@ -5,6 +5,8 @@ import com.alconn.copang.item.ItemQueryRepository;
 import com.alconn.copang.item.dto.ItemDetailForm;
 import com.alconn.copang.item.dto.ItemDetailForm.MainForm;
 import com.alconn.copang.item.dto.ItemForm;
+import com.alconn.copang.item.dto.ItemViewForm;
+import com.alconn.copang.item.dto.ItemViewForm.MainViewForm;
 import com.alconn.copang.item.mapper.ItemMapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +26,15 @@ public class SearchService {
         return null;
     }
 
-    public List<MainForm> search(ItemSearchCondition condition) {
+    public ItemViewForm.MainViewForm search(ItemSearchCondition condition) {
 
-        List<ItemDetail> details = itemQueryRepository.searchAndFilter(condition);
-        return itemMapper.mainPage(details);
+//        List<ItemDetail> details = itemQueryRepository.searchAndFilter(condition);
+//        List<MainForm> mainForms = itemMapper.mainPage(details);
+//        MainViewForm res =
+//            MainViewForm.builder()
+//            .totalCount()
+        return itemQueryRepository.search(condition, itemMapper);
     }
+
+
 }
