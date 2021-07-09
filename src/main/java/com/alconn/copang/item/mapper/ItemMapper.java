@@ -26,13 +26,15 @@ public interface ItemMapper {
     List<ItemDetailForm.MainForm> mainPage(List<ItemDetail> itemDetailList);
 
 
+
+    @Mapping(target = ".", source = "item.seller")
     @Mapping(target = ".", source = "item")
     @Mapping(target = ".",source = "item.category")
     @Mapping(source = "item.shipmentInfo", target = "shipmentInfoForm")
     ItemDetailForm.MainForm toPage(ItemDetail detail);
 
     // Seller mapping 추가
-    @Mapping(source = "sellerId", target = "item.seller.clientId")
+//    @Mapping(source = "sellerId", target = "item.seller.clientId")
     @Mapping(target = "item", source = ".")
     ItemDetail toEntity(ItemDetailForm.MainForm mainForm);
 

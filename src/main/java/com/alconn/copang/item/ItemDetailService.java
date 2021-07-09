@@ -8,6 +8,7 @@ import com.alconn.copang.item.dto.ItemDetailForm;
 import com.alconn.copang.item.dto.ItemForm;
 import com.alconn.copang.item.dto.ItemViewForm;
 import com.alconn.copang.item.mapper.ItemMapper;
+import com.alconn.copang.search.ItemSearchCondition;
 import com.alconn.copang.seller.Seller;
 import com.alconn.copang.shipment.ShipmentInfo;
 import com.alconn.copang.shipment.ShipmentInfoRepository;
@@ -163,31 +164,34 @@ public class ItemDetailService {
     //전체출력 ( 대표 출력 )
     public ItemViewForm.MainViewForm findMainList(int page) {
         //!==
-        System.out.println("page = " + page);
-        //!==
-        if (page < 1) page = 0;
-        else page -= 1;
-
-        Pageable pageable = PageRequest.of(page, 30);
-
-
-        List<ItemDetail> list = itemDetailRepository.listItemDetailsMainFind(ItemMainApply.APPLY, pageable);
-        List<ItemDetailForm.MainForm> listForm = itemMapper.mainPage(list);
-
-        int a = itemDetailRepository.countItemDetailByItemMainApply(ItemMainApply.APPLY);
-
-        //필터링 카운트
-        ItemViewForm.MainViewForm mainViewForm = ItemViewForm.MainViewForm.builder()
-                .totalCount(a)
-                .list(listForm)
-                .build();
+//        System.out.println("page = " + page);
+//        //!==
+//        if (page < 1) page = 0;
+//        else page -= 1;
+//
+//        Pageable pageable = PageRequest.of(page, 30);
+//
+//
+//        List<ItemDetail> list = itemDetailRepository.listItemDetailsMainFind(ItemMainApply.APPLY, pageable);
+//        List<ItemDetailForm.MainForm> listForm = itemMapper.mainPage(list);
+//
+//        int a = itemDetailRepository.countItemDetailByItemMainApply(ItemMainApply.APPLY);
+//
+//        //필터링 카운트
+//        ItemViewForm.MainViewForm mainViewForm = ItemViewForm.MainViewForm.builder()
+//                .totalCount(a)
+//                .list(listForm)
+//                .build();
+        ItemSearchCondition condition = new ItemSearchCondition();
+        condition.setPage(page);
+        return itemQueryRepository.search(condition, itemMapper);
 
 //        for (ItemDetailForm.MainForm l : listForm) {
 //            System.out.println("l.toString() = " + l.toString());
 //        }
 
 //        return listForm;
-        return mainViewForm;
+//        return mainViewForm;
     }
 
     //상품 상세 페이지
