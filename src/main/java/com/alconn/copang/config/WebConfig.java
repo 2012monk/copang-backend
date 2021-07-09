@@ -36,7 +36,9 @@ public class WebConfig implements WebMvcConfigurer {
                 "http://127.0.0.1:5500",
                 "http://localhost:3000",
                 "http://localhost:47788",
-                "http://localhost:8080")
+                "http://localhost:8080",
+                "https://alconn.co"
+            )
             .allowedHeaders("*")
             .allowedMethods("*")
             .allowCredentials(true)
