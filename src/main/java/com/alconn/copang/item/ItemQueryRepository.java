@@ -173,7 +173,7 @@ public class ItemQueryRepository {
         }
         return MainViewForm.builder()
             .list(itemMapper.mainPage(details))
-            .totalCount(Objects.requireNonNull(fetch.get(0).get(item.itemId.count())).intValue())
+            .totalCount(fetch.size() == 0 ? 0 :Objects.requireNonNull(fetch.get(0).get(item.itemId.count())).intValue())
             .build();
     }
 
