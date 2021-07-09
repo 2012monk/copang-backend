@@ -5,6 +5,8 @@ import com.alconn.copang.item.ItemDetail;
 import com.alconn.copang.item.dto.ItemDetailForm;
 import com.alconn.copang.item.dto.ItemForm;
 import com.alconn.copang.item.dto.ItemViewForm;
+import com.alconn.copang.shipment.ShipmentForm;
+import com.alconn.copang.shipment.ShipmentInfo;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
@@ -14,15 +16,22 @@ import java.util.List;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public interface ItemMapper {
 
+    //배송정보 매핑
+    @Mapping(source = "shipmentInfoForm",target = ".")
+    ShipmentInfo shipToEntity(ItemForm itemForm);
+
     //상품메인 조회
+    @Mapping(source = "itemDetailList.item.shipmentInfo",target = "shipmentInfoForm")
     List<ItemDetailForm.MainForm> mainPage(List<ItemDetail> itemDetailList);
+
 
     @Mapping(target = ".", source = "item")
     @Mapping(target = ".",source = "item.category")
+    @Mapping(source = "item.shipmentInfo", target = "shipmentInfoForm")
     ItemDetailForm.MainForm toPage(ItemDetail detail);
 
     // Seller mapping 추가
-//    @Mapping(source = "sellerId", target = "item.seller.clientId")
+    @Mapping(source = "sellerId", target = "item.seller.clientId")
     @Mapping(target = "item", source = ".")
     ItemDetail toEntity(ItemDetailForm.MainForm mainForm);
 
@@ -34,28 +43,23 @@ public interface ItemMapper {
     @Mapping(source = "item.itemId",target = "itemId")
     ItemDetailForm domainToDto(final ItemDetail itemDetail);
 
-    List<ItemDetail> listDtoToDomain(final List<ItemDetailForm> itemDetailForms);
 
     List<ItemDetailForm> listDomainToDto(final List<ItemDetail> itemDetail);
 
     //상품상세 조회
     @Mapping(source = "itemDetailList",target = "itemDetailFormList")
-    //=====
     @Mapping(source = "item.category.categoryId",target = "categoryId")
-    //=====
+    @Mapping(source = "item.shipmentInfo", target = "shipmentInfoForm")
     ItemForm itemDetailToDto(Item item, List<ItemDetail> itemDetailList);
 
 
     @Mapping(target = "item", source = ".")
     List<ItemDetail> listDtoToDomainN(List<ItemDetailForm.DetailForm> detailFormList);
 
-    //update ItemDetailList + item => to Form 매핑
-    //update 받고 보내는 form
-    @Mapping(source = "itemDetailList", target = "itemDetailUpdateClassList")
-    //====
+    @Mapping(source = "itemDetailList", target = "itemDetailFormList")
     @Mapping(source = "item.category.categoryId", target = "categoryId")
-    //====
-    ItemForm.ItemFormUpdate  updateItemForm(Item item,List<ItemDetail> itemDetailList);
+    @Mapping(source = "item.shipmentInfo", target = "shipmentInfoForm")
+    ItemForm  updateItemForm(Item item,List<ItemDetail> itemDetailList);
 
 
     //단일 저장
@@ -69,7 +73,13 @@ public interface ItemMapper {
     //====
     @Mapping(source = ".", target = "itemDetailViewForm")
     ItemViewForm detailViewForm(ItemDetail itemDetail);
+
+
+
+
 }
+
+//    List<ItemDetail> listDtoToDomain(final List<ItemDetailForm> itemDetailForms);
 
 //    @Mapping(source = "item", target = ".")
 //    @Mapping(source = ".", target = "detailForm")
