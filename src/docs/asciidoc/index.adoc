@@ -255,7 +255,7 @@ operation::address/update-address[snippets='http-request,request-headers,request
 
 상품중에 대표로 선택된 옵션들만 출력됩니다, 현재는 첫번째가 대표로 선택됩니다
 
-operation::item/get-mainlist[snippets='http-request,http-response']
+operation::item/get-mainlist[snippets='path-parameters,http-request,http-response,response-fields']
 
 == 상품 상세 목록
 ==== `GET` /api/item/itemid=:itemId
@@ -270,6 +270,10 @@ operation::item/get-categorymainlist[snippets='http-request,path-parameters,http
 ==== `POST` /api/item/add
 
 상품 새로 등록
+
+logisticCompany : HYUNDAI, KGB, EPOST, HANJIN, CJGLS
+
+ShippingChargeType : FREE, CONDITIONAL_FREE, NOT_FREE
 
 operation::item/post-save[snippets='http-request,request-fields,http-response,response-fields']
 

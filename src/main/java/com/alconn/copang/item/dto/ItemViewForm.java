@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 //단일
 @Getter
@@ -46,6 +47,18 @@ public class ItemViewForm {
 
         private String subImg;
     }
+
+    //횟수 출력
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MainViewForm{
+        private int totalCount;
+
+        private List<ItemDetailForm.MainForm> list;
+    }
+
 
 }
 

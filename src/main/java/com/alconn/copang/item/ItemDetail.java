@@ -51,12 +51,12 @@ public class ItemDetail {
     }
 
     public void updateAllData(int price,int stockQuantity, String optionName, String optionValue, String mainImg, String subImg){
-        this.price=price;
-        this.stockQuantity=stockQuantity;
-        this.optionName=optionName;
-        this.optionValue=optionValue;
-        this.mainImg=mainImg;
-        this.subImg=subImg;
+        this.price= (price==0) ? this.price :price;
+        this.stockQuantity=(stockQuantity==0)? this.stockQuantity:stockQuantity;
+        this.optionName= (optionName==null)? this.optionName:optionName;
+        this.optionValue= (optionValue==null)? this.optionValue:optionValue;
+        this.mainImg= (mainImg==null)? this.mainImg:mainImg;
+        this.subImg= (subImg==null)? this.subImg:subImg;
     }
 
 
