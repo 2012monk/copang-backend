@@ -86,4 +86,7 @@ public class Item {
     }
 
 
+    public void setAvg(Double aDouble) {
+        this.averageRating = aDouble;
+    }
 }

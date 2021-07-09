@@ -64,7 +64,7 @@ public class ItemDetailForm {
 
         private Long sellerId;
 
-        private Integer averageRating;
+        private Double averageRating;
 
         private ShipmentInfoForm shipmentInfoForm;
     }

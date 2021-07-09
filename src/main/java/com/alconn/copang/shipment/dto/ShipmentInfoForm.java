@@ -24,6 +24,8 @@ public class ShipmentInfoForm {
     //택배사
     private LogisticCode logisticCompany;
 
+    private String companyName;
+
     //배송비 관련 상태컬럼
     private ShippingChargeType shippingChargeType;
 

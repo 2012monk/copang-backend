@@ -21,10 +21,10 @@ public class ItemSearchCondition {
 
     private Integer priceUnder;
 
-    @JsonDeserialize(converter = EpochTimeToDateConvert.class)
+//    @JsonDeserialize(converter = EpochTimeToDateConvert.class)
     private LocalDate startDate;
 
-    @JsonDeserialize(converter = EpochTimeToDateConvert.class)
+//    @JsonDeserialize(converter = EpochTimeToDateConvert.class)
     private LocalDate endDate;
 
     private String keyword;
