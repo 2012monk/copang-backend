@@ -16,6 +16,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -88,9 +89,12 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
-    @ExceptionHandler(NoSuchEntityExceptions.class)
+    @ExceptionHandler({NoSuchEntityExceptions.class,NoSuchElementException.class,
+        SQLIntegrityConstraintViolationException.class,ConstraintViolationException.class,
+        ValidationException.class, DataIntegrityViolationException.class,
+        TransientPropertyValueException.class, HttpMessageConversionException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    protected ResponseMessage<String > selectFailed(NoSuchEntityExceptions e){
+    protected ResponseMessage<String> handleBadRequest(Exception e) {
         return ResponseMessage.<String>builder()
             .message("요청하신 정보가 올바르지 않습니다")
             .data(e.getMessage())
@@ -98,36 +102,65 @@ public class GlobalExceptionHandler {
             .build();
     }
 
-
-    @ExceptionHandler(NoSuchElementException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    protected ResponseMessage<String > selectFailedElement(NoSuchElementException e){
-        return ResponseMessage.<String>builder()
-            .message("요청하신 정보가 올바르지 않습니다")
-            .data(e.getMessage())
-            .code(-111)
-            .build();
-    }
-
-    @ExceptionHandler({SQLIntegrityConstraintViolationException.class,ConstraintViolationException.class})
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    protected ResponseMessage<String> jpaException(SQLIntegrityConstraintViolationException e) {
-        return ResponseMessage.<String>builder()
-            .message("요청하신 정보가 올바르지 않습니다")
-            .data(e.getMessage())
-            .code(-111)
-            .build();
-    }
-    @ExceptionHandler({ DataIntegrityViolationException.class, })
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    protected ResponseMessage<String> dataIntegrateException(DataIntegrityViolationException e) {
-        return ResponseMessage.<String>builder()
-                .message("요청하신 정보가 올바르지 않습니다")
-                .data(e.getMessage())
-                .code(-111)
-                .build();
-    }
-
+//    @ExceptionHandler(NoSuchEntityExceptions.class)
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    protected ResponseMessage<String > selectFailed(NoSuchEntityExceptions e){
+//        return ResponseMessage.<String>builder()
+//            .message("요청하신 정보가 올바르지 않습니다")
+//            .data(e.getMessage())
+//            .code(-111)
+//            .build();
+//    }
+//
+//
+//    @ExceptionHandler(NoSuchElementException.class)
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    protected ResponseMessage<String > selectFailedElement(NoSuchElementException e){
+//        return ResponseMessage.<String>builder()
+//            .message("요청하신 정보가 올바르지 않습니다")
+//            .data(e.getMessage())
+//            .code(-111)
+//            .build();
+//    }
+//
+//    @ExceptionHandler({SQLIntegrityConstraintViolationException.class,ConstraintViolationException.class})
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//    protected ResponseMessage<String> jpaException(SQLIntegrityConstraintViolationException e) {
+//        return ResponseMessage.<String>builder()
+//            .message("요청하신 정보가 올바르지 않습니다")
+//            .data(e.getMessage())
+//            .code(-111)
+//            .build();
+//    }
+//    @ExceptionHandler(ValidationException.class)
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    public ResponseMessage<?> handleValidate(ValidationException e){
+//        e.printStackTrace();
+//        return ResponseMessage.builder()
+//            .message("요청하신 정보가 올바르지 않습니다")
+//            .data(e.getMessage())
+//            .build();
+//    }
+//    @ExceptionHandler({ DataIntegrityViolationException.class, })
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//    protected ResponseMessage<String> dataIntegrateException(DataIntegrityViolationException e) {
+//        return ResponseMessage.<String>builder()
+//                .message("요청하신 정보가 올바르지 않습니다")
+//                .data(e.getMessage())
+//                .code(-111)
+//                .build();
+//    }
+//
+//    @ExceptionHandler(TransientPropertyValueException.class)
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    public ResponseMessage<String > handleUnSaved(TransientPropertyValueException e) {
+//        return ResponseMessage.<String>builder()
+//            .message("요청 하신 정보가 잘못 되었습니다!")
+//            .code(-11)
+//            .data(e.getMessage())
+//            .build();
+//    }
+//
 
 //    @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
@@ -140,8 +173,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({AccessDeniedException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
     protected ResponseMessage<String> handleAccessDenied(AccessDeniedException e){
-//        httpServletResponse.setCharacterEncoding("utf-8");
-//        System.out.println("ExceptionHandle! \n\n\n\n\n\n\n\n\n");
         log.warn("access denied ", e);
         return ResponseMessage.<String>builder()
                 .message("권한이 없습니다")
@@ -150,15 +181,6 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
-    @ExceptionHandler(ValidationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseMessage<?> handleValidate(ValidationException e){
-        e.printStackTrace();
-        return ResponseMessage.builder()
-            .message("요청하신 정보가 올바르지 않습니다")
-            .data(e.getMessage())
-            .build();
-    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -173,16 +195,6 @@ public class GlobalExceptionHandler {
                 .message("요청하신 정보가 유효하지 않습니다")
                 .data(msg)
                 .build();
-    }
-
-    @ExceptionHandler(TransientPropertyValueException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseMessage<String > handleUnSaved(TransientPropertyValueException e) {
-        return ResponseMessage.<String>builder()
-            .message("요청 하신 정보가 잘못 되었습니다!")
-            .code(-11)
-            .data(e.getMessage())
-            .build();
     }
 
 
