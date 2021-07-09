@@ -199,6 +199,8 @@ public class ItemDetailService {
     public ItemForm findItemDetailPage(Long id) {
         List<ItemDetail> list = itemDetailRepository.findItemDetailPage(id);
         ItemForm itemForm = itemMapper.itemDetailToDto(list.get(0).getItem(), list);
+        Double avg = itemQueryRepository.getAverageRating(id);
+        itemForm.setAverageRating(avg);
         return itemForm;
     }
 
