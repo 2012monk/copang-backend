@@ -2,6 +2,7 @@ package com.alconn.copang.item;
 
 import com.alconn.copang.category.Category;
 import com.alconn.copang.client.Client;
+import com.alconn.copang.item.rating.ItemRank;
 import com.alconn.copang.seller.Seller;
 import com.alconn.copang.shipment.ShipmentInfo;
 import lombok.*;
@@ -35,6 +36,15 @@ public class Item {
     @JoinColumn(name = "categoryId")
     private Category category;
 
+    // ==============추가부분 =================== */
+    private Double averageRating;
+
+    @OneToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn
+    private ItemRank itemRank;
+
+    // ==============추가부분 =================== */
+
     @OneToOne(cascade = CascadeType.REMOVE,orphanRemoval = true)
     @JoinColumn(name = "shipment_info_id")
     private ShipmentInfo shipmentInfo;
@@ -49,7 +59,6 @@ public class Item {
 
     private String brand;
 
-    private Integer averageRating;
 
     //=====
     public void changeCategory(Category category){

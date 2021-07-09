@@ -1,7 +1,6 @@
 package com.alconn.copang.utils;
 
 import java.util.regex.Pattern;
-import org.apache.tomcat.util.file.Matcher;
 
 public class StringUtils {
 
@@ -17,7 +16,7 @@ public class StringUtils {
     }
 
     public static boolean isEmpty(String target) {
-        return target.equals("");
+        return target == null || target.equals("");
     }
 
 }

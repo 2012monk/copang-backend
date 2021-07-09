@@ -1,5 +1,6 @@
 package com.alconn.copang.config;
 
+import com.alconn.copang.search.QueryStringResolver;
 import com.alconn.copang.security.aop.UserIdResolver;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,8 @@ import org.springframework.web.servlet.view.UrlBasedViewResolver;
 public class WebConfig implements WebMvcConfigurer {
 
     private final UserIdResolver userIdResolver;
+
+    private final QueryStringResolver queryStringResolver;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -54,6 +57,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(userIdResolver);
+        resolvers.add(queryStringResolver);
     }
 
     @Bean
