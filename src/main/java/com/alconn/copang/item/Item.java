@@ -2,6 +2,7 @@ package com.alconn.copang.item;
 
 import com.alconn.copang.category.Category;
 import com.alconn.copang.client.Client;
+import com.alconn.copang.item.rating.ItemRank;
 import com.alconn.copang.seller.Seller;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -44,7 +45,16 @@ public class Item {
     @JoinColumn(name = "categoryId")
     private Category category;
 
-    private Integer averageRating;
+    // ==============추가부분 =================== */
+    private Double averageRating;
+
+    private String brand;
+
+    @OneToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn
+    private ItemRank itemRank;
+
+    // ==============추가부분 =================== */
 
     //=====
     public void changeCategory(Category category){
