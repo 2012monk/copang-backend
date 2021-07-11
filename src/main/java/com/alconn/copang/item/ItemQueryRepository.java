@@ -150,8 +150,12 @@ public class ItemQueryRepository {
         }
         builder.and(itemDetail.itemMainApply.eq(ItemMainApply.APPLY));
         List<Tuple> fetch = queryFactory
-            .select(itemDetail, review.rating.avg().coalesce(0d), item.itemId.count(),
-                review.count())
+            .select(itemDetail,
+                review.rating.avg().coalesce(0d),
+                item.itemId.count(),
+                review.count(),
+                orderItem.count()
+            )
             .from(item)
             .offset((long) condition.getPage() * condition.getSize())
             .limit(condition.getSize())
@@ -176,7 +180,7 @@ public class ItemQueryRepository {
         for (Tuple t : fetch) {
             ItemDetail detail = t.get(itemDetail);
             if (detail != null) {
-//                detail.getItem().setAvg(t.get(review.rating.avg()));
+                detail.getItem().setCountOrderItems(t.get(orderItem.count()));
                 detail.getItem().setCountReviews(t.get(review.count()));
                 detail.getItem().setAvg(t.get(1, Double.class));
                 details.add(detail);

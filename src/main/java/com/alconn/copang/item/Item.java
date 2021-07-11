@@ -74,6 +74,9 @@ public class Item {
 
     private String brand;
 
+    @Transient
+    private Long countOrderItems;
+
 
     //=====
     public void changeCategory(Category category) {
@@ -96,5 +99,9 @@ public class Item {
 
     public void setCountReviews(Long aLong) {
         this.countReviews = aLong;
+    }
+
+    public void setCountOrderItems(Long aLong) {
+        this.countOrderItems = aLong;
     }
 }
