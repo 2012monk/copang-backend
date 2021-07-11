@@ -72,6 +72,8 @@ public class ItemDetailForm {
         private Long countReviews;
 
         private ShipmentInfoForm shipmentInfoForm;
+
+        private Long countOrderItems;
     }
 
     //상세페이지, 저장
