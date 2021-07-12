@@ -9,13 +9,17 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import lombok.NoArgsConstructor;
 
+@Builder
+@NoArgsConstructor @AllArgsConstructor
 @Getter
 @Entity
 public class Shipment {
@@ -39,4 +43,11 @@ public class Shipment {
 
     private Integer shippingCharge;
 
+    public Shipment(Long shipmentId) {
+        this.shipmentId = shipmentId;
+    }
+
+    public Shipment(String trackingNumber) {
+        this.trackingNumber = trackingNumber;
+    }
 }

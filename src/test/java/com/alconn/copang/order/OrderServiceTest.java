@@ -35,6 +35,7 @@ import com.alconn.copang.payment.ImpPaymentInfo;
 import com.alconn.copang.payment.PaymentService;
 import com.alconn.copang.seller.Seller;
 import com.alconn.copang.seller.SellerRepository;
+import com.alconn.copang.shipment.ShipmentForm;
 import com.alconn.copang.utils.TestUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -463,6 +464,35 @@ class OrderServiceTest {
                 e.printStackTrace();
             }
         }
+
+        List<ShipmentForm.Request> requests = new ArrayList<>();
+        sellerOrder.forEach(o ->
+            o.getOrderItems().forEach(
+                i -> requests.add(
+                    ShipmentForm.Request.builder()
+                    .orderItemId(i.getOrderItemId())
+                    .trackingNumber("123333")
+                    .build()
+                )
+            ));
+
+        Response response1 = service.placeShipment(requests, seller.getClientId(), 1L);
+
+        manager.flush();
+        manager.clear();
+
+        sellerOrder = sellerOrderService
+            .getSellerOrder(seller.getClientId());
+
+        assertEquals(1, sellerOrder.size());
+        for (SellerOrderForm.Response o : sellerOrder) {
+            try {
+                System.out.println(" sellerOrders " + objectMapper.writeValueAsString(o));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     private Address getAddress(Client client) {

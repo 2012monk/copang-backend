@@ -10,8 +10,12 @@ import com.alconn.copang.order.mapper.OrderMapper;
 import com.alconn.copang.order.mapper.SellerOrderMapper;
 import com.alconn.copang.payment.ImpPaymentInfo;
 import com.alconn.copang.payment.PaymentService;
+import com.alconn.copang.shipment.Shipment;
+import com.alconn.copang.shipment.ShipmentForm;
+import com.alconn.copang.shipment.ShipmentForm.Request;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +41,8 @@ public class OrderService {
     private final SellerOrderMapper sellerOrderMapper;
 
     private final SellerOrderService sellerOrderService;
+
+    private final OrderQueryRepository orderQueryRepository;
 
     @Transactional
     public OrderForm.Response readyOrder(OrderForm.Create form, Long clientId) {
@@ -144,7 +150,23 @@ public class OrderService {
         return sellerOrderRepository.findSellerOrdersBySeller_ClientId(sellerId);
     }
 
-    public Response placeShipment(Long sellerOrderId) {
+    @Transactional
+    public Response placeShipment(List<ShipmentForm.Request> requests, Long sellerId, Long sellerOrderId) {
+        List<OrderItem> list = orderQueryRepository.findByIds(requests.stream().map(
+            Request::getOrderItemId).collect(
+            Collectors.toList()));
+
+        Map<Long, String> numberMap =
+            requests.stream().collect(Collectors.toMap(Request::getOrderItemId,
+                Request::getTrackingNumber));
+
+        list.forEach(
+            o -> o.setShipment(
+                Shipment
+                    .builder()
+                    .trackingNumber(numberMap.get(o.getOrderItemId()))
+                    .build())
+        );
         return null;
     }
 }

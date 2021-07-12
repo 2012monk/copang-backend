@@ -21,6 +21,7 @@ public interface SellerOrderMapper {
     @Mapping(source = "orders.address.address", target = "address.address")
     SellerOrderForm.Response mtoForm(SellerOrder sellerOrder, Orders orders);
 
+    @Mapping(source = "shipment", target = ".")
     @Mapping(source = "itemDetail", target = ".")
     @Mapping(source = "itemDetail.item", target = ".")
     OrderItemForm toForm(OrderItem item);

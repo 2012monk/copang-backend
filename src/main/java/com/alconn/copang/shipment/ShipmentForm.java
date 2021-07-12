@@ -22,6 +22,10 @@ public class ShipmentForm {
 
         private List<Long> shippingItems;
 
+        private Long orderItemId;
+
+        private String trackingNumber;
+
     }
 
     @JsonInclude(Include.NON_NULL)

@@ -47,6 +47,7 @@ public interface OrderMapper extends EntityMapper<OrderForm, Orders> {
 //    @Mapping(source = "orderItemId", target = "orderItemId", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
     OrderItem toItem(OrderItemForm dto);
 
+    @Mapping(source = "shipment", target = ".")
     @Mapping(source = "itemDetail", target = ".")
     @Mapping(source = "itemDetail.item", target = ".")
     OrderItemForm toForm(OrderItem item);
