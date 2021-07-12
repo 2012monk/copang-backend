@@ -5,7 +5,6 @@ import com.alconn.copang.exceptions.UnauthorizedException;
 import com.alconn.copang.review.ReviewForm.Request;
 import com.alconn.copang.review.ReviewForm.Response;
 import com.alconn.copang.review.ReviewForm.Update;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +27,9 @@ public class ReviewService {
 
     public List<Response> getReviewByItem(Long itemId) {
 
-        List<Review> list = repository.findReviewsByOrderItem_ItemDetail_Item_ItemId(itemId,
-            Sort.by(Direction.ASC, "rating"));
+        List<Review> list = repository
+            .findReviewsByOrderItem_ItemDetail_Item_ItemIdOrderByRatingDesc(itemId,
+                Sort.by(Direction.ASC, "rating"));
 
         return list.stream().map(mapper::toDto).collect(Collectors.toList());
     }
@@ -67,14 +67,14 @@ public class ReviewService {
 
 
     public List<Response> getUserReview(Long clientId) {
-        List<Review> list = repository.findReviewsByWriter_ClientIdOrderByRegisterDate(clientId);
+        List<Review> list = repository.findReviewsByWriter_ClientIdOrderByRatingDesc(clientId);
         return list.stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
     public List<Response> getSellerReview(Long sellerId) {
 
         return mapper.toDto(repository
-            .findReviewsByOrderItem_ItemDetail_Item_Seller_ClientIdOrderByRegisterDate(sellerId));
+            .findReviewsByOrderItem_ItemDetail_Item_Seller_ClientIdOrderByRatingDesc(sellerId));
     }
 
 
