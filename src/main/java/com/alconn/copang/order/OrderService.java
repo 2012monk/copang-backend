@@ -139,7 +139,9 @@ public class OrderService {
 
         return ordersList.stream().map(
             orderMapper::toResponse
-        ).collect(Collectors.toList());
+        )
+            .sorted(Comparator.comparing(Response::getOrderDate))
+            .collect(Collectors.toList());
 
     }
 
