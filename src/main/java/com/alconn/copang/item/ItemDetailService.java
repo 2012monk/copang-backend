@@ -7,12 +7,14 @@ import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import com.alconn.copang.item.dto.ItemDetailForm;
 import com.alconn.copang.item.dto.ItemForm;
 import com.alconn.copang.item.dto.ItemViewForm;
+import com.alconn.copang.item.dto.ItemViewForm.MainViewForm;
 import com.alconn.copang.item.mapper.ItemMapper;
 import com.alconn.copang.search.ItemSearchCondition;
 import com.alconn.copang.seller.Seller;
 import com.alconn.copang.shipment.ShipmentInfo;
 import com.alconn.copang.shipment.ShipmentInfoRepository;
 import lombok.RequiredArgsConstructor;
+import org.jboss.jandex.Main;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -327,6 +329,10 @@ public class ItemDetailService {
 
         ItemViewForm itemViewForm = itemMapper.detailViewForm(itemDetail);
         return itemViewForm;
+    }
+
+    public MainViewForm getSellerItems(Long sellerId, ItemSearchCondition condition) {
+        return itemQueryRepository.getSellerItems(sellerId, condition, itemMapper);
     }
 }
 

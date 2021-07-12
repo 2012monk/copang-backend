@@ -19,6 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Getter
 @Builder
@@ -35,6 +36,7 @@ public class ReturnOrder {
 
     private String returnReason;
 
+    @CreationTimestamp
     private LocalDateTime receiptDate;
 
     private LocalDateTime completeDate;

@@ -41,4 +41,6 @@ public class OrderItemForm {
     private Integer unitTotal;
 
     private String trackingNumber;
+
+    private String canceledReceiptUrl;
 }

@@ -270,7 +270,7 @@ class ItemQueryRepositoryTest {
 
         ItemSearchCondition condition =
             ItemSearchCondition.builder()
-//            .sorted(OrderCondition.ranking)
+//            .sorted(OrderItemCondition.ranking)
                 .sorted(OrderCondition.review)
             .build();
 

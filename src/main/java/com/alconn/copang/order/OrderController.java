@@ -137,4 +137,12 @@ public class OrderController {
             service.receiptReturnOrder(request, orderItemId, clientId)
         );
     }
+
+    @GetMapping("/orders/items/canceled")
+    public ResponseMessage<?> returnCanceledOrderItems(@InjectId Long clineId) {
+        return ResponseMessage.success(
+            service.getCanceledItems(clineId)
+        );
+    }
+
 }

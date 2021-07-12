@@ -1,12 +1,15 @@
 package com.alconn.copang.seller;
 
 import com.alconn.copang.annotations.InjectId;
+import com.alconn.copang.annotations.QueryStringBody;
 import com.alconn.copang.client.ClientService;
 import com.alconn.copang.client.Role;
 import com.alconn.copang.client.UserForm;
 import com.alconn.copang.common.ResponseMessage;
 import com.alconn.copang.exceptions.NoSuchUserException;
+import com.alconn.copang.item.ItemDetailService;
 import com.alconn.copang.item.dto.ItemDetailForm;
+import com.alconn.copang.search.ItemSearchCondition;
 import com.alconn.copang.shipment.Shipment;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,7 @@ public class SellerController {
 
     private final ClientService service;
 
+    private final ItemDetailService detailService;
     @GetMapping("/user")
     public ResponseMessage<UserForm.Response> getSellerInfo(@InjectId(role = Role.SELLER) Long sellerId)
         throws NoSuchUserException {
@@ -41,6 +45,16 @@ public class SellerController {
     public ResponseMessage<?> registerItems(@RequestBody List<ItemDetailForm> forms,
         @InjectId Long sellerId) {
         return null;
+    }
+
+    @GetMapping("/items")
+    public ResponseMessage<?> getSellerItems(
+        @InjectId(role = Role.SELLER) Long sellerId,
+        @QueryStringBody ItemSearchCondition condition
+        ) {
+        return ResponseMessage.success(
+            detailService.getSellerItems(sellerId, condition)
+        );
     }
 
     @GetMapping("/orders")

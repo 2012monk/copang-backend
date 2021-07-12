@@ -4,9 +4,11 @@ import com.alconn.copang.address.Address;
 import com.alconn.copang.address.AddressForm;
 import com.alconn.copang.order.ReturnStatus;
 import com.alconn.copang.shipment.LogisticCode;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -75,5 +77,8 @@ public class ReturnOrderForm {
         private List<OrderItemForm> returnItems;
 
         private String returnReason;
+
+        @JsonFormat(timezone = "Seoul/Asia", pattern = "yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime receiptDate;
     }
 }
