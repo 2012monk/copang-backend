@@ -114,7 +114,7 @@ public class OrderController {
     }
 
     @PostMapping("/shipments")
-    public ResponseMessage<?> placeShipment(@RequestBody List<ShipmentForm.Request> form,
+    public ResponseMessage<?> placeShipment(@Validated @RequestBody List<ShipmentForm.Request> form,
         @InjectId(role = Role.SELLER) Long sellerId) throws AccessDeniedException {
         return ResponseMessage.success(
             service.placeShipment(form, sellerId)
@@ -122,7 +122,7 @@ public class OrderController {
     }
 
     @PostMapping("/shipment")
-    public ResponseMessage<?> placeShipment(ShipmentForm.Request form,
+    public ResponseMessage<?> placeShipment(@Validated @RequestBody ShipmentForm.Request form,
         @InjectId(role = Role.SELLER) Long sellerId) throws AccessDeniedException {
         return ResponseMessage.success(
             service.placeShipment(Collections.singletonList(form), sellerId)

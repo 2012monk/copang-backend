@@ -168,7 +168,8 @@ public class OrderService {
     @Transactional
     public List<ShipmentForm.Response> placeShipment(List<ShipmentForm.Request> requests, Long sellerId)
         throws AccessDeniedException {
-        List<OrderItem> list = orderQueryRepository.findByIds(requests.stream().map(
+        List<OrderItem> list = orderQueryRepository.findByIds(
+            requests.stream().map(
             Request::getOrderItemId).collect(
             Collectors.toList()));
         if (list.stream()

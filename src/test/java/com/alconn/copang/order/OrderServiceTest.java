@@ -36,6 +36,7 @@ import com.alconn.copang.payment.ImpPaymentInfo;
 import com.alconn.copang.payment.PaymentService;
 import com.alconn.copang.seller.Seller;
 import com.alconn.copang.seller.SellerRepository;
+import com.alconn.copang.shipment.LogisticCode;
 import com.alconn.copang.shipment.ShipmentForm;
 import com.alconn.copang.utils.TestUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -330,7 +331,8 @@ class OrderServiceTest {
 
     @Transactional
     @Test
-    void orderBySeller() throws NoSuchEntityExceptions, AccessDeniedException {
+    void orderBySeller()
+        throws Exception {
         objectMapper.writerWithDefaultPrettyPrinter();
 
         Seller seller = utils.getSeller();
@@ -474,26 +476,48 @@ class OrderServiceTest {
                     ShipmentForm.Request.builder()
                     .orderItemId(i.getOrderItemId())
                     .trackingNumber("123333")
+                        .logisticCode(LogisticCode.EPOST)
                     .build()
                 )
             ));
 
-        service.placeShipment(requests, seller.getClientId());
+//        for (ShipmentForm.Request r: requests) {
+//            System.out.println("objectMapper = " + objectMapper.writeValueAsString(r));
+//        }
+        String json = "{"
+            + "      \"orderItemId\": 6031,"
+            + "      \"trackingNumber\": \"6865113737890\","
+            + "      \"logisticCode\": \"EPOST\""
+            + "}";
+//        json = "[{\n"
+//            + "      \"orderItemId\": 6031,\n"
+//            + "      \"trackingNumber\": \"6865113737890\",\n"
+//            + "      \"logisticCode\": \"EPOST\"\n"
+//            + "}]";
+//        service.placeShipment(requests, seller.getClientId());
+//
+//        manager.flush();
+//        manager.clear();
+//
+//        sellerOrder = sellerOrderService
+//            .getSellerOrder(seller.getClientId());
+//
+//        assertEquals(1, sellerOrder.size());
+//        for (SellerOrderForm.Response o : sellerOrder) {
+//            try {
+//                System.out.println(" sellerOrders " + objectMapper.writeValueAsString(o));
+//            } catch (JsonProcessingException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
-        manager.flush();
-        manager.clear();
-
-        sellerOrder = sellerOrderService
-            .getSellerOrder(seller.getClientId());
-
-        assertEquals(1, sellerOrder.size());
-        for (SellerOrderForm.Response o : sellerOrder) {
-            try {
-                System.out.println(" sellerOrders " + objectMapper.writeValueAsString(o));
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-        }
+        mvc.perform(
+            post("/api/orders/shipment")
+            .content(json)
+            .contentType(MediaType.APPLICATION_JSON)
+            .header(HttpHeaders.AUTHORIZATION, utils.genHeader(client))
+        )
+            .andDo(print());
 
     }
 

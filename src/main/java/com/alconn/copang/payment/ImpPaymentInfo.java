@@ -50,7 +50,7 @@ public class ImpPaymentInfo {
 
     private LocalDateTime failedAt;
 
-    @OneToMany(mappedBy = "impPaymentInfo")
+    @OneToMany(mappedBy = "impPaymentInfo", cascade = CascadeType.ALL)
     private List<ImpCancelInfo> cancel_history;
 
 
