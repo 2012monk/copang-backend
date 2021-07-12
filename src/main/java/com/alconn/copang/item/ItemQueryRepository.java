@@ -4,6 +4,7 @@ import static com.alconn.copang.item.QItem.item;
 import static com.alconn.copang.item.QItemDetail.itemDetail;
 import static com.alconn.copang.order.QOrderItem.orderItem;
 import static com.alconn.copang.review.QReview.review;
+import static com.alconn.copang.seller.QSeller.seller;
 
 import com.alconn.copang.item.dto.ItemViewForm.MainViewForm;
 import com.alconn.copang.item.mapper.ItemMapper;
@@ -181,6 +182,11 @@ public class ItemQueryRepository {
             .orderBy(order(condition.getSorted()))
             .fetchJoin()
             .fetch();
+        return getMainViewForm(condition, itemMapper, fetch);
+    }
+
+    private MainViewForm getMainViewForm(ItemSearchCondition condition, ItemMapper itemMapper,
+        List<Tuple> fetch) {
         List<ItemDetail> details = new ArrayList<>();
         for (Tuple t : fetch) {
             ItemDetail detail = t.get(itemDetail);
@@ -193,7 +199,9 @@ public class ItemQueryRepository {
         }
 
         if (condition.getSorted() == OrderCondition.ranking) {
-            details.sort(Collections.reverseOrder(Comparator.comparing(i -> (i.getItem().getCountReviews() + i.getItem().getCountOrderItems()) * i.getItem().getAverageRating())));
+            details.sort(Collections.reverseOrder(Comparator.comparing(
+                i -> (i.getItem().getCountReviews() + i.getItem().getCountOrderItems()) * i
+                    .getItem().getAverageRating())));
         }
         return MainViewForm.builder()
             .list(itemMapper.mainPage(details))
@@ -222,6 +230,53 @@ public class ItemQueryRepository {
             default:
                 return review.rating.avg().desc();
         }
+    }
+
+    public MainViewForm getSellerItems(Long sellerId, ItemSearchCondition condition,
+        ItemMapper itemMapper) {
+
+        List<Tuple> fetch = queryFactory
+            .select(itemDetail,
+                review.rating.avg().coalesce(0d),
+                item.itemId.count(),
+                review.count(),
+                orderItem.count()
+            )
+            .from(item)
+            .offset((long) condition.getPage() * condition.getSize())
+            .limit(condition.getSize())
+            .join(itemDetail).on(item.eq(itemDetail.item))
+            .join(seller).on(item.seller.eq(seller))
+            .leftJoin(orderItem).on(itemDetail.eq(orderItem.itemDetail))
+            .leftJoin(review).on(orderItem.eq(review.orderItem))
+            .where(
+                eqBrand(condition.getBrand()),
+                eqPriceOver(condition.getPriceOver()),
+                eqPriceUnder(condition.getPriceUnder()),
+                afterDate(condition.getStartDate()),
+                beforeDate(condition.getEndDate()),
+                eqCategory(condition.getCategoryId()),
+                eqLogisticChargeType(condition.getShippingChargeType())
+            )
+            .where(seller.clientId.eq(sellerId))
+            .groupBy(item)
+//            .orderBy(review.rating.avg().desc())
+            .orderBy(order(condition.getSorted()))
+            .fetchJoin()
+            .fetch();
+
+        return getMainViewForm(condition, itemMapper, fetch);
+
+//        return queryFactory
+//            .select(itemDetail)
+//            .from(item)
+//            .join(itemDetail).on(itemDetail.in(item.itemDetails))
+//            .join(seller).on(seller.eq(item.seller))
+//            .where(seller.clientId.eq(sellerId))
+//            .orderBy(item.itemCreate.desc())
+//            .fetch();
+//
+
     }
 
 }

@@ -7,6 +7,7 @@ import com.alconn.copang.exceptions.UnauthorizedException;
 import com.alconn.copang.exceptions.ValidationException;
 import com.alconn.copang.order.dto.OrderForm;
 import com.alconn.copang.order.dto.OrderForm.Response;
+import com.alconn.copang.order.dto.OrderItemForm;
 import com.alconn.copang.order.dto.ReturnOrderForm;
 import com.alconn.copang.order.dto.ReturnOrderForm.AcceptRequest;
 import com.alconn.copang.order.dto.SellerOrderForm;
@@ -277,4 +278,10 @@ public class OrderService {
     }
 
 
+    public List<ReturnOrderForm.Response> getCanceledItems(Long clineId) {
+
+        List<ReturnOrder> orders = orderQueryRepository.getCanceledOrders(clineId);
+
+        return returnOrderMapper.toResponse(orders);
+    }
 }

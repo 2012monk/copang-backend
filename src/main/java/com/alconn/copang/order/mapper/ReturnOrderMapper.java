@@ -3,7 +3,6 @@ package com.alconn.copang.order.mapper;
 import com.alconn.copang.order.OrderItem;
 import com.alconn.copang.order.ReturnOrder;
 import com.alconn.copang.order.dto.OrderItemForm;
-import com.alconn.copang.order.dto.ReturnOrderForm;
 import com.alconn.copang.order.dto.ReturnOrderForm.Response;
 import java.util.List;
 import org.mapstruct.Mapper;
@@ -22,4 +21,7 @@ public interface ReturnOrderMapper {
     @Mapping(source = "itemDetail", target = ".")
     @Mapping(source = "itemDetail.item", target = ".")
     OrderItemForm toForm(OrderItem orderItem);
+
+
+    List<Response> toResponse(List<ReturnOrder> orders);
 }

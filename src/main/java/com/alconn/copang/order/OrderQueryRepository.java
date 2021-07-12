@@ -1,5 +1,9 @@
 package com.alconn.copang.order;
 
+import static com.alconn.copang.client.QClient.client;
+import static com.alconn.copang.order.QOrderItem.orderItem;
+import static com.alconn.copang.order.QOrders.orders;
+import static com.alconn.copang.order.QReturnOrder.returnOrder;
 import static com.alconn.copang.order.QSellerOrder.sellerOrder;
 
 import com.querydsl.core.BooleanBuilder;
@@ -79,6 +83,17 @@ public class OrderQueryRepository {
         return jpaQueryFactory
             .selectFrom(QReturnOrder.returnOrder)
             .where(QReturnOrder.returnOrder.returnOrderId.in(list))
+            .fetch();
+    }
+
+    public List<ReturnOrder> getCanceledOrders(Long clientId) {
+        return jpaQueryFactory
+            .selectFrom(returnOrder)
+            .join(orderItem).on(orderItem.in(returnOrder.orderItems))
+            .join(orders).on(orderItem.in(orders.orderItemList))
+            .join(client).on(orders.client.eq(client))
+            .where(client.clientId.eq(clientId))
+            .orderBy(returnOrder.receiptDate.desc())
             .fetch();
     }
 }
