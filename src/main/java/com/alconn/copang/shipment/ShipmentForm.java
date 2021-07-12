@@ -7,6 +7,8 @@ import com.alconn.copang.order.dto.OrderItemForm;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.List;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,9 +24,13 @@ public class ShipmentForm {
 
         private List<Long> shippingItems;
 
+        @NotNull(message = "아이템아이디는 필수입니다")
         private Long orderItemId;
 
+        @NotEmpty(message = "송장번호는 필수입니다")
         private String trackingNumber;
+
+        private LogisticCode logisticCode;
 
     }
 
