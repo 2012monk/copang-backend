@@ -8,15 +8,19 @@ import static com.alconn.copang.review.QReview.review;
 import com.alconn.copang.item.dto.ItemViewForm.MainViewForm;
 import com.alconn.copang.item.mapper.ItemMapper;
 import com.alconn.copang.search.ItemSearchCondition;
+import com.alconn.copang.search.OrderCondition;
 import com.alconn.copang.shipment.ShippingChargeType;
 import com.alconn.copang.utils.StringUtils;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -173,7 +177,8 @@ public class ItemQueryRepository {
                 eqLogisticChargeType(condition.getShippingChargeType())
             )
             .groupBy(item)
-            .orderBy(review.rating.avg().desc())
+//            .orderBy(review.rating.avg().desc())
+            .orderBy(order(condition.getSorted()))
             .fetchJoin()
             .fetch();
         List<ItemDetail> details = new ArrayList<>();
@@ -186,10 +191,34 @@ public class ItemQueryRepository {
                 details.add(detail);
             }
         }
+
+        if (condition.getSorted() == OrderCondition.ranking) {
+            details.sort(Collections.reverseOrder(Comparator.comparing(i -> (i.getItem().getCountReviews() + i.getItem().getCountOrderItems()) * i.getItem().getAverageRating())));
+        }
         return MainViewForm.builder()
             .list(itemMapper.mainPage(details))
-            .totalCount(fetch.size() == 0 ? 0 :Objects.requireNonNull(fetch.get(0).get(item.itemId.count())).intValue())
+            .totalCount(fetch.size() == 0 ? 0
+                : Objects.requireNonNull(fetch.get(0).get(item.itemId.count())).intValue())
             .build();
+    }
+
+    private OrderSpecifier<?> order(OrderCondition condition) {
+        switch (condition) {
+            case date:
+                return item.itemCreate.desc();
+            case dateAsc:
+                return item.itemCreate.asc();
+            case sales:
+                return orderItem.count().desc();
+            case price:
+                return itemDetail.price.desc();
+            case priceAsc:
+                return itemDetail.price.asc();
+            case review:
+                return review.count().desc();
+            default:
+                return review.rating.avg().asc();
+        }
     }
 
 }
