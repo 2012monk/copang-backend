@@ -4,6 +4,7 @@ import com.alconn.copang.order.Orders;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -26,8 +27,7 @@ public class ImpPaymentInfo {
     @Id @GeneratedValue
     private Long impPaymentId;
 
-    @OneToOne(mappedBy = "impPaymentInfo")
-//    @JoinColumn(name = "order_id")
+    @OneToOne(mappedBy = "impPaymentInfo", orphanRemoval = true, optional = false)
     private Orders orders;
 
     private String imp_uid;

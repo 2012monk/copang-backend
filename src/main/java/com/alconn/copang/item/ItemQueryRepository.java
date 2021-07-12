@@ -204,9 +204,7 @@ public class ItemQueryRepository {
 
     private OrderSpecifier<?> order(OrderCondition condition) {
         if (condition == null) {
-
             return review.rating.avg().desc();
-
         }
         switch (condition) {
             case date:
@@ -222,9 +220,7 @@ public class ItemQueryRepository {
             case review:
                 return review.count().desc();
             default:
-
                 return review.rating.avg().desc();
-
         }
     }
 

@@ -40,11 +40,20 @@ public class OrderItem {
     @JoinColumn(name = "shipment_id")
     private Shipment shipment;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "return_order_Id")
+    private ReturnOrder returnOrder;
+
     private int amount;
 
     private int unitTotal;
 
     private int shippingPrice;
+
+    public void setReturnOrder(ReturnOrder returnOrder) {
+        this.returnOrder = returnOrder;
+        returnOrder.returningItem(this);
+    }
 
     public void setOrders(Orders orders) {
         this.orders = orders;

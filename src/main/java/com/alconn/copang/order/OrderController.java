@@ -7,9 +7,11 @@ import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import com.alconn.copang.exceptions.UnauthorizedException;
 import com.alconn.copang.exceptions.ValidationException;
 import com.alconn.copang.order.dto.OrderForm;
+import com.alconn.copang.order.dto.ReturnOrderForm;
 import com.alconn.copang.order.dto.SellerOrderForm.Response;
 import com.alconn.copang.shipment.ShipmentForm;
 import java.nio.file.AccessDeniedException;
+import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -111,11 +113,28 @@ public class OrderController {
             .build();
     }
 
-    @PostMapping("/shipment/{sellerOrderId}")
+    @PostMapping("/shipments")
     public ResponseMessage<?> placeShipment(@RequestBody List<ShipmentForm.Request> form,
-        @InjectId(role = Role.SELLER) Long sellerId, @PathVariable Long sellerOrderId) {
+        @InjectId(role = Role.SELLER) Long sellerId) throws AccessDeniedException {
         return ResponseMessage.success(
-            service.placeShipment(form, sellerId, sellerOrderId)
+            service.placeShipment(form, sellerId)
+        );
+    }
+
+    @PostMapping("/shipment")
+    public ResponseMessage<?> placeShipment(ShipmentForm.Request form,
+        @InjectId(role = Role.SELLER) Long sellerId) throws AccessDeniedException {
+        return ResponseMessage.success(
+            service.placeShipment(Collections.singletonList(form), sellerId)
+        );
+    }
+
+    @PostMapping("/return/{orderItemId}")
+    public ResponseMessage<?> returnOrderItem(@RequestBody ReturnOrderForm.Request request,
+        @InjectId Long clientId, @PathVariable Long orderItemId)
+        throws NoSuchEntityExceptions, AccessDeniedException {
+        return ResponseMessage.success(
+            service.receiptReturnOrder(request, orderItemId, clientId)
         );
     }
 }
