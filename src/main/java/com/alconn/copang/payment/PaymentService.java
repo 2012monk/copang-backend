@@ -2,9 +2,9 @@ package com.alconn.copang.payment;
 
 import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import com.alconn.copang.exceptions.ValidationException;
+import com.alconn.copang.payment.dto.ImpPayResponse;
 import com.alconn.copang.payment.dto.PaymentForm;
 import com.alconn.copang.payment.dto.PaymentForm.Request;
-import com.alconn.copang.payment.dto.ImpPayResponse;
 import com.alconn.copang.payment.dto.PaymentInfoFrom;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -29,34 +29,27 @@ import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 
-@Transactional
+//@Transactional
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
 
+    private static String accessToken;
+    private static Integer exp;
+    private final RestTemplate restTemplate;
+    private final PaymentMapper mapper;
     @Value("${spring.imp.key}")
     private String impKey;
-
     @Value("${spring.imp.secret}")
     private String impSecret;
-
     @Value("${spring.imp.api-url}")
     private String baseUrl;
 
-    private static String accessToken;
-
-    private static Integer exp;
-
-    private final RestTemplate restTemplate;
-
-    private final PaymentMapper mapper;
-
     @PostConstruct
-    private void init(){
+    private void init() {
         if (accessToken == null) {
             getImpToken();
-        }
-        else if(exp != null && exp < new Date().getTime()) {
+        } else if (exp != null && exp < new Date().getTime()) {
             getImpToken();
         }
     }
@@ -64,6 +57,7 @@ public class PaymentService {
     public PaymentForm.Prepare preparePayment(Request request, Long clientId) {
         return null;
     }
+
     /**
      * 결제금액과 주문금액이 일치하는지 결제가 완료되었는지 검증
      *
@@ -74,21 +68,28 @@ public class PaymentService {
         throws ValidationException, NoSuchEntityExceptions {
         init();
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", this.accessToken);
+        headers.add("Authorization", accessToken);
         headers.setAcceptCharset(Collections.singletonList(StandardCharsets.UTF_8));
         String requestUri = baseUrl + "/payments/" + impUid;
 
         HttpEntity<HttpHeaders> req = new HttpEntity<>(headers);
         ResponseEntity<ImpPayResponse> res = null;
-        try{
+        try {
+            ResponseEntity<String> r = restTemplate.exchange(
+                requestUri,
+                HttpMethod.GET,
+                req,
+                String.class
+            );
+            log.warn(r.getBody());
             res = restTemplate.exchange(
-            requestUri,
-            HttpMethod.GET,
-            req,
-            ImpPayResponse.class
-        );
+                requestUri,
+                HttpMethod.GET,
+                req,
+                ImpPayResponse.class
+            );
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.info("http client exception ", e);
             init();
             res = restTemplate.exchange(
@@ -98,12 +99,6 @@ public class PaymentService {
                 ImpPayResponse.class);
         }
 
-//        ResponseEntity<String> st = restTemplate.exchange(
-//            requestUri,
-//            HttpMethod.GET,
-//            req,
-//            String.class
-//        );
         if (res.getStatusCode() == HttpStatus.NOT_FOUND) {
             throw new NoSuchEntityExceptions("주문번호가 잘못되었습니다");
         }
@@ -132,7 +127,7 @@ public class PaymentService {
             add("imp_secret", impSecret);
         }};
 
-        HttpEntity<MultiValueMap<String, String >> req = new HttpEntity<>(param, httpHeaders);
+        HttpEntity<MultiValueMap<String, String>> req = new HttpEntity<>(param, httpHeaders);
         ResponseEntity<Map> res = restTemplate
             .postForEntity(baseUrl + "/users/getToken", req, Map.class);
 
@@ -151,6 +146,51 @@ public class PaymentService {
         PaymentService.exp = exp;
         return token;
 
+    }
+
+    public ImpPaymentInfo cancelAmount(String imp_uid, Integer amount, String reason,
+        Integer checksum) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.add("Authorization", accessToken);
+//        headers.setAcceptCharset(Collections.singletonList(StandardCharsets.UTF_8));
+
+        LinkedMultiValueMap<String, String> param = new LinkedMultiValueMap<String, String>() {{
+            add("imp_uid", imp_uid);
+            add("amount", amount.toString());
+            add("reason", reason.toString());
+            add("checksum", checksum.toString());
+
+        }};
+        final String requestUri = baseUrl + "/payments/cancel";
+        HttpEntity<MultiValueMap<String, String>> req = new HttpEntity<>(param, headers);
+
+        ResponseEntity<ImpPayResponse> res = null;
+        try {
+            res = restTemplate.exchange(
+                requestUri,
+                HttpMethod.POST,
+                req,
+                ImpPayResponse.class
+            );
+
+        } catch (Exception e) {
+            log.info("http client exception ", e);
+            init();
+            res = restTemplate.exchange(
+                requestUri,
+                HttpMethod.POST,
+                req,
+                ImpPayResponse.class);
+        }
+
+        PaymentInfoFrom paymentInfoFrom = Objects.requireNonNull(res.getBody()).getResponse();
+
+        ImpPaymentInfo impPaymentInfo = mapper.toEntity(paymentInfoFrom);
+        impPaymentInfo.setPaidAt(paymentInfoFrom.getPaid_at());
+        impPaymentInfo.setCancelledAt(paymentInfoFrom.getCancelled_at());
+        impPaymentInfo.setFailedAt(paymentInfoFrom.getFailed_at());
+        return impPaymentInfo;
     }
 
 

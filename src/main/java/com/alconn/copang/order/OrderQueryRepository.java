@@ -6,6 +6,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
@@ -72,5 +73,12 @@ public class OrderQueryRepository {
             .where(QOrderItem.orderItem.orderItemId.in(ids))
             .fetch();
 
+    }
+
+    public List<ReturnOrder> findByIds(Set<Long> list) {
+        return jpaQueryFactory
+            .selectFrom(QReturnOrder.returnOrder)
+            .where(QReturnOrder.returnOrder.returnOrderId.in(list))
+            .fetch();
     }
 }

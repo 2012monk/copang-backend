@@ -3,14 +3,18 @@ package com.alconn.copang.order;
 import com.alconn.copang.address.AddressForm;
 import com.alconn.copang.client.UserForm;
 import com.alconn.copang.exceptions.InvalidTokenException;
+import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import com.alconn.copang.order.dto.OrderForm;
 import com.alconn.copang.order.dto.OrderItemForm;
+import com.alconn.copang.order.dto.ReturnOrderForm;
 import com.alconn.copang.order.dto.SellerOrderForm;
+import com.alconn.copang.shipment.ShipmentForm;
 import com.alconn.copang.utils.TestUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.nio.file.AccessDeniedException;
 import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +41,7 @@ import java.util.stream.Collectors;
 
 import static com.alconn.copang.ApiDocumentUtils.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
@@ -565,5 +570,132 @@ class OrderControllerTest {
 
                 )
             );
+    }
+
+
+    @Test
+    void returnOrder() throws Exception {
+
+        ReturnOrderForm.Response response =
+            ReturnOrderForm.Response.builder()
+            .returnOrderId(1L)
+            .cancelReceiptUrl("https://mockup-pg-web.kakao.com/v1/confirmation/p/T2918109671627384610/d2d665c7f2895baa7837f79eeda69be759fe35a58f4757ce3045f5983dba485d")
+            .pickupRequest("문앞")
+                .returnReason("걍")
+            .address(utils.getMockAddress())
+            .returnAmount(1)
+            .returnPrice(4000)
+            .orderTotalPrice(10000)
+            .build();
+
+
+        given(this.service.receiptReturnOrder(any(ReturnOrderForm.Request.class), eq(1L), eq(1L)))
+            .willReturn(response);
+
+        ReturnOrderForm.Request request =
+            ReturnOrderForm.Request.builder()
+            .returnReason("걍")
+            .amount(1)
+            .addressId(1L)
+            .pickupRequest(response.getPickupRequest())
+            .build();
+
+        this.mvc.perform(
+            RestDocumentationRequestBuilders.
+            post("/api/orders/return/{orderItemId}", 1L)
+            .header(HttpHeaders.AUTHORIZATION, utils.genAuthHeader())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(mapper.writeValueAsString(request))
+        )
+            .andDo(print())
+            .andDo(
+                document(
+                    "orders/{method-name}",
+                    getDocumentRequest(),
+                    getDocumentResponse(),
+                    getAuthHeader(),
+                    pathParameters(
+                        parameterWithName("orderItemId").description("환불한 주문 상품 아이디")
+                    )
+                )
+            );
+    }
+
+    @Test
+    void placeShipment() throws Exception {
+
+        ShipmentForm.Response response =
+            ShipmentForm.Response.builder()
+            .orderItemId(1L)
+            .trackingNumber("111230000321")
+            .build();
+
+
+
+        given(this.service.placeShipment(anyList(), eq(1L)))
+            .willReturn(Collections.singletonList(response));
+
+        ShipmentForm.Request request =
+            ShipmentForm.Request.builder()
+            .orderItemId(1L)
+            .trackingNumber(response.getTrackingNumber())
+            .build();
+
+        this.mvc.perform(
+            post("/api/orders/shipment")
+            .content(mapper.writeValueAsString(request))
+            .contentType(MediaType.APPLICATION_JSON)
+            .header(HttpHeaders.AUTHORIZATION, utils.getSellerAuthHeader())
+        )
+            .andDo(print())
+            .andDo(
+                document(
+                    "orders/{method-name}",
+                    getDocumentRequest(),
+                    getDocumentResponse(),
+                    getAuthHeader()
+                )
+            );
+
+
+
+    }
+
+    @Test
+    void placeShipments() throws Exception {
+        ShipmentForm.Response response =
+            ShipmentForm.Response.builder()
+                .orderItemId(1L)
+                .trackingNumber("111230000321")
+                .build();
+
+
+
+        given(this.service.placeShipment(anyList(), eq(1L)))
+            .willReturn(Collections.singletonList(response));
+
+        ShipmentForm.Request request =
+            ShipmentForm.Request.builder()
+                .orderItemId(1L)
+                .trackingNumber(response.getTrackingNumber())
+                .build();
+
+        this.mvc.perform(
+            post("/api/orders/shipment")
+                .content(mapper.writeValueAsString(Collections.singletonList(request)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, utils.getSellerAuthHeader())
+        )
+            .andDo(print())
+            .andDo(
+                document(
+                    "orders/{method-name}",
+                    getDocumentRequest(),
+                    getDocumentResponse(),
+                    getAuthHeader()
+                )
+            );
+
+
     }
 }

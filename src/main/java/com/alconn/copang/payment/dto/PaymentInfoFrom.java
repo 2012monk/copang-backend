@@ -39,4 +39,6 @@ public class PaymentInfoFrom {
 
     private Integer failed_at;
 
+    private List<String> cancel_receipt_urls;
+
 }

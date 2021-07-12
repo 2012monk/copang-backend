@@ -29,6 +29,7 @@ import com.alconn.copang.item.ItemRepository;
 import com.alconn.copang.order.dto.OrderForm;
 import com.alconn.copang.order.dto.OrderForm.Response;
 import com.alconn.copang.order.dto.OrderItemForm;
+import com.alconn.copang.order.dto.ReturnOrderForm;
 import com.alconn.copang.order.dto.SellerOrderForm;
 import com.alconn.copang.order.dto.SellerOrderForm;
 import com.alconn.copang.payment.ImpPaymentInfo;
@@ -46,6 +47,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -328,7 +330,7 @@ class OrderServiceTest {
 
     @Transactional
     @Test
-    void orderBySeller() throws NoSuchEntityExceptions {
+    void orderBySeller() throws NoSuchEntityExceptions, AccessDeniedException {
         objectMapper.writerWithDefaultPrettyPrinter();
 
         Seller seller = utils.getSeller();
@@ -476,7 +478,7 @@ class OrderServiceTest {
                 )
             ));
 
-        Response response1 = service.placeShipment(requests, seller.getClientId(), 1L);
+        service.placeShipment(requests, seller.getClientId());
 
         manager.flush();
         manager.clear();
@@ -594,5 +596,98 @@ class OrderServiceTest {
                 e.printStackTrace();
             }
         });
+    }
+
+
+    @Disabled
+    @Transactional
+    @Test
+    void returnTest()
+        throws NoSuchEntityExceptions, AccessDeniedException, ValidationException, UnauthorizedException, JsonProcessingException {
+        Client client = utils.generateRealClient();
+        Seller seller = utils.getSeller();
+        Address address = getAddress(client);
+        sellerRepository.save(seller);
+        repo.save(client);
+        addressRepository.save(address);
+        String[] names = new String[]{
+            "과자", "사이다", "선풍기", "양말"
+        };
+
+        List<ItemDetail> items = Arrays.stream(names).map(
+            n -> ItemDetail.builder()
+                .item(
+                    Item.builder()
+                        .itemName(n)
+                        .seller(seller)
+                        .build()
+                )
+                .optionName("수량")
+                .optionValue("킬로")
+                .price(60000)
+                .stockQuantity(2)
+                .mainImg("123")
+                .build()
+        ).collect(Collectors.toList());
+        items.forEach(i -> i.itemConnect(i.getItem()));
+        items.forEach(i -> itemRepository.save(i.getItem()));
+        itemDetailRepository.saveAll(items);
+
+
+        Orders orders =
+            Orders.builder()
+                .client(client)
+                .address(address)
+                .orderItemList(
+                    items.stream().map(i -> OrderItem.builder().itemDetail(i).amount(1).build())
+                        .collect(Collectors.toList())
+                )
+                .build();
+
+        orders.connectOrderItems();
+        orderRepository.save(orders);
+
+        service.setSellerOrder(orders.getOrderId());
+
+        OrderForm.Create create=
+            OrderForm.Create.builder()
+            .orderItems(items.stream().map(i ->
+                OrderItemForm.builder()
+            .amount(1)
+            .itemDetailId(i.getItemDetailId())
+            .build())
+                .collect(Collectors.toList())
+            )
+            .addressId(address.getAddressId())
+            .build();
+
+        String uid = "imp_647753011405";
+        Response response = service.readyOrder(create, client.getClientId());
+        manager.flush();
+        manager.clear();
+
+        Response response1 = service.orderPayment(uid, client.getClientId(), response.getOrderId());
+
+        Orders o1 = orderRepository.getById(response1.getOrderId());
+
+        manager.flush();
+        manager.clear();
+        System.out.println("o1.getImpPaymentInfo().getImp_uid() = " + o1.getImpPaymentInfo().getImp_uid());
+
+        ReturnOrderForm.Request request =
+
+            ReturnOrderForm.Request.builder()
+            .pickupRequest("문앞")
+            .returnReason("걍")
+            .amount(1)
+            .addressId(address.getAddressId())
+            .build();
+        ReturnOrderForm.Response response2 = service
+            .receiptReturnOrder(request, response1.getOrderItems().get(0).getOrderItemId(),
+                client.getClientId());
+        System.out.println("objectMapper.writeValueAsString(response2) = " + objectMapper
+            .writeValueAsString(response2));
+
+
     }
 }

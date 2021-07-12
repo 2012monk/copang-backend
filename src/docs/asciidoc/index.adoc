@@ -175,6 +175,11 @@ operation::orders/order-ready-test[snippets='request-headers,http-request,http-r
 
 operation::orders/order-payment[snippets='request-headers,http-request,path-parameters,http-response']
 
+== 주문한 상품 취소
+==== `POST` /api/orders/return/:orderItemId
+
+operation::orders/return-order[snippets='request-headers,http-request,http-response']
+
 = 장바구니 API
 
 == 장바구니 조회 [유저 기준]

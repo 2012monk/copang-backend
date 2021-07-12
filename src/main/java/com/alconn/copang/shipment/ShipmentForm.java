@@ -42,6 +42,8 @@ public class ShipmentForm {
 
         private String trackingNumber;
 
+        private Long orderItemId;
+
         private LogisticCode logisticCode;
 
         private String logisticCompany;
