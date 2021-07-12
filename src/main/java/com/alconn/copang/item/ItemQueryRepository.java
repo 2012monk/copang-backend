@@ -103,11 +103,11 @@ public class ItemQueryRepository {
 
 
     private BooleanExpression eqPriceOver(Integer price) {
-        return price == null ? null : itemDetail.price.gt(price);
+        return price == null ? null : itemDetail.price.goe(price);
     }
 
     private BooleanExpression eqPriceUnder(Integer price) {
-        return price == null ? null : itemDetail.price.lt(price);
+        return price == null ? null : itemDetail.price.loe(price);
     }
 
     private BooleanExpression afterDate(LocalDate startDate) {

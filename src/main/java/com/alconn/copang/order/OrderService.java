@@ -161,9 +161,12 @@ public class OrderService {
                 Request::getTrackingNumber));
 
         list.forEach(
-            o -> o.setShipment(new Shipment(numberMap.get(o.getOrderItemId())))
+            o -> o.setShipment(
+                Shipment
+                    .builder()
+                    .trackingNumber(numberMap.get(o.getOrderItemId()))
+                    .build())
         );
-
         return null;
     }
 }

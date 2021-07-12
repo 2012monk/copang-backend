@@ -39,4 +39,6 @@ public class OrderItemForm {
     private Integer price;
 
     private Integer unitTotal;
+
+    private String trackingNumber;
 }

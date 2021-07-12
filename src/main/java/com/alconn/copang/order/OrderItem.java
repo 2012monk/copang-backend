@@ -2,6 +2,7 @@ package com.alconn.copang.order;
 
 import com.alconn.copang.item.ItemDetail;
 import com.alconn.copang.shipment.Shipment;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -35,7 +36,7 @@ public class OrderItem {
     @JoinColumn(name = "seller_order_id")
     private SellerOrder sellerOrder;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "shipment_id")
     private Shipment shipment;
 

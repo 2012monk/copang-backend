@@ -67,7 +67,7 @@ public class OrderQueryRepository {
     }
 
     public List<OrderItem> findByIds(List<Long> ids) {
-        jpaQueryFactory
+        return jpaQueryFactory
             .selectFrom(QOrderItem.orderItem)
             .where(QOrderItem.orderItem.orderItemId.in(ids))
             .fetch();
