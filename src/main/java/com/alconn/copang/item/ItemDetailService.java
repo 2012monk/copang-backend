@@ -70,9 +70,7 @@ public class ItemDetailService {
 //    카테고리에 맞는 상품중 대표옵션만 출력
     public List<ItemDetailForm.MainForm> findCategpryMainList(Long categoryId)
             throws NoSuchEntityExceptions {
-        List<Long> idstest = new ArrayList<>();
-        List<Long> ids = categoryService.childCategoryExtract(categoryId, idstest);
-        System.out.println("ids.toString() = " + ids.toString());
+        List<Long> ids = categoryService.childCategoryExtract(categoryId);
 
         List<Long> itemList = itemRepository.findCategoryItem(ids);
 
@@ -103,6 +101,7 @@ public class ItemDetailService {
                 .itemComment(itemForm.getItemComment())
                 .brand(itemForm.getBrand())
                 .seller(Seller.builder().clientId(sellerId).build())
+                .averageRating(itemForm.getAverageRating())
                 .shipmentInfo(shipmentInfo)
                 .build();
 //

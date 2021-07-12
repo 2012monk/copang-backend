@@ -91,36 +91,36 @@ public class CategoryService {
         categoryRepository.save(categor);
         return categoryMapper.toDto(categor);
     }
-
-    //아이템 조회용 카테고리 id 추출
-    public List<Long> childCategoryExtract(Long id,List<Long> idtest){
-        //부모 카테고리 조회 자식여부 확인 -> 없으면 저장
-        List<Category> td= categoryRepository.findByParentId(id);
-        if(td.size()==0) {
-            try {
-                categoryRepository.findById(id);
-                idtest.add(id);
-                return idtest;
-            }catch (Exception e){
-                throw new NoSuchElementException("없는 카테고리입니다");
-            }
-        }
-        else if(td.size()>0){
-            for(int i=0; i<td.size();i++){
-////                if(td.get(i).getChildCheck().equalsIgnoreCase("y")){
-////                   idtest.addAll(childCategoryExtract(td.get(i).getCategoryId()));
-////                }
-////                else {
-////                    idtest.add(td.get(i).getCategoryId());
-////                }
-//                idtest.add(td.get(i).getCategoryId());
-                idtest.add(id);
-                childCategoryExtract(td.get(i).getCategoryId(),idtest);
-////                idtest.addAll(childCategoryExtract(td.get(i).getCategoryId(),idtest));
-            }
-        }
-        return idtest;
-    }
+//
+//    //아이템 조회용 카테고리 id 추출
+//    public List<Long> childCategoryExtract(Long id,List<Long> idtest){
+//        //부모 카테고리 조회 자식여부 확인 -> 없으면 저장
+//        List<Category> td= categoryRepository.findByParentId(id);
+//        if(td.size()==0) {
+//            try {
+//                categoryRepository.findById(id);
+//                idtest.add(id);
+//                return idtest;
+//            }catch (Exception e){
+//                throw new NoSuchElementException("없는 카테고리입니다");
+//            }
+//        }
+//        else if(td.size()>0){
+//            for(int i=0; i<td.size();i++){
+//////                if(td.get(i).getChildCheck().equalsIgnoreCase("y")){
+//////                   idtest.addAll(childCategoryExtract(td.get(i).getCategoryId()));
+//////                }
+//////                else {
+//////                    idtest.add(td.get(i).getCategoryId());
+//////                }
+////                idtest.add(td.get(i).getCategoryId());
+//                idtest.add(id);
+//                childCategoryExtract(td.get(i).getCategoryId(),idtest);
+//////                idtest.addAll(childCategoryExtract(td.get(i).getCategoryId(),idtest));
+//            }
+//        }
+//        return idtest;
+//    }
 
 
 
@@ -141,6 +141,7 @@ public class CategoryService {
                     .build();
             childCategoryadd(rootCategoryDto, parentGroup);
 
+            System.out.println("rootCategoryDto = " + rootCategoryDto.toString());
 
             return rootCategoryDto;
         }
@@ -182,5 +183,49 @@ public class CategoryService {
         }
 //====================
 
+    //======== api/item/list/categoryid=? 시 category마다 쿼리나가는 현상 수정
+    public List<Long> childCategoryExtract(Long id){
 
+        Map<Long, List<CategoryView.CategoryListDto>> parentGroup = categoryRepository.findAll()
+                .stream()
+                .map(category -> CategoryView.CategoryListDto.builder()
+                        .categoryId(category.getCategoryId())
+                        .parentId(category.getParentId())
+                        .build()).collect(groupingBy(c->c.getParentId()));
+
+
+        CategoryView.CategoryListDto rootCategoryDto=  CategoryView.CategoryListDto.builder()
+                .categoryId(id)
+                .categoryName("Root")
+                .cildCategory(null)
+                .build();
+
+        List<Long> ids=new ArrayList<>();
+        childCategoryadd2(rootCategoryDto, parentGroup,ids);
+
+        ids.add(id);
+        return ids;
+    }
+
+    private void childCategoryadd2(CategoryView.CategoryListDto rootCategoryDto, Map<Long, List<CategoryView.CategoryListDto>> parentGroup,List<Long> ids) {
+        //rootCategoryDto로 자식 카테고리를 찾는다
+        List<CategoryView.CategoryListDto> childCategory = parentGroup.get(rootCategoryDto.getCategoryId());
+        if (childCategory != null)
+            System.out.println("childCategory.toString() = " + childCategory.toString());
+        //종료 조건
+        if (childCategory == null)
+            return;
+
+        for (int i = 0; i < childCategory.size(); i++) {
+            ids.add(childCategory.get(i).getCategoryId());
+
+        }
+        //subcategory 셋팅
+        rootCategoryDto.changeSubCategory(childCategory);
+
+        //재귀적으로 childCategory들에 대해서도 수행
+        childCategory.stream().forEach(s -> {
+            childCategoryadd2(s, parentGroup, ids);
+        });
+    }
 }
