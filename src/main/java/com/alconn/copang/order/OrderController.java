@@ -8,6 +8,7 @@ import com.alconn.copang.exceptions.UnauthorizedException;
 import com.alconn.copang.exceptions.ValidationException;
 import com.alconn.copang.order.dto.OrderForm;
 import com.alconn.copang.order.dto.SellerOrderForm.Response;
+import com.alconn.copang.shipment.ShipmentForm;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -64,15 +65,15 @@ public class OrderController {
         return ResponseMessage.success(service.orderPayment(uid,clientId,orderId));
     }
 
-    @PatchMapping("/{sellerOrderId}/shipment")
-    public ResponseMessage<OrderForm.Response> updateOrderState(@PathVariable Long sellerOrderId)
-        throws NoSuchEntityExceptions {
-
-        return ResponseMessage.<OrderForm.Response>builder()
-            .message("success")
-            .data(service.placeShipment(sellerOrderId))
-            .build();
-    }
+//    @PatchMapping("/{sellerOrderId}/shipment")
+//    public ResponseMessage<OrderForm.Response> updateOrderState(@PathVariable Long sellerOrderId)
+//        throws NoSuchEntityExceptions {
+//
+//        return ResponseMessage.<OrderForm.Response>builder()
+//            .message("success")
+//            .data(service.placeShipment(sellerOrderId))
+//            .build();
+//    }
 
     @PatchMapping("/{orderId}/cancel")
     public ResponseMessage<OrderForm.Response> cancelOrder(@PathVariable Long orderId)
@@ -108,5 +109,13 @@ public class OrderController {
             .message("success")
             .data(service.getOneOrder(orderId))
             .build();
+    }
+
+    @PostMapping("/shipment/{sellerOrderId}")
+    public ResponseMessage<?> placeShipment(@RequestBody List<ShipmentForm.Request> form,
+        @InjectId(role = Role.SELLER) Long sellerId, @PathVariable Long sellerOrderId) {
+        return ResponseMessage.success(
+            service.placeShipment(form, sellerId, sellerOrderId)
+        );
     }
 }

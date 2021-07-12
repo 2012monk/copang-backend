@@ -65,4 +65,12 @@ public class OrderQueryRepository {
         Matcher matcher = SP_CHAR.matcher(keyWords);
         return matcher.replaceAll("");
     }
+
+    public List<OrderItem> findByIds(List<Long> ids) {
+        jpaQueryFactory
+            .selectFrom(QOrderItem.orderItem)
+            .where(QOrderItem.orderItem.orderItemId.in(ids))
+            .fetch();
+
+    }
 }
