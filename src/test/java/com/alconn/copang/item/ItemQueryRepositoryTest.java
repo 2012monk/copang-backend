@@ -20,6 +20,7 @@ import com.alconn.copang.order.dto.OrderItemForm;
 import com.alconn.copang.review.Review;
 import com.alconn.copang.review.ReviewRepository;
 import com.alconn.copang.search.ItemSearchCondition;
+import com.alconn.copang.search.OrderCondition;
 import com.alconn.copang.search.SearchService;
 import com.alconn.copang.seller.Seller;
 import com.alconn.copang.seller.SellerRepository;
@@ -247,7 +248,7 @@ class ItemQueryRepositoryTest {
                 .build()
             ).collect(Collectors.toList());
         reviews.addAll(
-            orderItems.stream().map(o -> Review.builder()
+            orderItems.subList(1, 3).stream().map(o -> Review.builder()
                 .content("좋아요")
                 .rating(random.nextInt(3))
                 .orderItem(
@@ -267,12 +268,19 @@ class ItemQueryRepositoryTest {
 //        itemWithReview.forEach(i -> System.out
 //            .println("i.getItem().getAverageRating() = " + i.getItem().getAverageRating()));
 
-        MainViewForm search = service.search(new ItemSearchCondition());
+        ItemSearchCondition condition =
+            ItemSearchCondition.builder()
+//            .sorted(OrderCondition.ranking)
+                .sorted(OrderCondition.review)
+            .build();
+
+//        MainViewForm search = service.search(new ItemSearchCondition());
+        MainViewForm search = service.search(condition);
 
         System.out.println("search.getTotalCount() = " + search.getTotalCount());
         for (MainForm m: search.getList()) {
             System.out.println("m.getAverageRating() = " + m.getAverageRating());
-            System.out.println("m.getCount() = " + m.getCountReviews());
+            System.out.println("m.getReviews() = " + m.getCountReviews());
             System.out.println("m.getCountOrderItems() = " + m.getCountOrderItems());
         }
     }
