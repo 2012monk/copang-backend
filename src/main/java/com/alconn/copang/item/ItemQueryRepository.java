@@ -5,6 +5,7 @@ import static com.alconn.copang.item.QItemDetail.itemDetail;
 import static com.alconn.copang.order.QOrderItem.orderItem;
 import static com.alconn.copang.review.QReview.review;
 
+import com.alconn.copang.item.dto.ItemForm;
 import com.alconn.copang.item.dto.ItemViewForm.MainViewForm;
 import com.alconn.copang.item.mapper.ItemMapper;
 import com.alconn.copang.search.ItemSearchCondition;
@@ -223,5 +224,11 @@ public class ItemQueryRepository {
                 return review.rating.avg().desc();
         }
     }
+
+//    public List<ItemForm> getSellerItems(ItemSearchCondition condition, Long sellerId) {
+//
+//        return queryFactory
+//            .
+//    }
 
 }
