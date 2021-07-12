@@ -281,7 +281,8 @@ class ItemQueryRepositoryTest {
         for (MainForm m: search.getList()) {
             System.out.println("m.getAverageRating() = " + m.getAverageRating());
             System.out.println("m.getReviews() = " + m.getCountReviews());
-            System.out.println("m.getCountOrderItems() = " + m.getCountOrderItems());
+
+
         }
     }
 }
