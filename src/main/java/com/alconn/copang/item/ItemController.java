@@ -41,6 +41,7 @@ public class ItemController {
 
     //상품 등록
     @CacheEvict(value = "item", allEntries = true)
+//    @CachePut(value = "item")
     @PostMapping("/add")
     public ResponseMessage<ItemForm> add(@Valid @RequestBody ItemForm itemForm,
         @InjectId(role = Role.SELLER) Long sellerId) {
