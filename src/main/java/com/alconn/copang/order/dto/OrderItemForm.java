@@ -42,5 +42,8 @@ public class OrderItemForm {
 
     private String trackingNumber;
 
-    private String canceledReceiptUrl;
+    private boolean isCanceled;
+
+    private boolean isShipping;
+
 }
