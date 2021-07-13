@@ -5,6 +5,7 @@ import com.alconn.copang.address.AddressForm;
 import com.alconn.copang.client.UserForm;
 import com.alconn.copang.order.OrderStatus;
 import com.alconn.copang.payment.PaymentType;
+import com.alconn.copang.shipment.LogisticCode;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import javax.validation.Valid;
@@ -53,8 +54,6 @@ public class OrderForm {
     public static class Response{
 
         private Long orderId;
-
-//        private Long clientId;
 
         @JsonFormat(timezone = "Seoul/Asia", pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime orderDate;
