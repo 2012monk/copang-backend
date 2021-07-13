@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: dev
+    active: prod
   jpa:
     open-in-view: false
     hibernate:
@@ -11,8 +11,14 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
-    #        dialect: org.hibernate.dialect.MariaDB103Dialect
+#          dialect: org.hibernate.dialect.MariaDB103Dialect
 
+  cache:
+    type: redis
+  redis:
+#    host: localhost
+    host: 3.34.216.224
+    port: 6379
   jwt:
     secret: qwerqwerqwerqwerqwerqwerqweqwrqweqwrqwr
 

@@ -32,7 +32,8 @@ spring:
         show_sql: true
         format_sql: true
 #        dialect: org.hibernate.dialect.MariaDBDialect
-
+  cache:
+    type: none
   jackson:
     serialization:
       fail-on-empty-beans: false

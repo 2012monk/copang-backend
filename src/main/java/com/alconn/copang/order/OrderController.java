@@ -14,6 +14,9 @@ import java.nio.file.AccessDeniedException;
 import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,6 +53,7 @@ public class OrderController {
             .build();
     }
 
+//    @CachePut(value = "orders", key = "'client'.concat(#clientId)")
     @PostMapping("/ready")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseMessage<OrderForm.Response> prepareOrder(@RequestBody OrderForm.Create form,
@@ -59,23 +63,15 @@ public class OrderController {
         );
     }
 
+    @CacheEvict(value = "orders", allEntries = true)
     @PostMapping("/{orderId}/pay/{uid}")
     public ResponseMessage<OrderForm.Response> paymentCheck(
         @InjectId Long clientId, @PathVariable(value = "orderId") Long orderId,
         @PathVariable(value = "uid") String uid)
         throws NoSuchEntityExceptions, ValidationException, UnauthorizedException, AccessDeniedException {
-        return ResponseMessage.success(service.orderPayment(uid,clientId,orderId));
+        return ResponseMessage.success(service.orderPayment(uid, clientId, orderId));
     }
 
-//    @PatchMapping("/{sellerOrderId}/shipment")
-//    public ResponseMessage<OrderForm.Response> updateOrderState(@PathVariable Long sellerOrderId)
-//        throws NoSuchEntityExceptions {
-//
-//        return ResponseMessage.<OrderForm.Response>builder()
-//            .message("success")
-//            .data(service.placeShipment(sellerOrderId))
-//            .build();
-//    }
 
     @PatchMapping("/{orderId}/cancel")
     public ResponseMessage<OrderForm.Response> cancelOrder(@PathVariable Long orderId)
@@ -87,6 +83,7 @@ public class OrderController {
             .build();
     }
 
+//    @Cacheable(key = "'clinet'.concat(#clientId)", value = "orders")
     @GetMapping("/client")
     public ResponseMessage<List<OrderForm.Response>> getClientOrders(@InjectId Long clientId) {
 
@@ -96,8 +93,10 @@ public class OrderController {
             .build();
     }
 
+//    @Cacheable(key = "'seller'.concat(#sellerId)", value = "orders")
     @GetMapping("/seller")
-    public ResponseMessage<List<Response>> getSellerOrders(@InjectId(role = Role.SELLER) Long sellerId) {
+    public ResponseMessage<List<Response>> getSellerOrders(
+        @InjectId(role = Role.SELLER) Long sellerId) {
         return ResponseMessage.success(
             service.getOrdersBySeller(sellerId)
         );
