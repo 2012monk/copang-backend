@@ -114,6 +114,8 @@ spring:
   config:
     activate:
       on-profile: test
+  cache:
+    type: none
 #server:
 #  servlet:
 #    encoding:
