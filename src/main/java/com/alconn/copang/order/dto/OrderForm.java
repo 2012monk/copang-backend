@@ -72,6 +72,5 @@ public class OrderForm {
 
         private String uid;
 
-
     }
 }

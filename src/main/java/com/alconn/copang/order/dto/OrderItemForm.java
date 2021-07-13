@@ -45,4 +45,5 @@ public class OrderItemForm {
     private boolean isCanceled;
 
     private boolean isShipping;
+
 }
