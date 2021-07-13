@@ -18,7 +18,7 @@ pipeline{
             }
 
             steps {
-                sh './gradlew clean build --exclude-task test'
+                sh './gradlew clean build'
             }
             post {
                 failure {
