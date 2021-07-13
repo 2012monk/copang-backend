@@ -10,8 +10,8 @@ spring:
     key: 9365280131116708
     secret: tkeVqQRndtYrkYBH9JROrSDVG2NnTZBmkPiKF97TD6kX5WFeFw27pG26JPuCP5Y9VhTAr1u48P1dLGsq
     api-url: https://api.iamport.kr/
-
-
+  cache:
+    type: none
 ---
 spring:
   datasource:

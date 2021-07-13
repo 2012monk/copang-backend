@@ -27,12 +27,6 @@ public class SearchService {
     }
 
     public ItemViewForm.MainViewForm search(ItemSearchCondition condition) {
-
-//        List<ItemDetail> details = itemQueryRepository.searchAndFilter(condition);
-//        List<MainForm> mainForms = itemMapper.mainPage(details);
-//        MainViewForm res =
-//            MainViewForm.builder()
-//            .totalCount()
         return itemQueryRepository.search(condition, itemMapper);
     }
 

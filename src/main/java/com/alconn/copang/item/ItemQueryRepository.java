@@ -1,11 +1,14 @@
 package com.alconn.copang.item;
 
+import static com.alconn.copang.category.QCategory.category;
 import static com.alconn.copang.item.QItem.item;
 import static com.alconn.copang.item.QItemDetail.itemDetail;
 import static com.alconn.copang.order.QOrderItem.orderItem;
 import static com.alconn.copang.review.QReview.review;
 import static com.alconn.copang.seller.QSeller.seller;
 
+import com.alconn.copang.category.Category;
+import com.alconn.copang.category.QCategory;
 import com.alconn.copang.item.dto.ItemViewForm.MainViewForm;
 import com.alconn.copang.item.mapper.ItemMapper;
 import com.alconn.copang.search.ItemSearchCondition;
@@ -23,7 +26,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -120,7 +125,29 @@ public class ItemQueryRepository {
     }
 
     private BooleanExpression eqCategory(Long categoryId) {
-        return categoryId == null ? null : itemDetail.item.category.categoryId.eq(categoryId);
+        if (categoryId == null) return null;
+        List<Long> ids = getChildCategory(categoryId);
+        return item.category.categoryId.in(ids);
+//        return categoryId == null ? null : itemDetail.item.category.categoryId.eq(categoryId);
+    }
+
+    private List<Long> getChildCategory(Long categoryId) {
+        List<Category> fetch = queryFactory
+            .selectFrom(category)
+            .fetch();
+
+        System.out.println("fetch.size() = " + fetch.size());
+        System.out.println("fetch.get(0).getParentId() = " + fetch.get(0).getParentId());
+        List<Long> ids = new ArrayList<>();
+        ids.add(categoryId);
+        for (Category c: fetch) {
+            if (ids.contains(c.getParentId())) {
+                ids.add(c.getCategoryId());
+            }
+//            fetch.remove(c);
+        }
+
+        return ids;
     }
 
     private BooleanExpression eqLogisticChargeType(ShippingChargeType type) {
