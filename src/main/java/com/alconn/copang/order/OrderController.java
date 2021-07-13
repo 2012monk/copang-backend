@@ -137,6 +137,13 @@ public class OrderController {
         );
     }
 
+//    @GetMapping("/orders/items/canceled/{returnOrderId}")
+//    public ResponseMessage<?> getOneCanceledOrderItem(@PathVariable Long returnOrderId) {
+//        return ResponseMessage.success(
+//            service.getCanceledOrder(returnOrderId)
+//        );
+//    }
+
     @GetMapping("/orders/items/canceled")
     public ResponseMessage<?> returnCanceledOrderItems(@InjectId Long clineId) {
         return ResponseMessage.success(
