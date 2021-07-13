@@ -107,18 +107,11 @@ spring:
 
   jwt:
     secret: qwerqwerqwerqwerqwerqwerqweqwrqweqwrqwr
-
+  cache:
+    type: none
   jackson:
     serialization:
       fail-on-empty-beans: false
   config:
     activate:
       on-profile: test
-#server:
-#  servlet:
-#    encoding:
-#      charset: UTF-8
-#      enabled: true
-#      force: true
-#      force-response: true
-#      force-request: true
