@@ -148,6 +148,7 @@ public class PaymentService {
 
     }
 
+    @Transactional
     public ImpPaymentInfo cancelAmount(String imp_uid, Integer amount, String reason,
         Integer checksum) {
         HttpHeaders headers = new HttpHeaders();
@@ -190,6 +191,7 @@ public class PaymentService {
         impPaymentInfo.setPaidAt(paymentInfoFrom.getPaid_at());
         impPaymentInfo.setCancelledAt(paymentInfoFrom.getCancelled_at());
         impPaymentInfo.setFailedAt(paymentInfoFrom.getFailed_at());
+        impPaymentInfo.getCancel_history().forEach(ImpCancelInfo::convertLocalDate);
         return impPaymentInfo;
     }
 

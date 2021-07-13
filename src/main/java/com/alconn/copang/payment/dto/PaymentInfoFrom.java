@@ -33,11 +33,11 @@ public class PaymentInfoFrom {
 
     private List<ImpCancelInfo> cancel_history;
 
-    private Integer paid_at;
+    private Long paid_at;
 
-    private Integer cancelled_at;
+    private Long cancelled_at;
 
-    private Integer failed_at;
+    private Long failed_at;
 
     private List<String> cancel_receipt_urls;
 

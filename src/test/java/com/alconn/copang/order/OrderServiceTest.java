@@ -648,7 +648,7 @@ class OrderServiceTest {
                 )
                 .optionName("수량")
                 .optionValue("킬로")
-                .price(60000)
+                .price(50)
                 .stockQuantity(2)
                 .mainImg("123")
                 .build()
@@ -685,7 +685,7 @@ class OrderServiceTest {
             .addressId(address.getAddressId())
             .build();
 
-        String uid = "imp_647753011405";
+        String uid = "imp_067362900733";
         Response response = service.readyOrder(create, client.getClientId());
         manager.flush();
         manager.clear();
@@ -712,6 +712,19 @@ class OrderServiceTest {
         System.out.println("objectMapper.writeValueAsString(response2) = " + objectMapper
             .writeValueAsString(response2));
 
+        manager.flush();
+        manager.clear();
+
+        List<ReturnOrderForm.Response> canceledItems = service
+            .getCanceledItems(client.getClientId());
+
+        canceledItems.forEach(c -> {
+            try {
+                System.out.println("objectMapper = " + objectMapper.writeValueAsString(c));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        });
 
     }
 }

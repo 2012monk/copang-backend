@@ -80,5 +80,8 @@ public class ReturnOrderForm {
 
         @JsonFormat(timezone = "Seoul/Asia", pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime receiptDate;
+
+        @JsonFormat(timezone = "Seoul/Asia", pattern = "yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime canceledAt;
     }
 }
