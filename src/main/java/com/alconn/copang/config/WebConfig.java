@@ -38,7 +38,9 @@ public class WebConfig implements WebMvcConfigurer {
                 "http://localhost:47788",
                 "http://localhost:8080",
                 "https://alconn.co",
-                "https://deli.alconn.co"
+                "https://deli.alconn.co",
+                "https://copang.alconn.co",
+                "https://seller.alconn.co"
             )
             .allowedHeaders("*")
             .allowedMethods("*")
