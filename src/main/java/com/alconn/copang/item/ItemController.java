@@ -28,7 +28,7 @@ public class ItemController {
     private final PagingFilterService pagingfilterService;
 
     //카테고리 클릭 시 자식 카테고리 조회하여 상품출력
-    @Cacheable(key = "#root.methodName.concat(':').concat(#id)", value = "category-by-id")
+    @Cacheable(key = "#root.methodName.concat(':').concat(#id)", value = "item")
     @GetMapping("/list/categoryid={categoryId}")
         public ResponseMessage<List<ItemDetailForm.MainForm>> categoryItemlist(@Valid @PathVariable(name = "categoryId")Long id) throws NoSuchEntityExceptions {
             List<ItemDetailForm.MainForm> itemDetailFormList=itemDetailService.findCategpryMainList(id);
@@ -40,7 +40,7 @@ public class ItemController {
         }
 
     //상품 등록
-    @CachePut()
+    @CacheEvict(value = "item", allEntries = true)
     @PostMapping("/add")
     public ResponseMessage<ItemForm> add(@Valid @RequestBody ItemForm itemForm,
         @InjectId(role = Role.SELLER) Long sellerId) {
@@ -53,6 +53,7 @@ public class ItemController {
     }
 
     //단일 옵션추가
+    @CacheEvict(value = "item", allEntries = true)
     @PostMapping("/add/detail")
     public ResponseMessage<ItemViewForm> addOne(@Valid @RequestBody ItemForm.ItemSingle itemForm)
         throws NoSuchEntityExceptions {
@@ -65,6 +66,7 @@ public class ItemController {
     }
 
     //단일 수정
+    @CacheEvict(value = "item", allEntries = true)
     @PutMapping("/update")
     public ResponseMessage<ItemViewForm> itemUpdate(
         @Valid @RequestBody ItemForm.ItemFormUpdateSingle itemForm) throws NoSuchEntityExceptions {
@@ -78,7 +80,7 @@ public class ItemController {
 
     //page 패스파람으로 받고 페이지별로 갯수
     //메인 대표이미지만 출력
-    @Cacheable(key = "#root.method.name.concat(':').concat(#page)", value = "item-page")
+    @Cacheable(key = "#root.method.name.concat(':').concat(#page)", value = "item")
     @GetMapping("/list/{pageNumber}")
 //    public ResponseMessage<List<ItemDetailForm.MainForm>> list(@PathVariable(name = "pageNumber",required = false) int page){
     public ResponseMessage<ItemViewForm.MainViewForm> list(@PathVariable(name = "pageNumber",required = false) int page){
@@ -91,7 +93,7 @@ public class ItemController {
     }
 
     //상세페이지
-    @Cacheable(key = "#root.method.name.concat(':').concat(#id)", value = "item-by-id")
+    @Cacheable(key = "#root.method.name.concat(':').concat(#id)", value = "item")
     @GetMapping("/list/itemid={itemId}")
     public ResponseMessage<ItemForm> itemDetailPageResponse(
         @PathVariable(name = "itemId") Long id) {
@@ -104,7 +106,7 @@ public class ItemController {
     }
 
     //1. 상품 삭제
-    @CacheEvict("item-by-id")
+    @CacheEvict(value = "item", allEntries = true)
     @DeleteMapping("/delete/{itemId}")
     public ResponseMessage<ItemForm> itemDel(@PathVariable(name = "itemId") Long id) {
         ItemForm itemForm = itemDetailService.delItem(id);
@@ -116,7 +118,7 @@ public class ItemController {
     }
 
     //2. 상품옵션 하나 삭제
-    @CacheEvict("item-by-id")
+    @CacheEvict(value = "item", allEntries = true)
     @DeleteMapping("/delete/item-detail/{itemDetailId}")
     public ResponseMessage<ItemForm> itemDetailDel(@PathVariable(name = "itemDetailId") Long id) {
         ItemForm itemForm
@@ -129,7 +131,7 @@ public class ItemController {
     }
 
     //상품 수정 + 카테고리 수정 + 배송수정
-    @CacheEvict("item-by-id")
+    @CacheEvict(value = "item", allEntries = true)
     @PutMapping("/update/list")
     public ResponseMessage<ItemForm> itemUpdate(
         @Valid @RequestBody ItemForm itemForm) throws NoSuchEntityExceptions {
