@@ -16,6 +16,7 @@ import com.alconn.copang.order.mapper.ReturnOrderMapper;
 import com.alconn.copang.order.mapper.SellerOrderMapper;
 import com.alconn.copang.payment.ImpCancelInfo;
 import com.alconn.copang.payment.ImpPaymentInfo;
+import com.alconn.copang.payment.PaymentRepository;
 import com.alconn.copang.payment.PaymentService;
 import com.alconn.copang.shipment.Shipment;
 import com.alconn.copang.shipment.ShipmentForm;
@@ -57,7 +58,10 @@ public class OrderService {
     private final OrderQueryRepository orderQueryRepository;
 
     private final AddressRepository addressRepository;
+
     private final ReturnOrderMapper returnOrderMapper;
+
+    private final PaymentRepository paymentRepository;
 
     @Transactional
     public OrderForm.Response readyOrder(OrderForm.Create form, Long clientId) {
@@ -209,7 +213,7 @@ public class OrderService {
         throws NoSuchEntityExceptions, AccessDeniedException {
         OrderItem i = orderItemRepository.findById(orderItemId)
             .orElseThrow(NoSuchEntityExceptions::new);
-        Orders o = repo.getById(i.getOrders().getOrderId());
+//        Orders o = repo.getById(i.getOrders().getOrderId());
         System.out.println("i.getOrders().getOrderStatus() = " + i.getOrders().getOrderStatus());
         if (!i.getOrders().getClient().getClientId().equals(clientId)) {
             throw new AccessDeniedException("본인인증 실패");
@@ -225,7 +229,6 @@ public class OrderService {
                 .returnPrice(i.getItemDetail().getPrice() * request.getAmount())
                 .build();
 
-        i.setReturnOrder(returnOrder);
 
         System.out
             .println("i.getOrders().getImpPaymentInfo() = " + i.getOrders().getImpPaymentInfo());
@@ -239,12 +242,16 @@ public class OrderService {
             i.getOrders().getTotalPrice()
         );
 
+        impPaymentInfo.connectCancelOrder();
+        paymentRepository.save(impPaymentInfo);
         i.getOrders().setPayment(impPaymentInfo);
+        repo.save(i.getOrders());
 
         ImpCancelInfo cancelInfo = impPaymentInfo.getCancel_history().stream().min(Comparator.comparing(
             ImpCancelInfo::getCanceled_at
         )).orElseThrow(NoSuchEntityExceptions::new);
 
+        i.setReturnOrder(returnOrder);
         returnOrder.setCancelInfo(cancelInfo);
 
         return returnOrderMapper.toResponse(returnOrder);
