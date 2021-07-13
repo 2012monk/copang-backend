@@ -15,7 +15,7 @@ public class SearchController {
 
     private final SearchService service;
 
-    @Cacheable(value = "item", keyGenerator = "searchKeyGenerator", cacheManager = "cacheManager")
+//    @Cacheable(value = "item", keyGenerator = "searchKeyGenerator", cacheManager = "cacheManager")
     @GetMapping("/api/item/search")
     public ResponseMessage<ItemViewForm.MainViewForm> searchItem(@QueryStringBody ItemSearchCondition condition) {
         return ResponseMessage.success(
