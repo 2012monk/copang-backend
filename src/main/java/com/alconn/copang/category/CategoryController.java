@@ -74,6 +74,7 @@ public class CategoryController {
 
 
     //카테고리 등록
+    @CachePut(value = {"list-category", "main-category"})
     @PostMapping("/add")
     public ResponseMessage<CategoryView> save(@RequestBody CategoryRequest.CategorySave categorySave) throws NoSuchEntityExceptions {
             return ResponseMessage.<CategoryView>builder()

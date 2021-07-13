@@ -12,6 +12,9 @@ import javax.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,6 +28,7 @@ public class ItemController {
     private final PagingFilterService pagingfilterService;
 
     //카테고리 클릭 시 자식 카테고리 조회하여 상품출력
+    @Cacheable(key = "#root.methodName.concat(':').concat(#id)", value = "category-by-id")
     @GetMapping("/list/categoryid={categoryId}")
         public ResponseMessage<List<ItemDetailForm.MainForm>> categoryItemlist(@Valid @PathVariable(name = "categoryId")Long id) throws NoSuchEntityExceptions {
             List<ItemDetailForm.MainForm> itemDetailFormList=itemDetailService.findCategpryMainList(id);
@@ -36,6 +40,7 @@ public class ItemController {
         }
 
     //상품 등록
+    @CachePut()
     @PostMapping("/add")
     public ResponseMessage<ItemForm> add(@Valid @RequestBody ItemForm itemForm,
         @InjectId(role = Role.SELLER) Long sellerId) {
@@ -73,6 +78,7 @@ public class ItemController {
 
     //page 패스파람으로 받고 페이지별로 갯수
     //메인 대표이미지만 출력
+    @Cacheable(key = "#root.method.name.concat(':').concat(#page)", value = "item-page")
     @GetMapping("/list/{pageNumber}")
 //    public ResponseMessage<List<ItemDetailForm.MainForm>> list(@PathVariable(name = "pageNumber",required = false) int page){
     public ResponseMessage<ItemViewForm.MainViewForm> list(@PathVariable(name = "pageNumber",required = false) int page){
@@ -85,6 +91,7 @@ public class ItemController {
     }
 
     //상세페이지
+    @Cacheable(key = "#root.method.name.concat(':').concat(#id)", value = "item-by-id")
     @GetMapping("/list/itemid={itemId}")
     public ResponseMessage<ItemForm> itemDetailPageResponse(
         @PathVariable(name = "itemId") Long id) {
@@ -97,6 +104,7 @@ public class ItemController {
     }
 
     //1. 상품 삭제
+    @CacheEvict("item-by-id")
     @DeleteMapping("/delete/{itemId}")
     public ResponseMessage<ItemForm> itemDel(@PathVariable(name = "itemId") Long id) {
         ItemForm itemForm = itemDetailService.delItem(id);
@@ -108,6 +116,7 @@ public class ItemController {
     }
 
     //2. 상품옵션 하나 삭제
+    @CacheEvict("item-by-id")
     @DeleteMapping("/delete/item-detail/{itemDetailId}")
     public ResponseMessage<ItemForm> itemDetailDel(@PathVariable(name = "itemDetailId") Long id) {
         ItemForm itemForm
@@ -120,6 +129,7 @@ public class ItemController {
     }
 
     //상품 수정 + 카테고리 수정 + 배송수정
+    @CacheEvict("item-by-id")
     @PutMapping("/update/list")
     public ResponseMessage<ItemForm> itemUpdate(
         @Valid @RequestBody ItemForm itemForm) throws NoSuchEntityExceptions {

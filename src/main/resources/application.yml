@@ -16,7 +16,8 @@ spring:
   cache:
     type: redis
   redis:
-    host: localhost
+#    host: localhost
+    host: 3.34.216.224
     port: 6379
   jwt:
     secret: qwerqwerqwerqwerqwerqwerqweqwrqweqwrqwr

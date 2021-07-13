@@ -64,7 +64,7 @@ public class OrderController {
         @InjectId Long clientId, @PathVariable(value = "orderId") Long orderId,
         @PathVariable(value = "uid") String uid)
         throws NoSuchEntityExceptions, ValidationException, UnauthorizedException, AccessDeniedException {
-        return ResponseMessage.success(service.orderPayment(uid,clientId,orderId));
+        return ResponseMessage.success(service.orderPayment(uid, clientId, orderId));
     }
 
 //    @PatchMapping("/{sellerOrderId}/shipment")
@@ -97,7 +97,8 @@ public class OrderController {
     }
 
     @GetMapping("/seller")
-    public ResponseMessage<List<Response>> getSellerOrders(@InjectId(role = Role.SELLER) Long sellerId) {
+    public ResponseMessage<List<Response>> getSellerOrders(
+        @InjectId(role = Role.SELLER) Long sellerId) {
         return ResponseMessage.success(
             service.getOrdersBySeller(sellerId)
         );
