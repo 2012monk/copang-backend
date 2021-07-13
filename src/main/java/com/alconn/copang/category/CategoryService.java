@@ -4,6 +4,7 @@ import com.alconn.copang.category.dto.CategoryRequest;
 import com.alconn.copang.category.dto.CategoryView;
 import com.alconn.copang.exceptions.NoSuchEntityExceptions;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -141,7 +142,7 @@ public class CategoryService {
                     .build();
             childCategoryadd(rootCategoryDto, parentGroup);
 
-            System.out.println("rootCategoryDto = " + rootCategoryDto.toString());
+//            System.out.println("rootCategoryDto = " + rootCategoryDto.toString());
 
             return rootCategoryDto;
         }
