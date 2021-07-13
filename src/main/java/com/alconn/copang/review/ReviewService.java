@@ -29,7 +29,7 @@ public class ReviewService {
 
         List<Review> list = repository
             .findReviewsByOrderItem_ItemDetail_Item_ItemIdOrderByRatingDesc(itemId,
-                Sort.by(Direction.ASC, "rating"));
+                Sort.by(Direction.DESC, "rating"));
 
         return list.stream().map(mapper::toDto).collect(Collectors.toList());
     }
