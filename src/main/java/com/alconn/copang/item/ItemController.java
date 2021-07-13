@@ -40,7 +40,7 @@ public class ItemController {
         }
 
     //상품 등록
-    @CacheEvict(value = "item", allEntries = true)
+    @CacheEvict(value = "item", allEntries = true, cacheManager = "cacheManager")
 //    @CachePut(value = "item")
     @PostMapping("/add")
     public ResponseMessage<ItemForm> add(@Valid @RequestBody ItemForm itemForm,
@@ -54,7 +54,7 @@ public class ItemController {
     }
 
     //단일 옵션추가
-    @CacheEvict(value = "item", allEntries = true)
+    @CacheEvict(value = "item", allEntries = true, cacheManager = "cacheManager")
     @PostMapping("/add/detail")
     public ResponseMessage<ItemViewForm> addOne(@Valid @RequestBody ItemForm.ItemSingle itemForm)
         throws NoSuchEntityExceptions {
@@ -67,7 +67,7 @@ public class ItemController {
     }
 
     //단일 수정
-    @CacheEvict(value = "item", allEntries = true)
+    @CacheEvict(value = "item", allEntries = true, cacheManager = "cacheManager")
     @PutMapping("/update")
     public ResponseMessage<ItemViewForm> itemUpdate(
         @Valid @RequestBody ItemForm.ItemFormUpdateSingle itemForm) throws NoSuchEntityExceptions {
@@ -107,7 +107,7 @@ public class ItemController {
     }
 
     //1. 상품 삭제
-    @CacheEvict(value = "item", allEntries = true)
+    @CacheEvict(value = "item", allEntries = true, cacheManager = "cacheManager")
     @DeleteMapping("/delete/{itemId}")
     public ResponseMessage<ItemForm> itemDel(@PathVariable(name = "itemId") Long id) {
         ItemForm itemForm = itemDetailService.delItem(id);
@@ -119,7 +119,7 @@ public class ItemController {
     }
 
     //2. 상품옵션 하나 삭제
-    @CacheEvict(value = "item", allEntries = true)
+    @CacheEvict(value = "item", allEntries = true, cacheManager = "cacheManager")
     @DeleteMapping("/delete/item-detail/{itemDetailId}")
     public ResponseMessage<ItemForm> itemDetailDel(@PathVariable(name = "itemDetailId") Long id) {
         ItemForm itemForm
@@ -132,7 +132,7 @@ public class ItemController {
     }
 
     //상품 수정 + 카테고리 수정 + 배송수정
-    @CacheEvict(value = "item", allEntries = true)
+    @CacheEvict(value = "item", allEntries = true, cacheManager = "cacheManager")
     @PutMapping("/update/list")
     public ResponseMessage<ItemForm> itemUpdate(
         @Valid @RequestBody ItemForm itemForm) throws NoSuchEntityExceptions {

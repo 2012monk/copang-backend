@@ -40,7 +40,7 @@ public class CategoryController {
     }
 
     //카테고리 제거
-    @CacheEvict(value = {"list-category", "main-category"}, allEntries = true)
+    @CacheEvict(value = {"list-category", "main-category"}, allEntries = true, cacheManager = "cacheManager")
     @DeleteMapping("/delete/{categoryId}")
     public ResponseMessage<CategoryView> del(@PathVariable(name = "categoryId") Long id) throws NoSuchEntityExceptions {
         //id값이 없을경우 에러확인
@@ -60,7 +60,7 @@ public class CategoryController {
 
 
     //수정
-    @CacheEvict(value = {"list-category", "main-category"}, allEntries = true)
+    @CacheEvict(value = {"list-category", "main-category"}, allEntries = true, cacheManager = "cacheManager")
     @PutMapping("/update")
     public ResponseMessage<CategoryView> update(@RequestBody CategoryRequest.CategoryUpdate categoryUpdate) throws  NoSuchEntityExceptions{
 
@@ -74,7 +74,7 @@ public class CategoryController {
 
 
     //카테고리 등록
-    @CacheEvict(value = {"list-category", "main-category"}, allEntries = true)
+    @CacheEvict(value = {"list-category", "main-category"}, allEntries = true, cacheManager = "cacheManager")
     @PostMapping("/add")
     public ResponseMessage<CategoryView> save(@RequestBody CategoryRequest.CategorySave categorySave) throws NoSuchEntityExceptions {
             return ResponseMessage.<CategoryView>builder()
