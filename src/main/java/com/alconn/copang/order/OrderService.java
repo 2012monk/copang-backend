@@ -294,4 +294,9 @@ public class OrderService {
 
         return returnOrderMapper.toResponse(orders);
     }
+
+//    public Object getCanceledOrder(Long returnOrderId) {
+//        return returnOrderMapper.toResponse(orderQueryRepository.getCanceledOrder(returnOrderId))
+//        return null;
+//    }
 }
