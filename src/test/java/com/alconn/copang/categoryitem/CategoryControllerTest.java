@@ -37,7 +37,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 
-
+@Disabled
 @AutoConfigureMockMvc
 @SpringBootTest
 @AutoConfigureRestDocs

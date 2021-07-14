@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: prod
+    active: dev
   jpa:
     open-in-view: false
     hibernate:
@@ -13,12 +13,12 @@ spring:
         format_sql: true
 #          dialect: org.hibernate.dialect.MariaDB103Dialect
 
-  cache:
-    type: redis
-  redis:
-#    host: localhost
-    host: 3.34.216.224
-    port: 6379
+#  cache:
+#    type: redis
+#  redis:
+##    host: localhost
+#    host: 3.34.216.224
+#    port: 6379
   jwt:
     secret: qwerqwerqwerqwerqwerqwerqweqwrqweqwrqwr
 
@@ -47,6 +47,12 @@ logging:
           trace
 ---
 spring:
+  cache:
+    type: redis
+  redis:
+    host: 3.34.216.224
+    port: 6379
+
   datasource:
     hikari:
       maximumPoolSize: 60
@@ -63,6 +69,11 @@ spring:
   config:
     activate:
       on-profile: prod
+  cache:
+    type: redis
+  redis:
+    host: 3.34.216.224
+    port: 6379
   datasource:
     hikari:
       maximumPoolSize: 60

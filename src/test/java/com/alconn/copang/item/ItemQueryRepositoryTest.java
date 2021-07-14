@@ -90,6 +90,7 @@ class ItemQueryRepositoryTest {
 
     }
 
+    @Disabled
     @Transactional
     @Test
     void searchTest() throws Exception {
